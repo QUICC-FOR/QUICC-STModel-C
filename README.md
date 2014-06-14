@@ -1,4 +1,4 @@
-State and transitions landscape model 
+States and transitions landscape model 
 ========
 
 Spatially explicit version built on C
