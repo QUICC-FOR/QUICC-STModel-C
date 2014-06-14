@@ -1,8 +1,7 @@
-C-STMFor
+State and transitions landscape model 
 ========
 
-Spatially explicit states and transitions landscape model
-Built on C
+Spatially explicit version built on C
 
 **Authors:** Steve Vissault and Matt Talluto
 
