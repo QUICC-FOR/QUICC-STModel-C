@@ -16,3 +16,4 @@ Work in progress...
 
     - Initial conditions (By example: Parameters of the multi)
 - Focus on get_trans_prob and select new_state (#2)
+
