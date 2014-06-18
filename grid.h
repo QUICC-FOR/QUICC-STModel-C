@@ -34,8 +34,8 @@ typedef struct Grid {
 
 Grid * 		make_grid		(size_t xsize, size_t ysize, GridType gridType);
 void 		destroy_grid		(Grid * grid);
-GridCell * 	grid_get		(Grid * grid, size_t x, size_t y);
-GridCell * 	grid_set		(Grid * grid, GridCell * value, size_t x, size_t y);
+GridCell * 	grid_get		 	(Grid * grid, size_t x, size_t y);
+GridCell * 	grid_set			(Grid * grid, GridCell * value, size_t x, size_t y);
 GridCell **	get_neighbors		(Grid * grid, x, y)
 
 
