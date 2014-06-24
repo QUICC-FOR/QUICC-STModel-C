@@ -1,6 +1,7 @@
 #ifndef GRIDCELL_H
 #define GRIDCELL_H
 
+
 /*
     DATA STRUCTURES
 */
@@ -13,6 +14,7 @@ typedef struct StateData{
 
 typedef struct Climate{
     double meanTemp;
+    /*Task: list all variables need to be used*/
     // Fill later
 };
 
@@ -24,13 +26,26 @@ typedef struct GridCell{
 };
 
 
-/*
+/*.
     FUNCTION PROTOTYPES
 */
 
-GridCell* make_cell ();
-void destroy_cell (GridCell* gridcell);
-StateData get_trans_prob (GridCell* gridcell);
-void select_new_state (GridCell* gridcell, StateData transprob);
+GridCell*   make_cell               ();
+GridCell*   update_cell            ();
+void            destroy_cell            (GridCell* gridcell);
+StateData       get_trans_prob       (GridCell* gridcell);
+void                select_new_state               (GridCell* gridcell, StateData transprob, gsl_rng* rng);
+
+
+/* PARAMETERS*/
+
+double beta_d (Climate climate);
+double beta_c (Climate climate);
+double theta_c (Climate climate);
+double theta_d (Climate climate);
+double phi_d (Climate climate);
+double phi_c (Climate climate);
+double phi_m (Climate climate);
+double epsi  (Climate climate);
 
 #endif
