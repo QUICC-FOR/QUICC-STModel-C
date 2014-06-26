@@ -26,7 +26,7 @@ StateData trans_prob; // output
             case T:
                 trans_prob.T =0;
                 trans_prob.C = phi_c;
-                trans_prob.D = phi_d;
+                trans_prob.D = phi_d;]
                 trans_prob.M = phi_m;
                 break;
 
