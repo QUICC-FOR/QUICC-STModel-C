@@ -6,11 +6,9 @@
     DATA STRUCTURES
 */
 
-typedef enum State { D,C,T,M };
-
-typedef struct StateData{
-    double D,C,T,M;
-};
+#define NUM_STATES 4
+typedef enum { DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED } State;
+typedef double StateData [NUM_STATES];
 
 typedef struct Climate{
     double meanTemp;
