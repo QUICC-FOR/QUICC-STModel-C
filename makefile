@@ -4,6 +4,7 @@ CC = clang
 # builds and runs all tests
 test: test/grid_cell_test
 	test/grid_cell_test
+	test/grid_test
 
 
 #

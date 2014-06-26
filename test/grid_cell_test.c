@@ -10,16 +10,16 @@ int check_return_values();
 int main(void) {
 	int failedTests = 0;
 	int numTests = 5;
-	
+
 	failedTests += check_sums();
 	failedTests += check_boundary_conditions();
 	failedTests += check_overflow_condition();
 	failedTests += check_inputs();
 	failedTests += check_return_values();
-	
-	printf("Failed %d of %d tests", failedTests, numTests);
+
+	printf("Failed %d of %d tests\n", failedTests, numTests);
 	return failedTests;
-	
+
 }
 
 

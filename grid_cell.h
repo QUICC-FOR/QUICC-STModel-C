@@ -1,6 +1,8 @@
 #ifndef GRIDCELL_H
 #define GRIDCELL_H
 
+#include <gsl/gsl_rng.h>
+
 
 /*
     DATA STRUCTURES
@@ -33,6 +35,6 @@ typedef struct {
 //GridCell*         update_cell                        ();
 //void                destroy_cell                       (GridCell* cell);
 void       get_trans_prob                  (GridCell* cell);
-//void                select_new_state               (GridCell* cell, StateData transprob, gsl_rng* rng);
+void select_new_state (GridCell* cell, gsl_rng* rng);
 
 #endif
