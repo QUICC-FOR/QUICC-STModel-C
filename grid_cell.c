@@ -41,14 +41,14 @@ StateData trans_prob; // output
                 trans_prob.T = epsi;
                 trans_prob.C = 0;
                 trans_prob.D = 0;
-                trans_prob.M = beta_c*(prevalence.C+prevalence.D);
+                trans_prob.M = beta_c*(prevalence.C+prevalence.M);
                 break;
 
             case C:
                 trans_prob.T = epsi;
                 trans_prob.C = 0;
                 trans_prob.D = 0;
-                trans_prob.M = beta_c*(prevalence.C+prevalence.D);
+                trans_prob.M = beta_d*(prevalence.M+prevalence.D);
                 break;
     }
 
