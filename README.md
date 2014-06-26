@@ -5,13 +5,16 @@ Spatially explicit version built on C
 
 **Authors:** Steve Vissault and Matt Talluto
 
-Work in progress...
+### Dependencies:
+    
+    - GNU Scientific Library: (GSL 1.16)[http://www.linuxfromscratch.org/blfs/view/svn/general/gsl.html]
 
-**Todo:**
+### Todo:
 
-- [ ] Implement grid_cell.c
-- [ ] Update the main.c with the stuff on the board (#1)
-- [ ] What the input data looks like (io.h) Format ?
-- [ ] Initial conditions (By example: Parameters of the multi)
-- [ ] Focus on get_trans_prob and select new_state (#2)
+- [ ] Work on grid.h and grid.c
+- [ ] Switch to work on the main 
+- [ x ] Instal GSL library
 
+### Getting started...
+
+Not yet !
