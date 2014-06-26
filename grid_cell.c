@@ -55,3 +55,9 @@ StateData trans_prob; // output
 return trans_prob;
 
 }
+
+StateData select_new_state(GridCell* gridcell)
+{
+
+
+}
