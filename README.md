@@ -13,7 +13,7 @@ Spatially explicit version built on C
 
 - [ ] Work on grid.h and grid.c
 - [ ] Switch to work on the main 
-- [ x ] Instal GSL library
+- [x] Instal GSL library
 
 ### Getting started...
 
