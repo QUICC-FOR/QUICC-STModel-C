@@ -7,7 +7,7 @@ Spatially explicit version built on C
 
 ### Dependencies:
     
-    - GNU Scientific Library: (GSL 1.16)[http://www.linuxfromscratch.org/blfs/view/svn/general/gsl.html]
+- GNU Scientific Library: [GSL 1.16](http://www.linuxfromscratch.org/blfs/view/svn/general/gsl.html)
 
 ### Todo:
 
