@@ -13,6 +13,8 @@
 	DATA STRUCTURES
 */
 
+typedef int size_t;
+
 typedef struct GridCell {
 	double meanTemperature;
 	double minTemperature;
@@ -31,10 +33,10 @@ typedef struct Grid {
 	FUNCTION PROTOTYPES
 */
 
-Grid * 		make_grid		(size_t xsize, size_t ysize, GridType gridType);
-void 		destroy_grid		(Grid * grid);
-GridCell * 	grid_get		(Grid * grid, size_t x, size_t y);
-GridCell * 	grid_set		(Grid * grid, GridCell * value, size_t x, size_t y);
-GridCell **	get_neighbors		(Grid * grid, x, y)
+Grid * 		grid_make_grid		(size_t xsize, size_t ysize, GridType gridType);
+void 		grid_destroy_grid		(Grid * grid);
+GridCell * 	grid_get_cell		(Grid * grid, size_t x, size_t y);
+GridCell * 	grid_set	_cell	(Grid * grid, GridCell * value, size_t x, size_t y);
+GridCell **	grid_get_neighbors		(Grid * grid, x, y)
 
 #endif
