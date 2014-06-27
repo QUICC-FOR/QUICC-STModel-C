@@ -12,7 +12,7 @@ double phi_m (Climate climate);
 double epsi  (Climate climate);
 
 
-void get_trans_prob(GridCell* cell)
+void gc_get_trans_prob(GridCell* cell)
 {
 /*FUNCTION DESCRIPTION: Parameters and ouput */
 
@@ -61,7 +61,7 @@ StateData * transProb; // output
 
 
 
-void select_new_state(GridCell* cell, gsl_rng* rng)
+void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 {
     double rValue = gsl_rng_uniform(rng);
     double testVal = cell->transitionProbs[DECIDUOUS];
