@@ -36,7 +36,7 @@ typedef struct Grid {
 Grid * 		grid_make_grid		(size_t xsize, size_t ysize, GridType gridType);
 void 		grid_destroy_grid		(Grid * grid);
 GridCell * 	grid_get_cell		(Grid * grid, size_t x, size_t y);
-GridCell * 	grid_set	_cell	(Grid * grid, GridCell * value, size_t x, size_t y);
-GridCell **	grid_get_neighbors		(Grid * grid, x, y)
+GridCell * 	grid_set_cell	(Grid * grid, GridCell * value, size_t x, size_t y);
+GridCell **	grid_get_neighbors		(Grid * grid, x, y);
 
 #endif
