@@ -15,18 +15,11 @@
 
 typedef int size_t;
 
-typedef struct GridCell {
-	double meanTemperature;
-	double minTemperature;
-	void * cellData;	// will fill this with something when appropriate
-};
-
-
-typedef struct Grid {
+typedef struct {
 	size_t 		xDim, yDim;
 	GridCell * 	gridData;
 
-};
+} Grid;
 
 
 /*
