@@ -13,6 +13,9 @@
 	DATA STRUCTURES
 */
 
+// this is where you write a comment explaining what random vs mixed vs uniform mean
+typedef enum {RANDOM, MIXED, UNIFORM} GridType;
+
 typedef int size_t;
 
 typedef struct {
