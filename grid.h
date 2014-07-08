@@ -13,20 +13,16 @@
 	DATA STRUCTURES
 */
 
+// this is where you write a comment explaining what random vs mixed vs uniform mean
+typedef enum {RANDOM, MIXED, UNIFORM} GridType;
+
 typedef int size_t;
 
-typedef struct GridCell {
-	double meanTemperature;
-	double minTemperature;
-	void * cellData;	// will fill this with something when appropriate
-};
-
-
-typedef struct Grid {
+typedef struct {
 	size_t 		xDim, yDim;
 	GridCell * 	gridData;
 
-};
+} Grid;
 
 
 /*
@@ -36,7 +32,7 @@ typedef struct Grid {
 Grid * 		grid_make_grid		(size_t xsize, size_t ysize, GridType gridType);
 void 		grid_destroy_grid		(Grid * grid);
 GridCell * 	grid_get_cell		(Grid * grid, size_t x, size_t y);
-GridCell * 	grid_set	_cell	(Grid * grid, GridCell * value, size_t x, size_t y);
-GridCell **	grid_get_neighbors		(Grid * grid, x, y)
+GridCell * 	grid_set_cell	(Grid * grid, GridCell * value, size_t x, size_t y);
+GridCell **	grid_get_neighbors		(Grid * grid, x, y);
 
 #endif

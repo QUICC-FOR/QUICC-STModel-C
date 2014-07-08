@@ -31,10 +31,9 @@ typedef struct {
     FUNCTION PROTOTYPES
 */
 
-//GridCell*         make_cell                           ();
-//GridCell*         update_cell                        ();
+//GridCell         make_cell                           (size_t numTimeSteps); // allocate memory and null initialize cell, initialize pointers
 //void                destroy_cell                       (GridCell* cell);
-void       get_trans_prob                  (GridCell* cell);
-void select_new_state (GridCell* cell, gsl_rng* rng);
+void gc_get_trans_prob                  (GridCell* cell);
+void gc_select_new_state (GridCell* cell, gsl_rng* rng);
 
 #endif
