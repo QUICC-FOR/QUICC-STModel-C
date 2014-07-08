@@ -12,7 +12,10 @@ void set_random_grid( Grid* grid){
             // Assign specific cell value in currentCell
             GridCell * currentCell = grid_get_cell(x,y);
 
-            // Get state value based on a random number
+            //Alloc memory for a random number
+            gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
+
+            // Set state based on random value
             switch((int)(gsl_rng_set(rng, (int) * 10.0) ))
                 {
                     case 0:        // this is 0.0 <= rng_value < 0.25
