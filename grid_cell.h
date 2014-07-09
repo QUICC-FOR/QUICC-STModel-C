@@ -24,6 +24,7 @@ typedef struct {
     Climate climate;
     StateData prevalence;
     StateData transitionProbs;
+    size_t historySize;
 } GridCell;
 
 
@@ -31,9 +32,9 @@ typedef struct {
     FUNCTION PROTOTYPES
 */
 
-//GridCell         make_cell                           (size_t numTimeSteps); // allocate memory and null initialize cell, initialize pointers
-//void                destroy_cell                       (GridCell* cell);
-void gc_get_trans_prob                  (GridCell* cell);
+GridCell* gc_make_cell (size_t numTimeSteps); // allocate memory and null initialize cell, initialize pointers
+void gc_destroy_cell (GridCell* cell);
+void gc_get_trans_prob (GridCell* cell);
 void gc_select_new_state (GridCell* cell, gsl_rng* rng);
 
 #endif
