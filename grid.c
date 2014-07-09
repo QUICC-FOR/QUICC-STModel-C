@@ -33,6 +33,7 @@ void set_random_grid(Grid* grid){
                             currentCell->currentState = currentCell->stateHistory = MIXED;
                         break;
                     default:
+                        abort();
                         break;
                 }
 
@@ -41,14 +42,31 @@ void set_random_grid(Grid* grid){
     }
 }
 
-void set_uniform_grid( Grid* grid){
+void set_uniform_grid(Grid* grid){
 
     // **DESCRIPTION**: This function create a landscape with each third (on Y
     // axis) of the grid is filled by one of states : D, M or C
 
+    // Get y grid dimension
+    int yGridDim = grid->yDim
+
     for (x, x < grid->xDim, x++) {
             for (y, y < grid->yDim, y++) {
 
+                GridCell * currentCell = grid_get_cell(x,y);
+
+                if(y < (yGridDim/3)){
+                    currentCell->currentState = currentCell->stateHistory = DECIDUOUS;
+                }
+                else if ( y < 2*(yGridDim/3) ){
+                    currentCell->currentState = currentCell->stateHistory = MIXED;
+                }
+                else if ( y < yGridDim ){
+                    currentCell->currentState = currentCell->stateHistory = CONIFEROUS;
+                }
+                else {
+                    abort(); // Helpfull ?
+                }
 
         }
     }
