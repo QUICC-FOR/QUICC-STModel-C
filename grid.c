@@ -1,22 +1,24 @@
 #include "grid.h"
 #include <gsl/gsl_rng.h>
 
-// FUNCTIONS PROTOTYPES
+// **FUNCTIONS PROTOTYPES**
 
-void set_random_grid( Grid* grid){
+void set_random_grid(Grid* grid){
 
-    // DESCRIPTION Set full random grid.
-    for (x, x < grid->xDim, x++) {
-            for (y, y < grid->yDim, y++) {
+    // **DESCRIPTION**: Set full random grid of three states: CONIFEROUS,
+    // DECIDUOUS, MIXED. Remove state: TRANSITIONNAL
 
-            // Assign specific cell value in currentCell
+    for (y, y < grid->yDim, y++) {
+        for (x, x < grid->xDim, x++) {
+
+            // Assign location cell value in currentCell
             GridCell * currentCell = grid_get_cell(x,y);
 
             //Alloc memory for a random number
             gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
 
-            // Set state based on random value
-            switch((int)(gsl_rng_set(rng, (int) * 10.0) ))
+            // Set state based on the random value
+            switch((int)(gsl_rng_set(rng, (int) * 10.0) )) // Number between 0 and 100
                 {
                     case 0:        // this is 0.0 <= rng_value < 0.25
                             currentCell->currentState = currentCell->stateHistory = TRANSITIONAL;
@@ -41,22 +43,29 @@ void set_random_grid( Grid* grid){
 
 void set_uniform_grid( Grid* grid){
 
+    // **DESCRIPTION**: This function create a landscape with each third (on Y
+    // axis) of the grid is filled by one of states : D, M or C
+
+    for (x, x < grid->xDim, x++) {
+            for (y, y < grid->yDim, y++) {
 
 
+        }
+    }
 }
 
-void set_mixed_grid( Grid* grid){
+//void set_mixed_grid( Grid* grid){
 
 
-}
 
+//}
 
-/*
-    an example of a getter function follows, assuming that the data are implemented as a 1-D array with row major ordering
-    this is implementation, so it will eventually go in a .c file; included here as an example only
-*/
+//void set_disturb_grid( Grid* grid){
 
-// **GLOBAL VARIABLE**
+    // DESCRIPTION:  The idea behind this function aims to create a grid with
+    // randomly a proportion of patch disturbed in the landscape
+
+//}
 
 
 GridCell * grid_get_cell(Grid * grid, size_t x, size_t y) {
