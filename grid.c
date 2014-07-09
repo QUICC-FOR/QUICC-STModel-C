@@ -18,6 +18,7 @@ void set_random_grid(Grid* grid){
             gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
 
             // Set state based on the random value
+            // Is it efficient and clear within a switch statement?
             switch((int)(gsl_rng_set(rng, (int) * 10.0) )) // Number between 0 and 100
                 {
                     case 0:        // this is 0.0 <= rng_value < 0.25
@@ -45,23 +46,23 @@ void set_random_grid(Grid* grid){
 void set_uniform_grid(Grid* grid){
 
     // **DESCRIPTION**: This function create a landscape with each third (on Y
-    // axis) of the grid is filled by one of states : D, M or C
+    // axis) of the grid is filled by one state : D, M or C
 
     // Get y grid dimension
-    int yGridDim = grid->yDim
+    int ysize = grid->yDim
 
     for (x, x < grid->xDim, x++) {
             for (y, y < grid->yDim, y++) {
 
                 GridCell * currentCell = grid_get_cell(x,y);
 
-                if(y < (yGridDim/3)){
+                if(y < (ysize/3)){
                     currentCell->currentState = currentCell->stateHistory = DECIDUOUS;
                 }
-                else if ( y < 2*(yGridDim/3) ){
+                else if ( y < 2*(ysize/3) ){
                     currentCell->currentState = currentCell->stateHistory = MIXED;
                 }
-                else if ( y < yGridDim ){
+                else if ( y < ysize ){
                     currentCell->currentState = currentCell->stateHistory = CONIFEROUS;
                 }
                 else {
@@ -130,12 +131,19 @@ Grid * grid_make_grid(size_t xsize, size_t ysize, GridType gridType) {
     newGrid->xDim = xsize;
     newGrid->yDim = ysize;
 
-    // Alloc memory
+    // **Alloc memory**
 
     newGrid->gridData = malloc(dim * sizeof GridCell)
     assert(newGrid->gridData);
+
+    // **Alloc memory GridCell level**
+
     // for loop across all gridData and call
+
+
     // newGrid->gridData[i] = make_cell()
+
+
 
     switch( gridType ) {
         case RANDOM:

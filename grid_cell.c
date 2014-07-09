@@ -14,7 +14,7 @@ double epsi  (Climate climate);
 
 void gc_get_trans_prob(GridCell* cell)
 {
-/*FUNCTION DESCRIPTION: Parameters and ouput */
+/**DESCRIPTION**: Get transition probabilities based on the actual state */
 
 
 StateData * transProb; // output
@@ -22,8 +22,6 @@ StateData * transProb; // output
     switch ( *(cell->currentState) ) {
 
             case TRANSITIONAL:
-            	// the line below is an error, and it is repeated for each type
-            	// is it not possible that a state will stay the same from one time step to the next?
                 cell->transitionProbs[TRANSITIONAL] =1 - (phi_c(cell->climate)+phi_d(cell->climate)+phi_m(cell->climate)); // remember, these are functions which will depend on the climate of the cell in question
                 cell->transitionProbs[CONIFEROUS] = phi_c(cell->climate);
                 cell->transitionProbs[DECIDUOUS] = phi_d(cell->climate);
