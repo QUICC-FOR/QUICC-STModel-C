@@ -6,7 +6,7 @@
 void set_random_grid(Grid* grid){
 
     // **DESCRIPTION**: Set full random grid of three states: CONIFEROUS,
-    // DECIDUOUS, MIXED. Remove state: TRANSITIONNAL
+    // DECIDUOUS, MIXED. Remove state: TRANSITIONAL
 
     for (y, y < grid->yDim, y++) {
         for (x, x < grid->xDim, x++) {
@@ -14,23 +14,17 @@ void set_random_grid(Grid* grid){
             // Assign location cell value in currentCell
             GridCell * currentCell = grid_get_cell(x,y);
 
-            //Alloc memory for a random number
-            gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
-
             // Set state based on the random value
             // Is it efficient and clear within a switch statement?
-            switch((int)(gsl_rng_set(rng, (int) * 10.0) )) // Number between 0 and 100
+            switch((int)(gsl_rng_set(rng, (int) * 10) )) // Number between 0 and 100
                 {
-                    case 0:        // this is 0.0 <= rng_value < 0.25
-                            currentCell->currentState = currentCell->stateHistory = TRANSITIONAL;
-                        break;
-                    case 25:        // this is 0.25 <= rng_value < 0.50
+                    case 25:        // this is 25 <= rng_value < 50
                             currentCell->currentState = currentCell->stateHistory = CONIFEROUS;
                         break;
-                    case 50:        // this is 0.50 <= rng_value < 0.75
+                    case 50:        // this is 50 <= rng_value < 75
                             currentCell->currentState = currentCell->stateHistory = DECIDUOUS;
                         break;
-                    case 75:        // this is 0.75 <= rng_value < 1
+                    case 75:        // this is 75 <= rng_value
                             currentCell->currentState = currentCell->stateHistory = MIXED;
                         break;
                     default:
@@ -38,10 +32,18 @@ void set_random_grid(Grid* grid){
                         break;
                 }
 
-            gsl_rng_free(rng)
+            set_disturb_grid();
+            gsl_rng_free(rng);
         }
     }
 }
+
+//void set_disturb_grid( Grid* grid){
+
+    // DESCRIPTION:  The idea behind this function aims to create a grid with
+    // randomly a proportion of patch disturbed in the landscape
+
+//}
 
 void set_uniform_grid(Grid* grid){
 
@@ -66,25 +68,31 @@ void set_uniform_grid(Grid* grid){
                     currentCell->currentState = currentCell->stateHistory = CONIFEROUS;
                 }
                 else {
-                    abort(); // Helpfull ?
+                    abort(); // Helpful ?
                 }
 
         }
     }
+
+    set_disturb_grid()
+
 }
 
-//void set_mixed_grid( Grid* grid){
+void set_disturb_grid( Grid* grid, double thresDist){
 
+    double thresDist = 0.20; // Set
 
+    int totalCell = grid->yDim * grid->yDim; // Get total number of cells
+    int numDist = totalCell * thresDist; // Get number of cells disturbed based on threshold
 
-//}
+    for (i, i < numDist, i ++){
+        // get random x coord
+        // get random y coord
 
-//void set_disturb_grid( Grid* grid){
-
-    // DESCRIPTION:  The idea behind this function aims to create a grid with
-    // randomly a proportion of patch disturbed in the landscape
-
-//}
+        GridCell * currentCell = grid_get_cell(x,y);
+        currentCell->currentState = currentCell->stateHistory = TRANSITIONAL;
+    }
+}
 
 
 GridCell * grid_get_cell(Grid * grid, size_t x, size_t y) {
