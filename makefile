@@ -3,7 +3,7 @@ GSL_INCLUDE = -I /usr/local/include
 GSL_LINK = -lgsl -lgslcblas -L /usr/local/lib
 
 # builds and runs all tests
-test: test/grid_cell_test
+test: test/grid_cell_test test/test.h
 	test/grid_cell_test
 #	test/grid_test
 

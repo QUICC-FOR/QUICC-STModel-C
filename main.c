@@ -1,3 +1,4 @@
+// #define NDEBUG	// enable this to switch off debugging/assertions
 
 #include "grid.h"
 #include "io.h"
