@@ -4,13 +4,17 @@
 #include <gsl/gsl_rng.h>
 
 
+
 /*
     DATA STRUCTURES
 */
 
+
 #define NUM_STATES 4
 typedef enum { DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED } State;
+//State allStates [NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
 typedef double StateData [NUM_STATES];
+
 
 typedef struct {
     double meanTemp;
