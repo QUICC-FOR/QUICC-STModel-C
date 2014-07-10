@@ -18,7 +18,7 @@ void set_random_grid(Grid* grid){
                         currentCell->currentState = currentCell->stateHistory = CONIFEROUS;
             } else if (rValue == 1) {
                         currentCell->currentState = currentCell->stateHistory = DECIDUOUS;
-            } else {
+            } else if (rValue == 2) {
                         currentCell->currentState = currentCell->stateHistory = MIXED;
             }
 
