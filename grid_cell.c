@@ -15,6 +15,48 @@ double epsi  (Climate climate);
 
 void gc_get_trans_prob(GridCell* cell)
 {
+<<<<<<< HEAD
+/**DESCRIPTION**: Get transition probabilities based on the actual state */
+
+
+StateData * transProb; // output
+
+    switch ( *(cell->currentState) ) {
+
+            case TRANSITIONAL:
+                cell->transitionProbs[TRANSITIONAL] =1 - (phi_c(cell->climate)+phi_d(cell->climate)+phi_m(cell->climate)); // remember, these are functions which will depend on the climate of the cell in question
+                cell->transitionProbs[CONIFEROUS] = phi_c(cell->climate);
+                cell->transitionProbs[DECIDUOUS] = phi_d(cell->climate);
+                cell->transitionProbs[MIXED] = phi_m(cell->climate);
+                break;
+
+            case MIXED:
+                cell->transitionProbs[TRANSITIONAL] = epsi(cell->climate);
+                cell->transitionProbs[CONIFEROUS] = theta_c(cell->climate);
+                cell->transitionProbs[DECIDUOUS] = theta_d(cell->climate);
+                cell->transitionProbs[MIXED] = 1-(epsi(cell->climate)+theta_c(cell->climate)+theta_d(cell->climate));
+                break;
+
+            case DECIDUOUS:
+                cell->transitionProbs[TRANSITIONAL] = epsi(cell->climate);
+                cell->transitionProbs[CONIFEROUS] = 0;
+                cell->transitionProbs[DECIDUOUS] = 1 - (epsi(cell->climate)+beta_c(cell->climate)*(cell->prevalence[CONIFEROUS]+cell->prevalence[MIXED]));
+                cell->transitionProbs[MIXED] = beta_c(cell->climate)*(cell->prevalence[CONIFEROUS]+cell->prevalence[MIXED]);
+                break;
+
+            case CONIFEROUS:
+                cell->transitionProbs[TRANSITIONAL] = epsi(cell->climate);
+                cell->transitionProbs[CONIFEROUS] = 1 - (epsi(cell->climate)+beta_d(cell->climate)*(cell->prevalence[MIXED]+cell->prevalence[DECIDUOUS]));
+                cell->transitionProbs[DECIDUOUS] = 0;
+                cell->transitionProbs[MIXED] = beta_d(cell->climate)*(cell->prevalence[MIXED]+cell->prevalence[DECIDUOUS]);
+                break;
+
+            default:
+            	// error!
+            	abort();
+            	break;
+    }
+=======
 	/*
 		calculate the transition probabilities given the current state
 		values are automatically stored in cell->transitionProbs
@@ -67,6 +109,7 @@ GridCell *gc_make_cell (size_t numTimeSteps) {
 	return cell;
 }
 
+>>>>>>> 92fc2d5951f2c34b085299223289f2bdcc2393dd
 
 void gc_destroy_cell (GridCell* cell) {
 	cell->currentState = NULL;
