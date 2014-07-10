@@ -8,7 +8,6 @@ void set_uniform_grid(Grid* grid);
 void set_disturb_grid( Grid* grid, double thresDist);
 
 
-
 GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 
     // always protect your pointers, boys and girls
