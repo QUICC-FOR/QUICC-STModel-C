@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <math.h>
 #include <assert.h>
 #include <time.h>
@@ -7,11 +6,11 @@
 #include "test.h"
 
 
-int gc_check_new_state(gsl_rng* rng);
-int gc_check_alloc();
-int gc_check_transition_probs();
+static int gc_check_new_state(gsl_rng* rng);
+static int gc_check_alloc();
+static int gc_check_transition_probs();
 
-int main(void) {
+int gc_test_all() {
 
 	// set up RNG
 	gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
@@ -27,14 +26,14 @@ int main(void) {
 	
 	gsl_rng_free(rng);
 
-	test_func_print("Full Test Suite", failedTests);
+	test_func_print("  Grid Cell Test Suite", failedTests);
 	return failedTests;
 
 }
 
 
 
-int gc_check_new_state(gsl_rng* rng) {
+static int gc_check_new_state(gsl_rng* rng) {
 	int fail = 0;
 	size_t histSize = 10;
 	GridCell * cell = gc_make_cell(histSize);
@@ -93,7 +92,7 @@ int gc_check_new_state(gsl_rng* rng) {
 
 
 
-int gc_check_alloc() {
+static int gc_check_alloc() {
 	// creates a cell, assigns values to it, and tries to get them back out
 	int fail = 0;
 	size_t histSize = 10;
@@ -116,7 +115,7 @@ int gc_check_alloc() {
 
 
 
-int gc_check_transition_probs() {
+static int gc_check_transition_probs() {
 	int fail = 0;
 	size_t histSize = 10;
 	GridCell * cell = gc_make_cell(histSize);
