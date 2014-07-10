@@ -3,9 +3,9 @@
 
 /* FUNCTION PROTOTYPES */
 
-void set_random_grid(Grid* grid);
-void set_uniform_grid(Grid* grid);
-void set_disturb_grid( Grid* grid, double thresDist);
+void gr_set_random_grid(Grid* grid);
+void gr_set_uniform_grid(Grid* grid);
+void gr_set_disturb_grid( Grid* grid, double thresDist);
 
 
 GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
@@ -90,7 +90,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
 }
 
-void set_random_grid(Grid* grid){
+void gr_set_random_grid(Grid* grid){
 
     // **DESCRIPTION**: Set full random grid of three states: CONIFEROUS,
     // DECIDUOUS, MIXED.
@@ -117,7 +117,7 @@ void set_random_grid(Grid* grid){
     }
 }
 
-void set_uniform_grid(Grid* grid){
+void gr_set_uniform_grid(Grid* grid){
 
     // **DESCRIPTION**: This function create a landscape with each third (on Y
     // axis) of the grid is filled by one state : D, M or C
@@ -127,8 +127,6 @@ void set_uniform_grid(Grid* grid){
 
     for (x, x < grid->xDim, x++) {
             for (y, y < grid->yDim, y++) {
-
-                GridCell * currentCell = grid_get_cell(x,y);
 
                 if(y < (ysize/3)){
                     currentCell->currentState = currentCell->stateHistory = DECIDUOUS;
@@ -150,7 +148,7 @@ void set_uniform_grid(Grid* grid){
 
 }
 
-void set_disturb_grid( Grid* grid, double thresDist){
+void gr_set_disturb_grid( Grid* grid, double thresDist){
 
     double thresDist = 0.20; // Set
 
