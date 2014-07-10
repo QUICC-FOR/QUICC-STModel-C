@@ -5,7 +5,7 @@ Spatially explicit version built on C
 
 **Authors:** Steve Vissault and Matt Talluto
 
-### Librairies description
+### Functions description
 
 TODO
 
