@@ -15,7 +15,8 @@ void set_random_grid(Grid* grid){
             GridCell * currentCell = grid_get_cell(x,y);
 
             // Set state based on the random value
-            // Is it efficient and clear within a switch statement?
+
+            // RETRIEVE for IF
             switch((int)(gsl_rng_set(rng, (int) * 10) )) // Number between 0 and 100
                 {
                     case 25:        // this is 25 <= rng_value < 50
