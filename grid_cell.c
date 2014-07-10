@@ -83,6 +83,12 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 	double testVal = 0;
 	State newState;
 	
+	
+// 	State testStates [NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
+// 	State chosenState;
+// 
+// 	gsl_ran_choose(rng, &chosenState, 1, testStates, NUM_STATES, sizeof(State));
+
 	for(int i = 0; i < NUM_STATES; i++) {
 		State curState = testStates[i];
 		testVal += cell->transitionProbs[curState];
