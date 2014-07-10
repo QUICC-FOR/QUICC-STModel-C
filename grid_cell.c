@@ -112,5 +112,5 @@ double theta_d (Climate climate) { return 0.25; }
 double phi_d (Climate climate) { return 0.2; }
 double phi_c (Climate climate) { return 0.2; }
 double phi_m (Climate climate) { return 0.2; }
-double epsi  (Climate climate) { return 0.1; }
+double epsi  (Climate climate) { return 1; }
 
