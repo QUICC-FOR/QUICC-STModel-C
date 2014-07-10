@@ -49,12 +49,12 @@ void gc_get_trans_prob(GridCell* cell)
 			cell->transitionProbs[MIXED] = beta_d(cell->climate)*(cell->prevalence[MIXED]+cell->prevalence[DECIDUOUS]);
 			cell->transitionProbs[CONIFEROUS] = 1 - (cell->transitionProbs[TRANSITIONAL] + cell->transitionProbs[MIXED]);
 			break;
- 
+
 			default:
 				break;
-	} 
+	}
 }
- 
+
 
 GridCell *gc_make_cell (size_t numTimeSteps) {
 	// allocates memory for the state history, initializes other values to 0
@@ -82,7 +82,7 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 	State testStates [NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
 	double testVal = 0;
 	State newState;
-	
+
 	for(int i = 0; i < NUM_STATES; i++) {
 		State curState = testStates[i];
 		testVal += cell->transitionProbs[curState];
@@ -96,7 +96,7 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 
 	// check that we haven't wandered into invalid memory
 	assert(cell->currentState < (cell->stateHistory + (cell->historySize - 1)));
-	
+
 	*(cell->currentState) = newState;
 }
 
