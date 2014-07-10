@@ -61,9 +61,16 @@ void set_uniform_grid(Grid* grid){
 
 }
 
+void set_mixed_grid(Grid* grid){
+
+
+}
+
+
+
 void set_disturb_grid( Grid* grid, double thresDist){
 
-    double thresDist = 0.20; // Set
+    double thresDist = 0.20; // Set threshold: proportion of the landscape disturbed
 
     int totalCells = grid->yDim * grid->yDim; // Get total number of cells
     int ysize = grid->yDim
