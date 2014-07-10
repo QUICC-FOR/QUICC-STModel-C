@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+
+// GLOBALS
+const State GC_POSSIBLE_STATES [GC_NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
+
 // prototypes for functions defining model parameters
 double beta_d (Climate climate);
 double beta_c (Climate climate);
@@ -79,12 +83,11 @@ void gc_destroy_cell (GridCell* cell) {
 void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 {
 	double rValue = gsl_rng_uniform(rng);
-	State testStates [NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
 	double testVal = 0;
 	State newState;
 
-	for(int i = 0; i < NUM_STATES; i++) {
-		State curState = testStates[i];
+	for(int i = 0; i < GC_NUM_STATES; i++) {
+		State curState = GC_POSSIBLE_STATES[i];
 		testVal += cell->transitionProbs[curState];
 		if(rValue < testVal) {
 			newState = curState;
