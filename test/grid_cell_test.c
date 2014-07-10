@@ -42,17 +42,17 @@ int gc_check_new_state(gsl_rng* rng) {
 	int numDraws = 100000;
 
 	// test even trans probs, as well as total dominance by each type
-	int numTransTests = NUM_STATES+1;
+	int numTransTests = GC_NUM_STATES+1;
 	StateData transTests [numTransTests];
-	for(int i = 0; i < NUM_STATES; i++) {
-		transTests[0][i] = 1.0 / ((double) NUM_STATES);
+	for(int i = 0; i < GC_NUM_STATES; i++) {
+		transTests[0][i] = 1.0 / ((double) GC_NUM_STATES);
 		for(int j = 1; j < numTransTests; j++)
 			transTests[j][i] = ( j == i+1 ? 1 : 0);
 	}
 
 	// for the even condition, we check within the threshold
 	StateData testCounts;
-	for(int i = 0; i < NUM_STATES; i++) {
+	for(int i = 0; i < GC_NUM_STATES; i++) {
 		testCounts[i] = 0;
 		cell->transitionProbs[i] = transTests[0][i];	
 	}
@@ -64,13 +64,13 @@ int gc_check_new_state(gsl_rng* rng) {
 	}
 	
 	// test proportions
-	for(int i = 0; i < NUM_STATES; i++) {
+	for(int i = 0; i < GC_NUM_STATES; i++) {
 		fail += (fabs((testCounts[i] / numDraws) - transTests[0][i])) > TEST_ERROR_THRESHOLD;	
 	}
 	
 	// for complete dominance, we check absolutes - we tolerate no mistakes (1 is 1, always)
 	for(int transInd = 1; transInd < numTransTests; transInd++) {
-		for(int i = 0; i < NUM_STATES; i++) {
+		for(int i = 0; i < GC_NUM_STATES; i++) {
 			testCounts[i] = 0;
 			cell->transitionProbs[i] = transTests[transInd][i];	
 		}
@@ -81,7 +81,7 @@ int gc_check_new_state(gsl_rng* rng) {
 			cell->currentState--;	// move it back so we don't walk off the end
 		}
 
-		for(int i = 0; i < NUM_STATES; i++) {
+		for(int i = 0; i < GC_NUM_STATES; i++) {
 			fail += ((int) testCounts[i] != (int) (cell->transitionProbs[i] * numDraws));
 		}
 	}		
@@ -124,16 +124,16 @@ int gc_check_transition_probs() {
 
 	// define prevalence conditions to test
 	// currently testing equality, plus complete dominance by each state
-	int numPrevTests = NUM_STATES+1;
+	int numPrevTests = GC_NUM_STATES+1;
 	StateData prevTests [numPrevTests];
-	for(int i = 0; i < NUM_STATES; i++) {
-		prevTests[0][i] = 1.0 / NUM_STATES;
+	for(int i = 0; i < GC_NUM_STATES; i++) {
+		prevTests[0][i] = 1.0 / GC_NUM_STATES;
 		for(int j = 1; j < numPrevTests; j++)
 			prevTests[j][i] = ( j == i+1 ? 1 : 0);
 	}
 	
 	// define currentState conditions to test
-	int numStateTests = NUM_STATES;
+	int numStateTests = GC_NUM_STATES;
 	State stateTests [] = {DECIDUOUS, CONIFEROUS, MIXED, TRANSITIONAL};
 
 	// define climate conditions to test
@@ -142,21 +142,21 @@ int gc_check_transition_probs() {
 
 	// loop over prevalence conditions
 	for(int prevInd = 0; prevInd < numPrevTests; prevInd++) {
-		for(int i = 0; i < NUM_STATES; i++) cell->prevalence[i] = prevTests[prevInd][i];
+		for(int i = 0; i < GC_NUM_STATES; i++) cell->prevalence[i] = prevTests[prevInd][i];
 		
 		// loop over state tests
 		for(int stateInd = 0; stateInd < numStateTests; stateInd++) {
 			*(cell->currentState) = stateTests[stateInd];
 			
 			// init all probs to -1 to start with, so we aren't just using old vals
-			for(int j = 0; j < NUM_STATES; j++)
+			for(int j = 0; j < GC_NUM_STATES; j++)
 				cell->transitionProbs[j] = -1;
 	
 			gc_get_trans_prob(cell);
 
 			// check that they sum to one and that all are on [0,1]
 			double sum = 0;
-			for(int i = 0; i < NUM_STATES; i++) {
+			for(int i = 0; i < GC_NUM_STATES; i++) {
 				sum += cell->transitionProbs[i];
 				fail += cell->transitionProbs[i] < 0 || cell->transitionProbs[i] > 1;
 			}
