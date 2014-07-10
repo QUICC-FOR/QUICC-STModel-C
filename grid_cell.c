@@ -7,14 +7,14 @@
 const State GC_POSSIBLE_STATES [GC_NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
 
 // prototypes for functions defining model parameters
-double beta_d (Climate climate);
-double beta_c (Climate climate);
-double theta_c (Climate climate);
-double theta_d (Climate climate);
-double phi_d (Climate climate);
-double phi_c (Climate climate);
-double phi_m (Climate climate);
-double epsi  (Climate climate);
+static double beta_d (Climate climate);
+static double beta_c (Climate climate);
+static double theta_c (Climate climate);
+static double theta_d (Climate climate);
+static double phi_d (Climate climate);
+static double phi_c (Climate climate);
+static double phi_m (Climate climate);
+static double epsi  (Climate climate);
 
 
 void gc_get_trans_prob(GridCell* cell)
@@ -108,12 +108,12 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 // TO IMPLEMENT
 // FOR NOW, THESE RETURN A DUMMY VALUE; EVENTUALLY WILL RETURN THE RESULTS OF
 // STATISTICAL MODELS
-double beta_d (Climate climate) { return 0.5; }
-double beta_c (Climate climate) { return 0.5; }
-double theta_c (Climate climate) { return 0.25; }
-double theta_d (Climate climate) { return 0.25; }
-double phi_d (Climate climate) { return 0.2; }
-double phi_c (Climate climate) { return 0.2; }
-double phi_m (Climate climate) { return 0.2; }
-double epsi  (Climate climate) { return 1; }
+static double beta_d (Climate climate) { return 0.5; }
+static double beta_c (Climate climate) { return 0.5; }
+static double theta_c (Climate climate) { return 0.25; }
+static double theta_d (Climate climate) { return 0.25; }
+static double phi_d (Climate climate) { return 0.2; }
+static double phi_c (Climate climate) { return 0.2; }
+static double phi_m (Climate climate) { return 0.2; }
+static double epsi  (Climate climate) { return 0.1; }
 
