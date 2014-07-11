@@ -1,5 +1,5 @@
 #include "test.h"
-#include "grid.h"
+#include "../grid.h"
 
 static int gr_test_alloc();
 static int gr_test_init();
