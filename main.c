@@ -1,7 +1,7 @@
 // #define NDEBUG	// enable this to switch off debugging/assertions
 
 #include "grid.h"
-#include "io.h"
+// #include "io.h"
 #include "grid_cell.h"
 
 #include <gsl/gsl_rng.h>
@@ -9,8 +9,9 @@
 #include <assert.h>
 #include <time.h>
 
-
-#define TIME_STEP number;
+// length of time to run the model
+#define MAX_TIME 100;
+#define OUTPUT_FILE "test_output.csv"
 
 int main(int argc, char ** argv){
 
@@ -19,24 +20,20 @@ int main(int argc, char ** argv){
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
+	// set up the grid
+	Grid * grid gr_make_grid();
+	gr_init_grid(UNIFORM);
+	
+	// main loop in time
+	for(int year = 0; year < MAX_TIME; year++) {
+		gr_update_grid(grid);
+	}
 
-    make_grid();
-    parse_input();
-    set_grid(data);
+//	io_write_output(grid, OUTPUT_FILE);
 
-for (y, y<TIME_STEP, y++){
-
-    for (i, i<size_t, i++){
-        update_prevalence();  /*Prevalence and state is going to change at each time step*/
-        get_trans_prob();
-        select_new_state();
-    }
-
-}
-    process_output();
-
-
+	// cleanup
+	gr_destroy_grid(grid);
 	gsl_rng_free(rng);
-    return 0;
 
+	return 0;
 }
