@@ -5,6 +5,7 @@
 
 int gc_test_all();
 int io_test_all();
+int gr_test_all();
 void test_func_print(char funcName [], int numFailed);
 
 
