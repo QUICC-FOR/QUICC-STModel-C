@@ -49,17 +49,35 @@ GridCell * gr_set_cell (Grid * grid, GridCell * value, size_t x, size_t y){
 
 }
 
+void gr_compute_prevalence(GridCell * cell) {
+    // set aside some memory for the neighbors
+    size_t nbSize = 8;
+    State * neighborStates = malloc(nbSize * sizeof(State));
 
-GirdCell ** gr_get_neighbors(Grid * grid, x, y){ // Output: two dimensional array ?
+    gr_compute_neighbor_states(cell, neighborStates, nbSize);
 
-	int neighborsArr[8]; // Moore neighbors without original cell x,y
+    // now compute prevalence and save it directly in the cell
+    // no return value necessary
+}
 
-	// pointers validation
-	assert(grid);
 
-	// Store neighbors pointer addresses or direct value ?
+void gr_compute_neighbor_states(GridCell* cell, State * dest, size_t neighborhoodSize) {
+
+    dest[0] = gr_get_cell(cell, x,y-1)->currentState;
+    dest[1] = gr_get_cell(cell, x,y+1)->currentState;
+    dest[2] = gr_get_cell(cell, x+1,y)->currentState;
+    dest[3] = gr_get_cell(cell, x-1,y)->currentState;
+
+    if(neighborhoodSize > 4) {
+        dest[4] = gr_get_cell(cell, x-1,y+1)->currentState;
+        dest[5] = gr_get_cell(cell, x-1,y-1)->currentState;
+        dest[6] = gr_get_cell(cell, x+1,y+1)->currentState;
+        dest[7] = gr_get_cell(cell, x+1,y-1)->currentState;
+
+    }
 
 }
+
 
 Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
@@ -104,6 +122,10 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 	// Generate grid
 
 	return newGrid
+
+}
+
+void gr_destroy_grid(Grid * grid){
 
 }
 
