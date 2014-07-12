@@ -14,7 +14,7 @@ void gr_set_uniform_grid(Grid* grid);
 void gr_set_disturb_grid( Grid* grid, double thresDist);
 
 
-GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
+GridCell * gr_get_cell(GridCell * cell, size_t x, size_t y) {
 
 	// always protect your pointers, boys and girls
 	assert(grid);
@@ -63,6 +63,9 @@ void gr_compute_prevalence(GridCell * cell) {
 
 void gr_compute_neighbor_states(GridCell* cell, State * dest, size_t neighborhoodSize) {
 
+    size_t x;
+    size_t y;
+
     dest[0] = gr_get_cell(cell, x,y-1)->currentState;
     dest[1] = gr_get_cell(cell, x,y+1)->currentState;
     dest[2] = gr_get_cell(cell, x+1,y)->currentState;
@@ -106,10 +109,6 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 			set_random_grid(newGrid);
 			break;
 
-		case MIXED:
-			set_mixed_grid(newGrid);
-			break;
-
 		case UNIFORM:
 			set_uniform(newGrid);
 			break;
@@ -138,6 +137,8 @@ void gr_destroy_grid(Grid * grid){
 void gr_set_random_grid(Grid* grid){
 
 	State chosenState;
+            int x;
+            int y;
 
 	for (y, y < grid->yDim, y++) {
 		for (x, x < grid->xDim, x++) {
@@ -155,7 +156,9 @@ gsl_rng_free(rng);
 void gr_set_uniform_grid(Grid* grid){
 
 	// Get y dimension
-	int ysize = grid->yDim
+	int ysize = grid->yDim;
+            int x;
+            int y;
 
 	for (x, x < grid->xDim, x++) {
 		for (y, y < grid->yDim, y++) {
@@ -188,8 +191,10 @@ void gr_set_disturb_grid( Grid* grid, double thresDist){
 	int numDist = totalCells * thresDist; // Get number of cells disturbed based on threshold
 
 	// Get grid dimensions
-	int ysize = grid->yDim
-	int xsize = grid->xDim
+	int ysize = grid->yDim;
+	int xsize = grid->xDim;
+
+            int i;
 
 	for (i, i < numDist, i ++){
 
