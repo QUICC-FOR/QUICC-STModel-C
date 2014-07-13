@@ -12,6 +12,7 @@ int main(void) {
 	
 	failed += gc_test_all();
 //	failed += io_test_all();
+	failed += gr_test_all();
 	
 	test_func_print("Full test suite", failed);
 }

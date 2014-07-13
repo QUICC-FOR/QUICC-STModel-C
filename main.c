@@ -18,12 +18,11 @@ int main(int argc, char ** argv){
 	// set up RNG
 	gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
-	gsl_rng_set(rng, (int) time(NULL)); 
+	gsl_rng_set(rng, (int) time(NULL));
 
 	// set up the grid
-	Grid * grid gr_make_grid();
-	gr_init_grid(UNIFORM);
-	
+	Grid * grid gr_make_grid(100,100,RANDOM);
+
 	// main loop in time
 	for(int year = 0; year < MAX_TIME; year++) {
 		gr_update_grid(grid);
