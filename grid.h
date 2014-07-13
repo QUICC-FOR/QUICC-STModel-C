@@ -15,7 +15,7 @@
 */
 
 // this is where you write a comment explaining what random vs mixed vs uniform mean
-typedef enum {RANDOM, UNIFORM} GridType;
+typedef enum {RANDOM, UNIFORM, MIX} GridType;
 
 typedef struct {
 	size_t 		xDim, yDim;

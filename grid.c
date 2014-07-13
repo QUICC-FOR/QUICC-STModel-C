@@ -14,7 +14,7 @@ void gr_set_uniform_grid(Grid* grid);
 void gr_set_disturb_grid( Grid* grid, double thresDist);
 
 
-GridCell * gr_get_cell(GridCell * cell, size_t x, size_t y) {
+GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 
 	// always protect your pointers, boys and girls
 	assert(grid);
@@ -61,21 +61,21 @@ void gr_compute_prevalence(GridCell * cell) {
 }
 
 
-void gr_compute_neighbor_states(GridCell* cell, State * dest, size_t neighborhoodSize) {
+void gr_compute_neighbor_states(Grid* grid, State * dest, size_t neighborhoodSize) {
 
     size_t x;
     size_t y;
 
-    dest[0] = gr_get_cell(cell, x,y-1)->currentState;
-    dest[1] = gr_get_cell(cell, x,y+1)->currentState;
-    dest[2] = gr_get_cell(cell, x+1,y)->currentState;
-    dest[3] = gr_get_cell(cell, x-1,y)->currentState;
+    dest[0] = gr_get_cell(grid, x,y-1)->currentState;
+    dest[1] = gr_get_cell(grid, x,y+1)->currentState;
+    dest[2] = gr_get_cell(grid, x+1,y)->currentState;
+    dest[3] = gr_get_cell(grid, x-1,y)->currentState;
 
     if(neighborhoodSize > 4) {
-        dest[4] = gr_get_cell(cell, x-1,y+1)->currentState;
-        dest[5] = gr_get_cell(cell, x-1,y-1)->currentState;
-        dest[6] = gr_get_cell(cell, x+1,y+1)->currentState;
-        dest[7] = gr_get_cell(cell, x+1,y-1)->currentState;
+        dest[4] = gr_get_cell(grid, x-1,y+1)->currentState;
+        dest[5] = gr_get_cell(grid, x-1,y-1)->currentState;
+        dest[6] = gr_get_cell(grid, x+1,y+1)->currentState;
+        dest[7] = gr_get_cell(grid, x+1,y-1)->currentState;
 
     }
 
