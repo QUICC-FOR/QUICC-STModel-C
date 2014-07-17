@@ -69,13 +69,6 @@ void gr_compute_prevalence(Grid* grid, size_t x, size_t y) {
 
 void gr_compute_neighbor_states(Grid* grid, State* dest, size_t x, size_t y,size_t neighborhoodSize) {
 
-    //State *dest = malloc(neighborhoodSize * sizeof(State));
-    //State dest = dest[neighborhoodSize];
-    State dest[neighborhoodSize];
-
-    // QUESTION: In doing this, dest is recognized as an array ?
-    // x and y are undeclared, how to get cell coords to pass on gr_get_cell function?
-
     dest[0] = *(gr_get_cell(grid, x,y-1)->currentState);
     dest[1] = *(gr_get_cell(grid, x,y+1)->currentState);
     dest[2] = *(gr_get_cell(grid, x+1,y)->currentState);
@@ -151,10 +144,9 @@ void gr_destroy_grid(Grid* grid){
 void gr_set_random_grid(Grid* grid, gsl_rng* rng){
 
 	State chosenState;
-            int x,y;
 
-	for (y; y < grid->yDim; y++) {
-		for (x; x < grid->xDim; x++) {
+	for (int y; y < grid->yDim; y++) {
+		for (int x; x < grid->xDim; x++) {
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
