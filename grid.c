@@ -39,9 +39,11 @@ GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 
 	//assert(myCell = grid_get(myGrid, xx, yy));
 	// the assertion will fail if myCell gets a null pointer; assuming it succeeds, myCell can be safely used
-	return &grid->gridData[index];
 
-            // S: Add & before grid
+            return grid->gridData[index];  // - MATT, Can you fix this ?
+
+            // TODO:
+            // - Torus between east and west part of the grid
 }
 
 
@@ -136,9 +138,7 @@ void gr_destroy_grid(Grid* grid){
 }
 
 
-
 /*	 	GRID INITIALIZATION FUNCTIONS		*/
-
 
 
 void gr_set_random_grid(Grid* grid, gsl_rng* rng){
@@ -150,7 +150,7 @@ void gr_set_random_grid(Grid* grid, gsl_rng* rng){
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
-//			gr_set_cell(grid,chosenState,x,y);
+                                    //gr_set_cell(grid,chosenState,x,y);
 		}
 	}
 
@@ -158,7 +158,7 @@ gsl_rng_free(rng);
 
 }
 
-void gr_set_uniform_grid(Grid* grid,gsl_rng* rng)){
+void gr_set_uniform_grid(Grid* grid,gsl_rng* rng){
 
 	// Get y dimension
 	int ysize = grid->yDim;
