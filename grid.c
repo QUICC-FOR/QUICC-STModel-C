@@ -12,7 +12,7 @@
 
 void gr_set_random_grid(Grid* grid, gsl_rng* rng);
 //void gr_set_mixed_grid(Grid* grid);
-void gr_set_uniform_grid(Grid* grid);
+void gr_set_uniform_grid(Grid* grid,gsl_rng* rng);
 void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng);
 
 
@@ -158,7 +158,7 @@ gsl_rng_free(rng);
 
 }
 
-void gr_set_uniform_grid(Grid* grid){
+void gr_set_uniform_grid(Grid* grid,gsl_rng* rng)){
 
 	// Get y dimension
 	int ysize = grid->yDim;
@@ -208,7 +208,7 @@ void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng){
 	for(int i = 0; i < numDist; i ++){
 		int rxCoord = gsl_rng_uniform_int(rng, grid->xDim);
 		int ryCoord = gsl_rng_uniform_int(rng, grid->yDim);
-		gr_set_cell(rxCoord,ryCoord) = TRANSITIONAL;
+		//gr_set_cell(rxCoord,ryCoord) = TRANSITIONAL;
 	}
 
 	gsl_rng_free(rng);
