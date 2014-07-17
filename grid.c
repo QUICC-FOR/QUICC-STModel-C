@@ -6,7 +6,7 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
-#define THRESDIST = 0.20
+#define THRESDIST 0.20
 
 /* FUNCTION PROTOTYPES */
 
@@ -50,7 +50,7 @@ GridCell * gr_set_cell (Grid* grid, GridCell* value, size_t x, size_t y){
 	// pointers validation
 	assert(grid);
 	assert(value);
-
+            return 0;
 }
 
 void gr_compute_prevalence(Grid* grid, size_t x, size_t y) {
@@ -109,11 +109,11 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
 	switch( gridType ) {
 		case RANDOM:
-			gr_set_random_grid(newGrid);
+			gr_set_random_grid(newGrid, rng);
 			break;
 
 		case UNIFORM:
-			gr_set_uniform_grid(newGrid);
+			gr_set_uniform_grid(newGrid, rng);
 			break;
 
                         //case MIX:
@@ -145,12 +145,12 @@ void gr_set_random_grid(Grid* grid, gsl_rng* rng){
 
 	State chosenState;
 
-	for (int y; y < grid->yDim; y++) {
-		for (int x; x < grid->xDim; x++) {
+	for (int y = 0; y < grid->yDim; y++) {
+		for (int x = 0; x < grid->xDim; x++) {
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
-			gr_set_cell(grid,chosenState,x,y);
+//			gr_set_cell(grid,chosenState,x,y);
 		}
 	}
 
@@ -162,23 +162,22 @@ void gr_set_uniform_grid(Grid* grid){
 
 	// Get y dimension
 	int ysize = grid->yDim;
-            int x, y;
             State chosenState;
 
-	for (x; x < grid->xDim; x++) {
-		for (y; y < grid->yDim; y++) {
+	for(int x = 0; x < grid->xDim; x++) {
+		for(int y = 0 ; y < grid->yDim; y++) {
 
 			if(y < (ysize/3)){
                                                 chosenState = DECIDUOUS;
-				gr_set_cell(grid,chosenState,x,y);
+				//gr_set_cell(grid,chosenState,x,y);
 			}
 			else if ( y < 2*(ysize/3) ){
                                                 chosenState = MIXED;
-                                                gr_set_cell(grid,chosenState,x,y);
+                                                //gr_set_cell(grid,chosenState,x,y);
 			}
 			else if ( y < ysize ){
                                                 chosenState = CONIFEROUS;
-                                                gr_set_cell(grid,chosenState,x,y);
+                                                //gr_set_cell(grid,chosenState,x,y);
 			}
 			else {
                                                 printf ("%s \n", "State undefined...");
@@ -210,9 +209,7 @@ void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng){
 	int ysize = grid->yDim;
 	int xsize = grid->xDim;
 
-            int i;
-
-	for (i; i < numDist; i ++){
+	for(int i = 0; i < numDist; i ++){
 		int rxCoord = gsl_rng_uniform_int(rng, unsigned long int xsize);
 		int ryCoord = gsl_rng_uniform_int(rng, unsigned long int ysize);
 		gr_set_cell(rxCoord,ryCoord) = TRANSITIONAL;

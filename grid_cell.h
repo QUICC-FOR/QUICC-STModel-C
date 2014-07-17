@@ -12,7 +12,7 @@
 typedef enum { DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED} State;
 typedef double StateData [GC_NUM_STATES];
 
-extern const State GC_POSSIBLE_STATES [GC_NUM_STATES];	// this is an array giving all possible states
+extern State GC_POSSIBLE_STATES [GC_NUM_STATES];	// this is an array giving all possible states
 
 typedef struct {
     double meanTemp;

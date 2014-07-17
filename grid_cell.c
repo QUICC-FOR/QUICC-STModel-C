@@ -5,7 +5,7 @@
 
 
 // GLOBALS
-const State GC_POSSIBLE_STATES [GC_NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
+State GC_POSSIBLE_STATES [GC_NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
 
 // prototypes for functions defining model parameters
 static double beta_d (Climate climate);
