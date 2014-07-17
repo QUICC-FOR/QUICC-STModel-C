@@ -76,16 +76,16 @@ void gr_compute_neighbor_states(Grid* grid, State* dest, size_t x, size_t y,size
     // QUESTION: In doing this, dest is recognized as an array ?
     // x and y are undeclared, how to get cell coords to pass on gr_get_cell function?
 
-    dest[0] = gr_get_cell(grid, x,y-1)->currentState;
-    dest[1] = gr_get_cell(grid, x,y+1)->currentState;
-    dest[2] = gr_get_cell(grid, x+1,y)->currentState;
-    dest[3] = gr_get_cell(grid, x-1,y)->currentState;
+    dest[0] = *(gr_get_cell(grid, x,y-1)->currentState);
+    dest[1] = *(gr_get_cell(grid, x,y+1)->currentState);
+    dest[2] = *(gr_get_cell(grid, x+1,y)->currentState);
+    dest[3] = *(gr_get_cell(grid, x-1,y)->currentState);
 
     if(neighborhoodSize > 4) {
-        dest[4] = gr_get_cell(grid, x-1,y+1)->currentState;
-        dest[5] = gr_get_cell(grid, x-1,y-1)->currentState;
-        dest[6] = gr_get_cell(grid, x+1,y+1)->currentState;
-        dest[7] = gr_get_cell(grid, x+1,y-1)->currentState;
+        dest[4] = *(gr_get_cell(grid, x-1,y+1)->currentState);
+        dest[5] = *(gr_get_cell(grid, x-1,y-1)->currentState);
+        dest[6] = *(gr_get_cell(grid, x+1,y+1)->currentState);
+        dest[7] = *(gr_get_cell(grid, x+1,y-1)->currentState);
 
     }
 
