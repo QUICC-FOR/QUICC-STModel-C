@@ -85,7 +85,7 @@ void gr_compute_neighbor_states(Grid* grid, State* dest, size_t x, size_t y,size
 }
 
 
-Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
+Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType, gsl_rng* rng) {
 
 	int dim = xsize * ysize;
 	Grid * newGrid = malloc(sizeof(Grid));
@@ -187,7 +187,7 @@ void gr_set_uniform_grid(Grid* grid){
 		}
 	}
 
-	gr_set_disturb_grid(grid, THRESDIST);
+	gr_set_disturb_grid(grid, THRESDIST,rng);
 
 }
 
@@ -200,18 +200,14 @@ void gr_set_uniform_grid(Grid* grid){
 
 void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng){
 
-	double thresDist = THRESDIST;
+	thresDist = THRESDIST;
 
 	int totalCells = grid->yDim * grid->yDim; // Get total number of cells
 	int numDist = totalCells * thresDist; // Get number of cells disturbed based on threshold
 
-	// Get grid dimensions
-	int ysize = grid->yDim;
-	int xsize = grid->xDim;
-
 	for(int i = 0; i < numDist; i ++){
-		int rxCoord = gsl_rng_uniform_int(rng, unsigned long int xsize);
-		int ryCoord = gsl_rng_uniform_int(rng, unsigned long int ysize);
+		int rxCoord = gsl_rng_uniform_int(rng, grid->xDim);
+		int ryCoord = gsl_rng_uniform_int(rng, grid->yDim);
 		gr_set_cell(rxCoord,ryCoord) = TRANSITIONAL;
 	}
 
