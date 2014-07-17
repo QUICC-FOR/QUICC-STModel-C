@@ -36,8 +36,8 @@ Grid * 		gr_make_grid		               (size_t xsize, size_t ysize, GridType grid
 void 		gr_destroy_grid		   (Grid * grid);
 GridCell * 	gr_get_cell		               (Grid * grid, size_t x, size_t y);
 GridCell * 	gr_set_cell	                           (Grid * grid, GridCell * value, size_t x, size_t y);
-void                gr_compute_neighbor_states      (GridCell* cell, State * dest, size_t neighborhoodSize);
-void                gr_compute_prevalence              (GridCell * cell);
+void                gr_compute_neighbor_states      (Grid *grid, State *dest, size_t x, size_t y,size_t neighborhoodSize);
+void                gr_compute_prevalence              (Grid * grid, size_t x, size_t y);
 
 
 #endif

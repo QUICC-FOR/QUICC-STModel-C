@@ -6,12 +6,14 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
+#define THRESDIST = 0.20
+
 /* FUNCTION PROTOTYPES */
 
-void gr_set_random_grid(Grid* grid);
+void gr_set_random_grid(Grid* grid, gsl_rng* rng);
 //void gr_set_mixed_grid(Grid* grid);
 void gr_set_uniform_grid(Grid* grid);
-void gr_set_disturb_grid( Grid* grid, double thresDist);
+void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng);
 
 
 GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
@@ -38,10 +40,12 @@ GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 	//assert(myCell = grid_get(myGrid, xx, yy));
 	// the assertion will fail if myCell gets a null pointer; assuming it succeeds, myCell can be safely used
 	return &grid->gridData[index];
+
+            // S: Add & before grid
 }
 
 
-GridCell * gr_set_cell (Grid * grid, GridCell * value, size_t x, size_t y){
+GridCell * gr_set_cell (Grid* grid, GridCell* value, size_t x, size_t y){
 
 	// pointers validation
 	assert(grid);
@@ -49,34 +53,39 @@ GridCell * gr_set_cell (Grid * grid, GridCell * value, size_t x, size_t y){
 
 }
 
-void gr_compute_prevalence(GridCell * cell) {
+void gr_compute_prevalence(Grid* grid, size_t x, size_t y) {
     // set aside some memory for the neighbors
     size_t nbSize = 8;
-    State * neighborStates = malloc(nbSize * sizeof(State));
+    State *neighborStates = malloc(nbSize * sizeof(State));
 
-    gr_compute_neighbor_states(cell, neighborStates, nbSize);
+    gr_compute_neighbor_states(grid, neighborStates, x, y, nbSize);
 
     // now compute prevalence and save it directly in the cell
     // no return value necessary
+
+    free(neighborStates);
 }
 
 
-void gr_compute_neighbor_states(GridCell * cell, State * dest, size_t neighborhoodSize) {
+void gr_compute_neighbor_states(Grid* grid, State* dest, size_t x, size_t y,size_t neighborhoodSize) {
 
-   // State * dest = malloc(neighborhoodSize * sizeof(State))
+    //State *dest = malloc(neighborhoodSize * sizeof(State));
+    //State dest = dest[neighborhoodSize];
+    State dest[neighborhoodSize];
+
     // QUESTION: In doing this, dest is recognized as an array ?
-    // x and y are undeclared, how to get cell coords ?
+    // x and y are undeclared, how to get cell coords to pass on gr_get_cell function?
 
-    dest[0] = gr_get_cell(cell, x,y-1)->currentState;
-    dest[1] = gr_get_cell(cell, x,y+1)->currentState;
-    dest[2] = gr_get_cell(cell, x+1,y)->currentState;
-    dest[3] = gr_get_cell(cell, x-1,y)->currentState;
+    dest[0] = gr_get_cell(grid, x,y-1)->currentState;
+    dest[1] = gr_get_cell(grid, x,y+1)->currentState;
+    dest[2] = gr_get_cell(grid, x+1,y)->currentState;
+    dest[3] = gr_get_cell(grid, x-1,y)->currentState;
 
     if(neighborhoodSize > 4) {
-        dest[4] = gr_get_cell(cell, x-1,y+1)->currentState;
-        dest[5] = gr_get_cell(cell, x-1,y-1)->currentState;
-        dest[6] = gr_get_cell(cell, x+1,y+1)->currentState;
-        dest[7] = gr_get_cell(cell, x+1,y-1)->currentState;
+        dest[4] = gr_get_cell(grid, x-1,y+1)->currentState;
+        dest[5] = gr_get_cell(grid, x-1,y-1)->currentState;
+        dest[6] = gr_get_cell(grid, x+1,y+1)->currentState;
+        dest[7] = gr_get_cell(grid, x+1,y-1)->currentState;
 
     }
 
@@ -114,9 +123,9 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 			gr_set_uniform_grid(newGrid);
 			break;
 
-                        case MIX:
-                                    gr_set_mixed_grid(newGrid);
-                                    break;
+                        //case MIX:
+                        //            gr_set_mixed_grid(newGrid);
+                        //            break;
 
 		default:
 			abort();
@@ -129,7 +138,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
 }
 
-void gr_destroy_grid(Grid * grid){
+void gr_destroy_grid(Grid* grid){
 
 }
 
@@ -139,18 +148,17 @@ void gr_destroy_grid(Grid * grid){
 
 
 
-void gr_set_random_grid(Grid* grid){
+void gr_set_random_grid(Grid* grid, gsl_rng* rng){
 
 	State chosenState;
-            int x;
-            int y;
+            int x,y;
 
 	for (y; y < grid->yDim; y++) {
 		for (x; x < grid->xDim; x++) {
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
-			gr_set_cell(x,y) = chosenState;
+			gr_set_cell(grid,chosenState,x,y);
 		}
 	}
 
@@ -162,29 +170,33 @@ void gr_set_uniform_grid(Grid* grid){
 
 	// Get y dimension
 	int ysize = grid->yDim;
-            int x;
-            int y;
+            int x, y;
+            State chosenState;
 
 	for (x; x < grid->xDim; x++) {
 		for (y; y < grid->yDim; y++) {
 
 			if(y < (ysize/3)){
-				gr_set_cell(x,y) = DECIDUOUS;
+                                                chosenState = DECIDUOUS;
+				gr_set_cell(grid,chosenState,x,y);
 			}
 			else if ( y < 2*(ysize/3) ){
-				gr_set_cell(x,y) =  MIXED;
+                                                chosenState = MIXED;
+                                                gr_set_cell(grid,chosenState,x,y);
 			}
 			else if ( y < ysize ){
-				gr_set_cell(x,y) =  CONIFEROUS;
+                                                chosenState = CONIFEROUS;
+                                                gr_set_cell(grid,chosenState,x,y);
 			}
 			else {
-				abort(); // Helpful ?
+                                                printf ("%s \n", "State undefined...");
+				abort();
 			}
 
 		}
 	}
 
-	gr_set_disturb_grid();
+	gr_set_disturb_grid(grid, THRESDIST);
 
 }
 
@@ -195,9 +207,9 @@ void gr_set_uniform_grid(Grid* grid){
 //}
 
 
-void gr_set_disturb_grid( Grid* grid, double thresDist){
+void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng){
 
-	double thresDist = 0.20; // Set as Global variable ?
+	double thresDist = THRESDIST;
 
 	int totalCells = grid->yDim * grid->yDim; // Get total number of cells
 	int numDist = totalCells * thresDist; // Get number of cells disturbed based on threshold
@@ -209,9 +221,8 @@ void gr_set_disturb_grid( Grid* grid, double thresDist){
             int i;
 
 	for (i; i < numDist; i ++){
-
-		int ryCoord = gsl_rng_uniform_int(rng, unsigned long int ysize);
 		int rxCoord = gsl_rng_uniform_int(rng, unsigned long int xsize);
+		int ryCoord = gsl_rng_uniform_int(rng, unsigned long int ysize);
 		gr_set_cell(rxCoord,ryCoord) = TRANSITIONAL;
 	}
 
