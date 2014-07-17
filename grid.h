@@ -5,6 +5,7 @@
 
 #ifndef GRID_H
 #define GRID_H
+
 #include "grid_cell.h"
 
 #include <assert.h>	// for assert()
@@ -15,6 +16,7 @@
 */
 
 // this is where you write a comment explaining what random vs mixed vs uniform mean
+
 typedef enum {RANDOM, UNIFORM, MIX} GridType;
 
 typedef struct {

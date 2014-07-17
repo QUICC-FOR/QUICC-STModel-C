@@ -37,7 +37,7 @@ GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 
 	//assert(myCell = grid_get(myGrid, xx, yy));
 	// the assertion will fail if myCell gets a null pointer; assuming it succeeds, myCell can be safely used
-	return grid->gridData[index];
+	return &grid->gridData[index];
 }
 
 
@@ -61,21 +61,22 @@ void gr_compute_prevalence(GridCell * cell) {
 }
 
 
-void gr_compute_neighbor_states(Grid* grid, State * dest, size_t neighborhoodSize) {
+void gr_compute_neighbor_states(GridCell * cell, State * dest, size_t neighborhoodSize) {
 
-    size_t x;
-    size_t y;
+   // State * dest = malloc(neighborhoodSize * sizeof(State))
+    // QUESTION: In doing this, dest is recognized as an array ?
+    // x and y are undeclared, how to get cell coords ?
 
-    dest[0] = gr_get_cell(grid, x,y-1)->currentState;
-    dest[1] = gr_get_cell(grid, x,y+1)->currentState;
-    dest[2] = gr_get_cell(grid, x+1,y)->currentState;
-    dest[3] = gr_get_cell(grid, x-1,y)->currentState;
+    dest[0] = gr_get_cell(cell, x,y-1)->currentState;
+    dest[1] = gr_get_cell(cell, x,y+1)->currentState;
+    dest[2] = gr_get_cell(cell, x+1,y)->currentState;
+    dest[3] = gr_get_cell(cell, x-1,y)->currentState;
 
     if(neighborhoodSize > 4) {
-        dest[4] = gr_get_cell(grid, x-1,y+1)->currentState;
-        dest[5] = gr_get_cell(grid, x-1,y-1)->currentState;
-        dest[6] = gr_get_cell(grid, x+1,y+1)->currentState;
-        dest[7] = gr_get_cell(grid, x+1,y-1)->currentState;
+        dest[4] = gr_get_cell(cell, x-1,y+1)->currentState;
+        dest[5] = gr_get_cell(cell, x-1,y-1)->currentState;
+        dest[6] = gr_get_cell(cell, x+1,y+1)->currentState;
+        dest[7] = gr_get_cell(cell, x+1,y-1)->currentState;
 
     }
 
@@ -85,7 +86,7 @@ void gr_compute_neighbor_states(Grid* grid, State * dest, size_t neighborhoodSiz
 Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
 	int dim = xsize * ysize;
-	Grid * newGrid = malloc(sizeof Grid);
+	Grid * newGrid = malloc(sizeof(Grid));
 
 	assert(newGrid);
 
@@ -94,7 +95,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
 	// **Alloc memory**
 
-	newGrid->gridData = malloc(dim * sizeof GridCell)
+	newGrid->gridData = malloc(dim * sizeof(GridCell));
 	assert(newGrid->gridData);
 
 	// **Alloc memory GridCell level**
@@ -106,21 +107,25 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType) {
 
 	switch( gridType ) {
 		case RANDOM:
-			set_random_grid(newGrid);
+			gr_set_random_grid(newGrid);
 			break;
 
 		case UNIFORM:
-			set_uniform(newGrid);
+			gr_set_uniform_grid(newGrid);
 			break;
 
+                        case MIX:
+                                    gr_set_mixed_grid(newGrid);
+                                    break;
+
 		default:
-			abort()
+			abort();
 			break;
 		 }
 
 	// Generate grid
 
-	return newGrid
+	return newGrid;
 
 }
 
@@ -140,8 +145,8 @@ void gr_set_random_grid(Grid* grid){
             int x;
             int y;
 
-	for (y, y < grid->yDim, y++) {
-		for (x, x < grid->xDim, x++) {
+	for (y; y < grid->yDim; y++) {
+		for (x; x < grid->xDim; x++) {
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
@@ -160,8 +165,8 @@ void gr_set_uniform_grid(Grid* grid){
             int x;
             int y;
 
-	for (x, x < grid->xDim, x++) {
-		for (y, y < grid->yDim, y++) {
+	for (x; x < grid->xDim; x++) {
+		for (y; y < grid->yDim; y++) {
 
 			if(y < (ysize/3)){
 				gr_set_cell(x,y) = DECIDUOUS;
@@ -179,9 +184,16 @@ void gr_set_uniform_grid(Grid* grid){
 		}
 	}
 
-	set_disturb_grid();
+	gr_set_disturb_grid();
 
 }
+
+
+// TO DO
+//void gr_set_mixed_grid(Grid* grid){
+
+//}
+
 
 void gr_set_disturb_grid( Grid* grid, double thresDist){
 
@@ -196,7 +208,7 @@ void gr_set_disturb_grid( Grid* grid, double thresDist){
 
             int i;
 
-	for (i, i < numDist, i ++){
+	for (i; i < numDist; i ++){
 
 		int ryCoord = gsl_rng_uniform_int(rng, unsigned long int ysize);
 		int rxCoord = gsl_rng_uniform_int(rng, unsigned long int xsize);

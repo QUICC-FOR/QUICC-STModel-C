@@ -3,18 +3,16 @@
 
 #include <gsl/gsl_rng.h>
 
-
-
 /*
     DATA STRUCTURES
 */
 
 
 #define GC_NUM_STATES 4
-typedef enum { DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED } State;
+typedef enum { DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED} State;
 typedef double StateData [GC_NUM_STATES];
 
-extern const State GC_POSSIBLE_STATES [GC_NUM_STATES];	// this is an array giving all possible states 
+extern const State GC_POSSIBLE_STATES [GC_NUM_STATES];	// this is an array giving all possible states
 
 typedef struct {
     double meanTemp;
