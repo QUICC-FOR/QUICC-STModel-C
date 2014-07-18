@@ -11,7 +11,7 @@
 /* FUNCTION PROTOTYPES */
 
 void gr_set_random_grid(Grid* grid, gsl_rng* rng);
-//void gr_set_mixed_grid(Grid* grid);
+void gr_set_mixed_grid(Grid* grid, gsl_rng* rng);
 void gr_set_uniform_grid(Grid* grid,gsl_rng* rng);
 void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng);
 
@@ -52,15 +52,21 @@ GridCell * gr_set_cell (Grid* grid, GridCell* value, size_t x, size_t y){
 	// pointers validation
 	assert(grid);
 	assert(value);
+
+
             return 0;
 }
 
 void gr_compute_prevalence(Grid* grid, size_t x, size_t y) {
-    // set aside some memory for the neighbors
+
+    // pointer validation
+    assert(grid);
+
     size_t nbSize = 8;
     double count_D, count_C, count_T, count_M = 0.00;
     double increment = 1/nbSize;
 
+    // set aside some memory for the neighbors
     State *neighborStates = malloc(nbSize * sizeof(State));
 
     gr_compute_neighbor_states(grid, neighborStates, x, y, nbSize);
@@ -119,7 +125,7 @@ void gr_compute_neighbor_states(Grid* grid, State* dest, size_t x, size_t y,size
 }
 
 
-Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType, gsl_rng* rng) {
+Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng* rng) {
 
 	int dim = xsize * ysize;
 	Grid * newGrid = malloc(sizeof(Grid));
@@ -137,9 +143,9 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType, gsl_rng* rng)
 	// **Alloc memory GridCell level**
 
 	// for loop across all gridData and call
-
-
-	// newGrid->gridData[i] = make_cell()
+            for(int i; i < (xsize * ysize) -1 ; i++){
+	        newGrid->gridData[i] = gc_make_cell(numTimeSteps);
+            }
 
 	switch( gridType ) {
 		case RANDOM:
@@ -150,23 +156,20 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, GridType gridType, gsl_rng* rng)
 			gr_set_uniform_grid(newGrid, rng);
 			break;
 
-                        //case MIX:
-                        //            gr_set_mixed_grid(newGrid);
-                        //            break;
+                        case MIX:
+                                    gr_set_mixed_grid(newGrid,rng);
+                                    break;
 
 		default:
 			abort();
 			break;
 		 }
 
-	// Generate grid
-
 	return newGrid;
-
 }
 
 void gr_destroy_grid(Grid* grid){
-
+    free(grid);
 }
 
 
@@ -177,8 +180,8 @@ void gr_set_random_grid(Grid* grid, gsl_rng* rng){
 
 	State chosenState;
 
-	for (int y = 0; y < grid->yDim; y++) {
-		for (int x = 0; x < grid->xDim; x++) {
+	for (int x = 0; x < grid->xDim; x++) {
+                        for (int y = 0; y < grid->yDim; y++) {
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
@@ -224,10 +227,9 @@ void gr_set_uniform_grid(Grid* grid,gsl_rng* rng){
 }
 
 
-// TO DO
-//void gr_set_mixed_grid(Grid* grid){
+void gr_set_mixed_grid(Grid* grid, gsl_rng* rng){
 
-//}
+}
 
 
 void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng){
