@@ -31,14 +31,15 @@ GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 }
 
 
-GridCell * gr_set_cell (Grid* grid, GridCell* value, size_t x, size_t y){
+void  gr_set_cell (Grid* grid, State* value, size_t x, size_t y){
+// This function is useless...
 
 	// pointers validation
 	assert(grid);
 	assert(value);
 
+            gr_get_cell(grid, x,y)->currentState = value;
 
-            return 0;
 }
 
 void gr_compute_prevalence(Grid* grid, size_t x, size_t y) {
@@ -153,7 +154,6 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 }
 
 void gr_destroy_grid(Grid* grid){
-
     // Empty grid
     free(grid);
 }
