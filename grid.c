@@ -40,8 +40,8 @@ GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 	//assert(myCell = grid_get(myGrid, xx, yy));
 	// the assertion will fail if myCell gets a null pointer; assuming it succeeds, myCell can be safely used
 
-            return grid->gridData[index];  // - MATT, Can you fix this ?
-
+            //return grid->gridData[index];  // - MATT, Can you fix this ?
+            return 0;
             // TODO:
             // - Torus between east and west part of the grid
 }
@@ -58,12 +58,44 @@ GridCell * gr_set_cell (Grid* grid, GridCell* value, size_t x, size_t y){
 void gr_compute_prevalence(Grid* grid, size_t x, size_t y) {
     // set aside some memory for the neighbors
     size_t nbSize = 8;
+    double count_D, count_C, count_T, count_M = 0.00;
+    double increment = 1/nbSize;
+
     State *neighborStates = malloc(nbSize * sizeof(State));
 
     gr_compute_neighbor_states(grid, neighborStates, x, y, nbSize);
 
-    // now compute prevalence and save it directly in the cell
-    // no return value necessary
+    // Compute prevalence
+
+    for(int i; i < nbSize; i ++){
+        switch(neighborStates[i]){
+
+            case TRANSITIONAL:
+                count_T = count_T + increment;
+                break;
+
+            case MIXED:
+                count_M = count_M +increment;
+                break;
+
+            case DECIDUOUS:
+                count_D = count_D +increment;
+                break;
+
+            case CONIFEROUS:
+                count_C = count_C +increment;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // Stored in cell
+    gr_get_cell(grid, x,y)->prevalence[0] = count_C;
+    gr_get_cell(grid, x,y)->prevalence[1] = count_D;
+    gr_get_cell(grid, x,y)->prevalence[2] = count_M;
+    gr_get_cell(grid, x,y)->prevalence[3] = count_T;
 
     free(neighborStates);
 }
