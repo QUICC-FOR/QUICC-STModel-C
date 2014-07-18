@@ -18,32 +18,16 @@ void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng);
 
 GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 
-	// always protect your pointers, boys and girls
 	assert(grid);
 
-	// basic error checking, making sure we don't exceed our max dimensions
-	// we use less than because arrays are 0 indexed, so y = yDim is an error
 	assert(y < grid->yDim);
 	assert(x < grid->xDim);
 
 	// note the arrow operator: grid->yDim === (*grid).yDim
 	size_t index = grid->yDim * y + x;
 
-	// for a 10x10 grid (100 element array), giving it values of 9,9 results in 9*10 + 9 = 99, which is the last element
-	// (5,3) results in an index of 3 * 10 + 5 = 35
-
-	// finally, note that this function makes no guarantees that the object returned is not null
-	// it's not technically required to check this, since this function is not dereferencing the pointer that is returned
-	// however, this means the calling code will need to check the result; a one-line way to do this would be:
-	//GridCell * myCell;0.
-
-	//assert(myCell = grid_get(myGrid, xx, yy));
-	// the assertion will fail if myCell gets a null pointer; assuming it succeeds, myCell can be safely used
-
-            //return grid->gridData[index];  // - MATT, Can you fix this ?
+            //return grid->gridData[index];
             return 0;
-            // TODO:
-            // - Torus between east and west part of the grid
 }
 
 
@@ -169,6 +153,8 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 }
 
 void gr_destroy_grid(Grid* grid){
+
+    // Empty grid
     free(grid);
 }
 
