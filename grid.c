@@ -143,8 +143,8 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 	// **Alloc memory GridCell level**
 
 	// for loop across all gridData and call
-            for(int i; i < (xsize * ysize) -1 ; i++){
-	        newGrid->gridData[i] = gc_make_cell(numTimeSteps);
+            for(int i; i < (xsize * ysize); i++){
+	        newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
             }
 
 	switch( gridType ) {
