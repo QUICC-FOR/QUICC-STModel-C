@@ -38,6 +38,6 @@ void	           gr_set_cell	                           (Grid* grid, State* value
 void                gr_compute_neighbor_states      (Grid *grid, State *dest, size_t x, size_t y,size_t neighborhoodSize);
 void                gr_compute_prevalence              (Grid * grid, size_t x, size_t y);
 void                gr_destroy_cell                             (Grid * grid, size_t x, size_t y);
-void                gr_destroy_grid(Grid * grid, size_t x, size_t y)
+void                gr_destroy_grid                             (Grid * grid);
 
 #endif
