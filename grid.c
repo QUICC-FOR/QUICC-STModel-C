@@ -161,6 +161,9 @@ void gr_destroy_cell(Grid * grid, size_t x, size_t y){
 
 void gr_destroy_grid(Grid * grid){
 
+    size_t ysize;
+    size_t xsize;
+
     grid->xDim = xsize;
     grid->yDim = ysize;
 
