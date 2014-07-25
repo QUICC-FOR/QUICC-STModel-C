@@ -153,9 +153,25 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 	return newGrid;
 }
 
-void gr_destroy_grid(Grid* grid){
-    // Empty grid
+void gr_destroy_cell(Grid * grid, size_t x, size_t y){
+
+    free(gr_get_cell(grid,x,y)); // gr_get_cell return a pointer on GridCell
+
+}
+
+void gr_destroy_grid(Grid * grid){
+
+    grid->xDim = xsize;
+    grid->yDim = ysize;
+
+    for(int x;x<xsize;x++){
+        for(int y; y<ysize;y++){
+                gr_destroy_cell(grid,x,y);
+        }
+    }
+
     free(grid);
+
 }
 
 
