@@ -15,7 +15,6 @@ void gr_set_mixed_grid(Grid* grid, gsl_rng* rng);
 void gr_set_uniform_grid(Grid* grid,gsl_rng* rng);
 void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng);
 
-
 GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 
 	assert(grid);
@@ -26,13 +25,11 @@ GridCell * gr_get_cell(Grid * grid, size_t x, size_t y) {
 	// note the arrow operator: grid->yDim === (*grid).yDim
 	size_t index = grid->yDim * y + x;
 
-            //return grid->gridData[index];
-            return 0;
+            return &(grid->gridData[index]);
 }
 
 
 void  gr_set_cell (Grid* grid, State* value, size_t x, size_t y){
-// This function is useless...
 
 	// pointers validation
 	assert(grid);
@@ -114,7 +111,8 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 
 	int dim = xsize * ysize;
 	Grid * newGrid = malloc(sizeof(Grid));
-
+printf("1\n");
+fflush(stdout);
 	assert(newGrid);
 
 	newGrid->xDim = xsize;
@@ -126,11 +124,15 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 	assert(newGrid->gridData);
 
 	// **Alloc memory GridCell level**
+printf("2\n");
+fflush(stdout);
 
 	// for loop across all gridData and call
             for(int i; i < (xsize * ysize); i++){
 	        newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
             }
+printf("3\n");
+fflush(stdout);
 
 	switch( gridType ) {
 		case RANDOM:
@@ -149,6 +151,8 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 			abort();
 			break;
 		 }
+printf("4\n");
+fflush(stdout);
 
 	return newGrid;
 }
@@ -169,7 +173,7 @@ void gr_destroy_grid(Grid * grid){
 
     for(int x;x<xsize;x++){
         for(int y; y<ysize;y++){
-                gr_destroy_cell(grid,x,y);
+                 gr_destroy_cell(grid,x,y);
         }
     }
 
@@ -190,11 +194,9 @@ void gr_set_random_grid(Grid* grid, gsl_rng* rng){
 			// Pickup a random state
 			chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES, GC_NUM_STATES, sizeof(State));
 			// Set state based on the random value
-                                    //gr_set_cell(grid,chosenState,x,y);
+                                            gr_set_cell(grid,chosenState,x,y);
 		}
 	}
-
-gsl_rng_free(rng);
 
 }
 
@@ -250,8 +252,9 @@ void gr_set_disturb_grid( Grid* grid, double thresDist, gsl_rng* rng){
 		//gr_set_cell(rxCoord,ryCoord) = TRANSITIONAL;
 	}
 
-	gsl_rng_free(rng);
-
 }
 
+void gr_update_grid(Grid * grid){
+    
+}
 
