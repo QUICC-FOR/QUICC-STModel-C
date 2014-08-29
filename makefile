@@ -25,6 +25,11 @@ grid_cell.o: grid_cell.c grid_cell.h
 grid.o: grid.c grid.h grid_cell.h
 	$(CC) -c -o grid.o grid.c
 
+stm: grid.o grid_cell.o main.o
+	$(CC) $(GSL_LINK) grid.o grid_cell.o main.o -o stm
+
+clean_o:
+	rm *.o
 #
 #	test suite
 #
