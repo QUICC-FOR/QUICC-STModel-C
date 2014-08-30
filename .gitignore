@@ -28,4 +28,9 @@
 
 # Build files
 build
+*.cmake
+CMakeCache.txt
+Makefile
+CMakeFiles
+
 
