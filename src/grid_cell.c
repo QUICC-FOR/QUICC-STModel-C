@@ -85,7 +85,7 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 {
 	double rValue = gsl_rng_uniform(rng);
 	double testVal = 0;
-	State newState;
+	State newState = 0;
 
 	for(int i = 0; i < GC_NUM_STATES; i++) {
 		State curState = GC_POSSIBLE_STATES[i];
