@@ -30,7 +30,8 @@ int main(int argc, char ** argv) {
 
     for (int x = 0; x < xsize; ++x) {
         for (int y = 0; y < ysize; ++y) {
-            printf("%p", gr_get_cell(grid,x,y));
+            const GridCell *c = gr_get_cell(grid, x, y);
+            printf("(%d, %d) => %d\n", x, y, (int)(c->currentState[0]));
         }
     }
 
