@@ -21,19 +21,19 @@ int main(int argc, char ** argv){
     gsl_rng_set(rng, (int) time(NULL));
 
     // set up the grid
-    Grid * grid = gr_make_grid(10,10,100,RANDOM,rng);
-
-    size_t ysize;
-    size_t xsize;
-
-    grid->xDim = xsize;
-    grid->yDim = ysize;
-    
-    for(int x;x<xsize;x++){
-        for(int y; y<ysize;y++){
-            printf("%p", gr_get_cell(grid,x,y));
-        }
-    }
+        // Grid * grid = gr_make_grid(10,10,100,RANDOM,rng);
+    // 
+    //         // size_t ysize;
+    //         // size_t xsize;
+    // 
+    //         // grid->xDim = xsize;
+    //         // grid->yDim = ysize;
+    //         // 
+    //         // for(int x;x<xsize;x++){
+    //         //     for(int y; y<ysize;y++){
+    //         //         printf("%p", gr_get_cell(grid,x,y));
+    //         //     }
+        // }
 
     // main loop in time
     // for(int year = 0; year < MAX_TIME; year++) {
