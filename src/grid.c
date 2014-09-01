@@ -1,5 +1,5 @@
-#include "grid.h"
-#include "grid_cell.h"
+#include "../includes/grid.h"
+#include "../includes/grid_cell.h"
 #include <stdlib.h>
 #include <assert.h>
 
@@ -169,6 +169,7 @@ void gr_destroy_grid(Grid *grid) {
 void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
 
   State chosenState;
+  State GC_POSSIBLE_STATES [GC_NUM_STATES];
 
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
@@ -191,13 +192,13 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
     for (int y = 0; y < grid->yDim; y++) {
 
       if (y < (ysize / 3)) {
-        chosenState = DECIDUOUS;
+        chosenState = CONIFEROUS;
         gr_set_cell(grid,chosenState,x,y);
       } else if (y < 2 * (ysize / 3)) {
         chosenState = MIXED;
         gr_set_cell(grid,chosenState,x,y);
       } else if (y < ysize) {
-        chosenState = CONIFEROUS;
+        chosenState = DECIDUOUS;
         gr_set_cell(grid,chosenState,x,y);
       } else {
         printf("%s \n", "State undefined...");

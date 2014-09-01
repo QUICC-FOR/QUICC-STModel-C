@@ -1,11 +1,8 @@
-#include "grid_cell.h"
-#include "grid.h"
+#include "../includes/grid_cell.h"
+#include "../includes/grid.h"
 #include <stdlib.h>
 #include <assert.h>
 
-
-// GLOBALS
-State GC_POSSIBLE_STATES [GC_NUM_STATES] = {DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED};
 
 // prototypes for functions defining model parameters
 static double beta_d (Climate climate);
@@ -86,6 +83,7 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 	double rValue = gsl_rng_uniform(rng);
 	double testVal = 0;
 	State newState = 0;
+	State GC_POSSIBLE_STATES [GC_NUM_STATES];
 
 	for(int i = 0; i < GC_NUM_STATES; i++) {
 		State curState = GC_POSSIBLE_STATES[i];

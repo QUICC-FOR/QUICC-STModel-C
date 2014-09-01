@@ -22,7 +22,6 @@ typedef enum {RANDOM, UNIFORM, MIX} GridType;
 typedef struct {
 	size_t 		xDim, yDim;
 	GridCell * 	gridData; //might want  to change to **
-
 } Grid;
 
 

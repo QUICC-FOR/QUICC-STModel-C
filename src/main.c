@@ -6,14 +6,15 @@
 
 #include <gsl/gsl_rng.h>
 
-#include "grid.h"
-#include "grid_cell.h"
+#include "../includes/grid.h"
+#include "../includes/grid_cell.h"
 
 
 // length of time to run the model
 
 #define MAX_TIME 100;
 #define OUTPUT_FILE "test_output.csv"
+
 
 int main(int argc, char ** argv) {
 
@@ -27,9 +28,9 @@ int main(int argc, char ** argv) {
     gr_view_grid(grid);
 
     // main loop in time
-    // for(int year = 0; year < MAX_TIME; year++) {
-    //  gr_update_grid(grid);
-    // }
+    for(int year = 0; year < 100; year++) {
+         gr_update_grid(grid);
+    }
 
     //io_write_output(grid, OUTPUT_FILE);
 
