@@ -23,21 +23,6 @@ int main(int argc, char ** argv) {
     gsl_rng_set(rng, (int) time(NULL));
 
     // set up the grid
-<<<<<<< HEAD:main.c
-        // Grid * grid = gr_make_grid(10,10,100,RANDOM,rng);
-    // 
-    //         // size_t ysize;
-    //         // size_t xsize;
-    // 
-    //         // grid->xDim = xsize;
-    //         // grid->yDim = ysize;
-    //         // 
-    //         // for(int x;x<xsize;x++){
-    //         //     for(int y; y<ysize;y++){
-    //         //         printf("%p", gr_get_cell(grid,x,y));
-    //         //     }
-        // }
-=======
     Grid * grid = gr_make_grid(10, 10, 100, RANDOM, rng);
 
     size_t ysize = grid->xDim;
@@ -49,7 +34,6 @@ int main(int argc, char ** argv) {
             printf("(%d, %d) => %d\n", x, y, (int)(c->currentState[0]));
         }
     }
->>>>>>> b680dc8df22ed7bb958e3c82137450c618f1c451:src/main.c
 
     // main loop in time
     // for(int year = 0; year < MAX_TIME; year++) {
