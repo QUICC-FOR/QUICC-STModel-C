@@ -15,4 +15,7 @@ TODO
 
 ### Getting started...
 
-Not yet !
+	$ git clone https://github.com/QUICC-FOR/QUICC-STModel-C.git
+	$ cd QUICC-STModel-C
+	$ cmake .
+	$ make
