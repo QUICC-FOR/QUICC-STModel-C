@@ -23,17 +23,8 @@ int main(int argc, char ** argv) {
     gsl_rng_set(rng, (int) time(NULL));
 
     // set up the grid
-    Grid * grid = gr_make_grid(10, 10, 100, RANDOM, rng);
-
-    size_t ysize = grid->xDim;
-    size_t xsize = grid->yDim;
-
-    for (int x = 0; x < xsize; ++x) {
-        for (int y = 0; y < ysize; ++y) {
-            const GridCell *c = gr_get_cell(grid, x, y);
-            printf("(%d, %d) => %d\n", x, y, (int)(c->currentState[0]));
-        }
-    }
+    Grid * grid = gr_make_grid(10, 10, 100, UNIFORM, rng);
+    gr_view_grid(grid);
 
     // main loop in time
     // for(int year = 0; year < MAX_TIME; year++) {

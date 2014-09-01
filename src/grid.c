@@ -84,8 +84,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   free(neighborStates);
 }
 
-void gr_compute_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
-                                size_t neighborhoodSize) {
+void gr_compute_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, size_t neighborhoodSize) {
 
   dest[0] = *(gr_get_cell(grid, x, y - 1)->currentState);
   dest[1] = *(gr_get_cell(grid, x, y + 1)->currentState);
@@ -100,8 +99,7 @@ void gr_compute_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
   }
 }
 
-Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
-                   GridType gridType, gsl_rng *rng) {
+Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
@@ -208,7 +206,7 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
     }
   }
 
-  gr_set_disturb_grid(grid, THRESDIST, rng);
+  //gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
@@ -230,4 +228,20 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
 }
 
 void gr_update_grid(Grid *grid) {
+}
+
+void  gr_view_grid(Grid *grid) {
+
+    size_t ysize = grid->xDim;
+    size_t xsize = grid->yDim;
+
+    for (int y = 0; y < ysize; ++y) {
+        printf("%d    |", y);
+            for (int x = 0; x < xsize; ++x) {
+                const GridCell *c = gr_get_cell(grid, x, y);
+                printf(" %d |", (int)(c->currentState[0]));
+            }
+        printf("\n");
+    }
+
 }
