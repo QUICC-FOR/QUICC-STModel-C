@@ -105,7 +105,7 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
-  printf("1\n");
+
   assert(newGrid);
 
   newGrid->xDim = xsize;
@@ -123,7 +123,7 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
     newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
     //newGrid->gridData[i] = gc_make_cell(numTimeSteps);
   }
-  printf("3\n");
+
 
   switch (gridType) {
   case RANDOM:
@@ -142,7 +142,7 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
     abort();
     break;
   }
-  printf("4\n");
+
 
   return newGrid;
 }
