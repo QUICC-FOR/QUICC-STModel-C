@@ -25,3 +25,12 @@
 
 # Personnal notes
 *pers_note*
+
+# Build files
+build
+*.cmake
+CMakeCache.txt
+Makefile
+CMakeFiles
+
+

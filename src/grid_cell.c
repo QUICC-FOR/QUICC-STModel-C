@@ -65,7 +65,7 @@ GridCell *gc_make_cell (size_t numTimeSteps) {
 	// allocates memory for the state history, initializes other values to 0
 	// initializes the current state to the first record in stateHistory
 	GridCell * cell = (GridCell *) malloc(sizeof (GridCell));
-	cell->stateHistory = (State *) malloc(numTimeSteps * sizeof (numTimeSteps));
+	cell->stateHistory = (State *) malloc(numTimeSteps * sizeof (State));
 	assert(cell->stateHistory);
 	cell->currentState = cell->stateHistory;
 	cell->historySize = numTimeSteps;
@@ -85,7 +85,7 @@ void gc_select_new_state(GridCell* cell, gsl_rng* rng)
 {
 	double rValue = gsl_rng_uniform(rng);
 	double testVal = 0;
-	State newState;
+	State newState = 0;
 
 	for(int i = 0; i < GC_NUM_STATES; i++) {
 		State curState = GC_POSSIBLE_STATES[i];
