@@ -100,7 +100,7 @@ void gr_compute_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, siz
   }
 }
 
-Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
+Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
@@ -146,9 +146,14 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gri
   return newGrid;
 }
 
-void gr_destroy_cell(Grid *grid, size_t x, size_t y) {
 
-  free(gr_get_cell(grid, x, y)); // gr_get_cell return a pointer on GridCell
+void gr_destroy_cell(Grid * grid, size_t x, size_t y) {
+
+  GridCell *cell = gr_get_cell(grid, x, y);
+  cell->currentState = NULL;
+  free(cell->stateHistory);
+  free(cell);
+  
 }
 
 void gr_destroy_grid(Grid *grid) {
@@ -159,7 +164,7 @@ void gr_destroy_grid(Grid *grid) {
   for (int x = 0; x < xsize; x++) {
     for (int y = 0; y < ysize; y++) {
       gr_destroy_cell(grid, x, y);
-    }
+     }
   }
 
   free(grid);
@@ -207,9 +212,10 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-
   gr_set_disturb_grid(grid, THRESDIST, rng);
+
 }
+
 
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
 }

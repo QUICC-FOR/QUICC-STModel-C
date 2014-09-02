@@ -78,12 +78,6 @@ GridCell *gc_make_cell(size_t numTimeSteps) {
   return cell;
 }
 
-void gc_destroy_cell(GridCell *cell) {
-  cell->currentState = NULL;
-  free(cell->stateHistory);
-  free(cell);
-}
-
 void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   double rValue = gsl_rng_uniform(rng);
   double testVal = 0;
@@ -105,6 +99,14 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   assert(cell->currentState < (cell->stateHistory + (cell->historySize - 1)));
 
   *(cell->currentState) = newState;
+}
+
+void gc_destroy_cell(GridCell *cell) {
+
+  cell->currentState = NULL;
+  free(cell->stateHistory);
+  free(cell);
+
 }
 
 // TO IMPLEMENT

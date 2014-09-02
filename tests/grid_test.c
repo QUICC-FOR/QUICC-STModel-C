@@ -12,6 +12,7 @@ static int gr_test_get();
 static int gr_test_neighbors();
 
 int main() {
+	
 	int failedTests = 0;
 
 	failedTests += gr_test_alloc();
@@ -19,24 +20,23 @@ int main() {
 	failedTests += gr_test_get();
 	failedTests += gr_test_neighbors();
 
-	 return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 
 }
 
 
 static int gr_test_alloc() {
 
-	gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
+	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
-
 
 	int fail = 0;
 	int xSize = 10;
 	int ySize = 15;
 	int timeSteps = 100;
 
-	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
+	Grid *grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
 	assert(grid);
 	
 	fail += (grid->xDim == xSize);
@@ -44,7 +44,7 @@ static int gr_test_alloc() {
 	fail += (grid->gridData != NULL);
 	
 	gr_destroy_grid(grid);
-	
+
 	return fail;
 }
 
