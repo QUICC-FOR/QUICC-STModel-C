@@ -208,7 +208,7 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
     }
   }
 
-  //gr_set_disturb_grid(grid, THRESDIST, rng);
+  gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {

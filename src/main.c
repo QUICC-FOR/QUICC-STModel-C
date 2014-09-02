@@ -11,7 +11,7 @@
 
 // length of time to run the model
 
-#define MAX_TIME 100;
+#define  MAX_TIME   100
 #define OUTPUT_FILE "test_output.csv"
 
 int main(int argc, char **argv) {
@@ -22,11 +22,11 @@ int main(int argc, char **argv) {
   gsl_rng_set(rng, (int)time(NULL));
 
   // set up the grid
-  Grid *grid = gr_make_grid(10, 10, 100, UNIFORM, rng);
+  Grid *grid = gr_make_grid(20, 20, 100, UNIFORM, rng);
   gr_view_grid(grid);
 
   // main loop in time
-  for (int year = 0; year < 100; year++) {
+  for (int year = 0; year < MAX_TIME; year++) {
     gr_update_grid(grid);
   }
 
