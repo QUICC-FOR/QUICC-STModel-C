@@ -6,9 +6,8 @@
 
 #include <gsl/gsl_rng.h>
 
-#include "../includes/grid.h"
-#include "../includes/grid_cell.h"
-
+#include "grid.h"
+#include "grid_cell.h"
 
 // length of time to run the model
 

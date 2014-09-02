@@ -1,8 +1,8 @@
-#include "../includes/grid_cell.h"
-#include "../includes/grid.h"
 #include <stdlib.h>
 #include <assert.h>
 
+#include "grid_cell.h"
+#include "grid.h"
 
 // prototypes for functions defining model parameters
 static double beta_d (Climate climate);

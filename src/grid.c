@@ -1,10 +1,11 @@
-#include "../includes/grid.h"
-#include "../includes/grid_cell.h"
 #include <stdlib.h>
 #include <assert.h>
 
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+
+#include "grid.h"
+#include "grid_cell.h"
 
 #define THRESDIST 0.20
 

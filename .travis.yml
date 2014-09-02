@@ -1,0 +1,13 @@
+language: c
+
+# Compilers to test
+compiler:
+  - clang
+  - gcc
+
+# Command to run tests
+script:
+  - cmake .
+  - make
+  - make test
+
