@@ -22,3 +22,5 @@ TODO
 	$ cd QUICC-STModel-C
 	$ cmake .
 	$ make
+
+**run tests:** ```$ make test```
