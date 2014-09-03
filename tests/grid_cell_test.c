@@ -5,38 +5,28 @@
 
 #include "../src/grid_cell.c"
 
-
-static int gc_check_new_state(gsl_rng* rng);
-static int gc_check_alloc();
-static int gc_check_transition_probs();
+void gc_check_new_state(gsl_rng* rng);
+void gc_check_alloc();
+void gc_check_transition_probs();
 
 int main() {
-
 	// set up RNG
 	gsl_rng * rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
-
-	int failedTests = 0;
-
-	failedTests += gc_check_alloc();
-	failedTests += gc_check_transition_probs();
-	failedTests += gc_check_new_state(rng);
+	gc_check_alloc();
+	gc_check_transition_probs();
+	gc_check_new_state(rng);
 	
 	gsl_rng_free(rng);
-
 	return EXIT_SUCCESS;
-
 }
 
-
-
-static int gc_check_new_state(gsl_rng* rng) {
-	int fail = 0;
+void gc_check_new_state(gsl_rng* rng) {
 	size_t histSize = 10;
 	GridCell * cell = gc_make_cell(histSize);
-	*(cell->currentState) = CONIFEROUS;
+	cell->currentState[0] = CONIFEROUS;
 	int numDraws = 100000;
 
 	// test even trans probs, as well as total dominance by each type
@@ -80,42 +70,33 @@ static int gc_check_new_state(gsl_rng* rng) {
 		}
 
 		for(int i = 0; i < GC_NUM_STATES; i++) {
-			fail += ((int) testCounts[i] != (int) (cell->transitionProbs[i] * numDraws));
+			assert(((int) testCounts[i] != (int) (cell->transitionProbs[i] * numDraws)));
 		}
 	}		
-		
-	return(fail);
 }
 
-
-
-static int gc_check_alloc() {
+void gc_check_alloc() {
 	// creates a cell, assigns values to it, and tries to get them back out
-	int fail = 0;
 	size_t histSize = 10;
 	GridCell * cell = gc_make_cell(histSize);
-	*(cell->currentState) = DECIDUOUS;
-	fail += cell->stateHistory[0] != DECIDUOUS;
-	fail += cell->historySize != histSize;
+	cell->currentState = DECIDUOUS;
+	assert(cell->stateHistory[0] != DECIDUOUS);
+	assert(cell->historySize != histSize);
 	for(int i = 1; i < histSize; i++) {
 		cell->currentState++;
-		*(cell->currentState) = CONIFEROUS;
+		cell->currentState[0] = CONIFEROUS;
 	}
-	fail += cell->stateHistory[histSize-1] != CONIFEROUS;
+	assert(cell->stateHistory[histSize-1] != CONIFEROUS);
 	cell->climate.meanTemp = 0;
 	cell->prevalence[0] = cell->transitionProbs[0] = 0.5;
 	gc_destroy_cell(cell);
-
-	return fail;
 }
 
 
 
-static int gc_check_transition_probs() {
-	int fail = 0;
+void gc_check_transition_probs() {
 	size_t histSize = 10;
-	GridCell * cell = gc_make_cell(histSize);
-	
+	GridCell * cell = gc_make_cell(histSize);	
 
 	// define prevalence conditions to test
 	// currently testing equality, plus complete dominance by each state
@@ -123,8 +104,9 @@ static int gc_check_transition_probs() {
 	StateData prevTests [numPrevTests];
 	for(int i = 0; i < GC_NUM_STATES; i++) {
 		prevTests[0][i] = 1.0 / GC_NUM_STATES;
-		for(int j = 1; j < numPrevTests; j++)
+		for(int j = 1; j < numPrevTests; j++) {
 			prevTests[j][i] = ( j == i+1 ? 1 : 0);
+                }
 	}
 	
 	// define currentState conditions to test
@@ -141,7 +123,7 @@ static int gc_check_transition_probs() {
 		
 		// loop over state tests
 		for(int stateInd = 0; stateInd < numStateTests; stateInd++) {
-			*(cell->currentState) = stateTests[stateInd];
+			cell->currentState[0] = stateTests[stateInd];
 			
 			// init all probs to -1 to start with, so we aren't just using old vals
 			for(int j = 0; j < GC_NUM_STATES; j++)
@@ -153,11 +135,9 @@ static int gc_check_transition_probs() {
 			double sum = 0;
 			for(int i = 0; i < GC_NUM_STATES; i++) {
 				sum += cell->transitionProbs[i];
-				fail += cell->transitionProbs[i] < 0 || cell->transitionProbs[i] > 1;
+				assert(cell->transitionProbs[i] < 0 || cell->transitionProbs[i] > 1);
 			}
 			//fail += (fabs(1.0 - sum) > TEST_ERROR_THRESHOLD);
 		}
 	}
-
-	return(fail);
 }
