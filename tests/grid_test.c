@@ -27,33 +27,45 @@ void gr_test_alloc() {
 
 	/* DESC: Test memory allocated to the grid */
 
-	// init random number
+	// Init random number generator
+
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
-	size_t xSize = 10;
-	size_t ySize = 8;
-	size_t timeSteps = 100;
+	int nTest = 10;
 
-	// Create grid
-	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
-	assert(grid);
+	//  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 
+
+	for(int i = 0; i < nTest+1; i++){
+		size_t xSize = gsl_rng_uniform_int(rng, 100);
+		size_t ySize = gsl_rng_uniform_int(rng, 100);
+		size_t timeSteps = gsl_rng_uniform_int(rng, 100);
+
+		// Create grid
+		Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
+		assert(grid);
 
 
-	assert(grid->xDim == xSize);
-	assert(grid->yDim == ySize);
-	assert(grid->gridData != NULL);
-	
-	gr_destroy_grid(grid);
-
+		assert(grid->xDim == xSize);
+		assert(grid->yDim == ySize);
+		assert(grid->gridData != NULL);
+		assert(gr_get_cell(grid,1,1)->historySize == timeSteps);
+		
+		gr_destroy_grid(grid);
+	}
 }
 
 void gr_test_init() {
+	/* DESC:  Perform unit tests on initial lattice configuration (RANDOM, ) */
+
 }
 
 void gr_test_get() {
+	/* DESC:  Unit test on gr_get_cell */
 }
 
 void gr_test_neighbors () {
+	/* DESC:  Unit test on gr_get_neighbor_states and gr_compute_prevalence*/
+
 }
