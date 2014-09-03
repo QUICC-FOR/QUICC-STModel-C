@@ -149,25 +149,25 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 
 void gr_destroy_cell(Grid * grid, size_t x, size_t y) {
 
-  GridCell *cell = gr_get_cell(grid, x, y);
-  cell->currentState = NULL;
-  free(cell->stateHistory);
-  free(cell);
+  //GridCell *cell = gr_get_cell(grid, x, y);
+  //cell->currentState = NULL;
+  //free(cell->stateHistory);
+  //free(cell);
   
 }
 
 void gr_destroy_grid(Grid *grid) {
 
-  const size_t ysize = grid->xDim;
-  const size_t xsize = grid->yDim;
+  const size_t ysize = grid->yDim;
+  const size_t xsize = grid->xDim;
 
   for (int x = 0; x < xsize; x++) {
     for (int y = 0; y < ysize; y++) {
-      gr_destroy_cell(grid, x, y);
+     //gr_destroy_cell(grid, x, y);
      }
   }
 
-  free(grid);
+  //free(grid);
 }
 
 /*	 	GRID INITIALIZATION FUNCTIONS		*/

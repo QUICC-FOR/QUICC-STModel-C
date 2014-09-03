@@ -27,23 +27,29 @@ int main() {
 
 static int gr_test_alloc() {
 
+	/* DESC: Test memory allocated to the grid */
+
+	// init random number
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
+	// Declare variables
 	int fail = 0;
 	int xSize = 10;
 	int ySize = 15;
 	int timeSteps = 100;
 
-	Grid *grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
+	// Create grid
+	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
 	assert(grid);
 	
+	// Test
 	fail += (grid->xDim == xSize);
 	fail += (grid->yDim == ySize);
 	fail += (grid->gridData != NULL);
 	
-	gr_destroy_grid(grid);
+	//gr_destroy_grid(grid);
 
 	return fail;
 }
