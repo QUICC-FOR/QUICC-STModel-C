@@ -51,7 +51,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   // set aside some memory for the neighbors
   State *neighborStates = malloc(nbSize * sizeof(State));
 
-  gr_compute_neighbor_states(grid, neighborStates, x, y, nbSize);
+  gr_get_neighbor_states(grid, neighborStates, x, y, nbSize);
 
   // Compute prevalence
 
@@ -88,7 +88,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   free(neighborStates);
 }
 
-void gr_compute_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, size_t neighborhoodSize) {
+void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, size_t neighborhoodSize) {
 
 // Von neumann neighboors
   dest[0] = *(gr_get_cell(grid, x, y - 1)->currentState);
