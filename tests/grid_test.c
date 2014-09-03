@@ -13,7 +13,6 @@ void gr_test_neighbors();
 
 int main() {
 	
-
 	gr_test_alloc();
 	gr_test_init();
 	gr_test_get();
@@ -33,16 +32,15 @@ void gr_test_alloc() {
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
-
-	int xSize = 10;
-	int ySize = 15;
-	int timeSteps = 10;
+	// Create rectangular lattice
+	size_t xSize = 5;
+	size_t ySize = 4;
+	size_t timeSteps = 100;
 
 	// Create grid
 	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
 	assert(grid);
-	
-	gr_view_grid(grid);
+
 
 	assert(grid->xDim == xSize);
 	assert(grid->yDim == ySize);

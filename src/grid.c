@@ -18,15 +18,22 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng);
 
 GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 
+  size_t index;
   assert(grid);
 
   assert(y < grid->yDim);
   assert(x < grid->xDim);
 
   // note the arrow operator: grid->yDim === (*grid).yDim
-  size_t index = grid->yDim * y + x;
+  if (x < y ) {
+    index = grid->xDim * y + x;
+  }
+  else {
+    index = grid->yDim * y + x; 
+  }
 
   return &(grid->gridData[index]);
+
 }
 
 void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
@@ -34,7 +41,6 @@ void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   assert(grid);
   GridCell *cell = gr_get_cell(grid, x, y);
   *(cell->currentState) = chosenState;
-
 }
 
 void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
@@ -88,11 +94,13 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
 
 void gr_compute_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, size_t neighborhoodSize) {
 
+// Von neumann neighboors
   dest[0] = *(gr_get_cell(grid, x, y - 1)->currentState);
   dest[1] = *(gr_get_cell(grid, x, y + 1)->currentState);
   dest[2] = *(gr_get_cell(grid, x + 1, y)->currentState);
   dest[3] = *(gr_get_cell(grid, x - 1, y)->currentState);
 
+// Moore neighboors
   if (neighborhoodSize > 4) {
     dest[4] = *(gr_get_cell(grid, x - 1, y + 1)->currentState);
     dest[5] = *(gr_get_cell(grid, x - 1, y - 1)->currentState);
@@ -119,7 +127,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
   // **Alloc memory GridCell level**
 
   // for loop across all gridData and call
-  for (int i = 0; i < (xsize * ysize); i++) {
+  for (int i = 0; i < dim; i++) {
     newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
     //newGrid->gridData[i] = gc_make_cell(numTimeSteps);
   }
@@ -167,7 +175,7 @@ void gr_destroy_grid(Grid *grid) {
      gr_destroy_cell(grid, x, y);
      }
   }
-
+  //free(grid->gridData);
   free(grid);
 }
 
@@ -225,7 +233,7 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
 
   thresDist = THRESDIST;
 
-  int totalCells = grid->yDim * grid->yDim; // Get total number of cells
+  int totalCells = grid->xDim * grid->yDim; // Get total number of cells
   int numDist = totalCells *
                 thresDist; // Get number of cells disturbed based on threshold
 
