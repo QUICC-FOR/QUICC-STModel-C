@@ -44,14 +44,23 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   // pointer validation
   assert(grid);
 
-  size_t nbSize = 8;
+  NeighType neighType = MOORE;
+  size_t nbSize;
+
+  if(neighType == MOORE){
+    nbSize = 8;  
+  } 
+  else if(neighType == VONNE){
+    nbSize = 4;  
+  }
+  
+
   double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
   double increment = 1 / nbSize;
 
   // set aside some memory for the neighbors
   State *neighborStates = malloc(nbSize * sizeof(State));
-
-  gr_get_neighbor_states(grid, neighborStates, x, y, nbSize);
+  gr_get_neighbor_states(grid, neighborStates, x, y, neighType );
 
   // Compute prevalence
 
@@ -88,7 +97,11 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   free(neighborStates);
 }
 
-void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, size_t neighborhoodSize) {
+void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighType neighType) {
+
+  assert(y < grid->yDim);
+  assert(x < grid->xDim);
+
 
 // Von neumann neighboors
   dest[0] = *(gr_get_cell(grid, x, y - 1)->currentState);
@@ -97,12 +110,13 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, size_t 
   dest[3] = *(gr_get_cell(grid, x - 1, y)->currentState);
 
 // Moore neighboors
-  if (neighborhoodSize > 4) {
+  if (neighType == MOORE) {
     dest[4] = *(gr_get_cell(grid, x - 1, y + 1)->currentState);
     dest[5] = *(gr_get_cell(grid, x - 1, y - 1)->currentState);
     dest[6] = *(gr_get_cell(grid, x + 1, y + 1)->currentState);
     dest[7] = *(gr_get_cell(grid, x + 1, y - 1)->currentState);
   }
+
 }
 
 Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
