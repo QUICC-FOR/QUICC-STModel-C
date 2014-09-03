@@ -244,7 +244,7 @@ void  gr_view_grid(Grid *grid) {
         printf("%d    |", y);
             for (int x = 0; x < xsize; ++x) {
                 const GridCell *c = gr_get_cell(grid, x, y);
-                printf(" %d |", (int)(c->currentState[0]));
+                printf(" %d |", (int)*(c->currentState));
             }
         printf("\n");
     }
