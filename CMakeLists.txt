@@ -28,6 +28,6 @@ macro(add_libstmodel_test NAME)
   add_test(NAME ${NAME} COMMAND ${NAME})
 endmacro(add_libstmodel_test)
 
-add_libstmodel_test(grid_test)
-add_libstmodel_test(grid_cell_test)
+add_libstmodel_test(gr_test_alloc)
+add_libstmodel_test(gc_test_alloc)
 

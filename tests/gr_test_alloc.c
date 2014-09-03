@@ -2,27 +2,10 @@
 #include <time.h>
 #include <gsl/gsl_rng.h>
 
-#include "../src/grid.c"
 #include "../src/grid_cell.c"
-
-void gr_test_alloc();
-void gr_test_init();
-void gr_test_get();
-void gr_test_neighbors();
+#include "../src/grid.c"
 
 int main() {
-	
-	gr_test_alloc();
-	gr_test_init();
-	gr_test_get();
-	gr_test_neighbors();
-
-	return EXIT_SUCCESS;
-
-}
-
-
-void gr_test_alloc() {
 
 	/* DESC: Test memory allocated to the grid */
 
@@ -56,18 +39,4 @@ void gr_test_alloc() {
 		// Free memory
 		gr_destroy_grid(grid);
 	}
-}
-
-void gr_test_init() {
-	/* DESC:  Perform unit tests on initial lattice configuration (RANDOM, UNIFORM, MIXED) */
-
-}
-
-void gr_test_get() {
-	/* DESC:  Unit test on gr_get_cell */
-}
-
-void gr_test_neighbors () {
-	/* DESC:  Unit test on gr_get_neighbor_states and gr_compute_prevalence*/
-
 }
