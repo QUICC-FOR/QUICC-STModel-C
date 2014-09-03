@@ -33,7 +33,7 @@ typedef struct {
 
 Grid * 		gr_make_grid		               (size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng* rng);
 GridCell *	gr_get_cell		               (Grid * grid, size_t x, size_t y);
-void	           gr_set_cell	                           (Grid* grid, State value, int x, int y);
+void	           gr_set_cell	                           (Grid* grid, State chosenState, size_t x, size_t y);
 void                gr_compute_neighbor_states      (Grid *grid, State *dest, size_t x, size_t y,size_t neighborhoodSize);
 void                gr_compute_prevalence              (Grid * grid, size_t x, size_t y);
 void                gr_destroy_cell                             (Grid * grid, size_t x, size_t y);

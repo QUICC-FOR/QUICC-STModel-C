@@ -42,6 +42,7 @@ void gr_test_alloc() {
 	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
 	assert(grid);
 	
+	gr_view_grid(grid);
 
 	assert(grid->xDim == xSize);
 	assert(grid->yDim == ySize);

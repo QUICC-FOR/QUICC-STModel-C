@@ -29,11 +29,12 @@ GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
   return &(grid->gridData[index]);
 }
 
-void gr_set_cell(Grid *grid, State value, int x, int y) {
+void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   // pointers validation
   assert(grid);
-  GridCell *c = gr_get_cell(grid, x, y);
-  *(c->currentState) = value;
+  GridCell *cell = gr_get_cell(grid, x, y);
+  *(cell->currentState) = chosenState;
+
 }
 
 void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
@@ -149,10 +150,10 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
 
 void gr_destroy_cell(Grid * grid, size_t x, size_t y) {
 
-  //GridCell *cell = gr_get_cell(grid, x, y);
-  //cell->currentState = NULL;
-  //free(cell->stateHistory);
-  //free(cell);
+  GridCell *cell = gr_get_cell(grid, x, y);
+  cell->currentState = NULL;
+  free(cell->stateHistory);
+  free(cell);
   
 }
 
@@ -163,11 +164,11 @@ void gr_destroy_grid(Grid *grid) {
 
   for (int x = 0; x < xsize; x++) {
     for (int y = 0; y < ysize; y++) {
-     //gr_destroy_cell(grid, x, y);
+     gr_destroy_cell(grid, x, y);
      }
   }
 
-  //free(grid);
+  free(grid);
 }
 
 /*	 	GRID INITIALIZATION FUNCTIONS		*/
@@ -240,8 +241,8 @@ void gr_update_grid(Grid *grid) {
 
 void  gr_view_grid(Grid *grid) {
 
-    size_t ysize = grid->xDim;
-    size_t xsize = grid->yDim;
+    size_t ysize = grid->yDim;
+    size_t xsize = grid->xDim;
 
     for (int y = 0; y < ysize; ++y) {
         printf("%d    |", y);

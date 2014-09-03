@@ -6,7 +6,7 @@ enable_testing()
 
 include_directories(includes)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -std=c99")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -g -Wall -std=c99")
 
 add_executable(stmodel
   src/main.c
