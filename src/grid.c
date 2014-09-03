@@ -18,20 +18,16 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng);
 
 GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 
-  size_t index;
   assert(grid);
 
   assert(y < grid->yDim);
   assert(x < grid->xDim);
 
   // note the arrow operator: grid->yDim === (*grid).yDim
-  if (grid->xDim < grid->yDim ) {
-    index = grid->xDim * y + x;
-  }
-  else {
-    index = grid->yDim * y + x; 
-  }
+  size_t  index = grid->xDim * y + x; 
+  
 
+  // printf("Coord(%d, %d): %d \n",(int)x,(int)y,(int)index);
   return &(grid->gridData[index]);
 
 }
@@ -155,27 +151,19 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
   return newGrid;
 }
 
-
-void gr_destroy_cell(Grid * grid, size_t x, size_t y) {
-
-  GridCell *cell = gr_get_cell(grid, x, y);
-  cell->currentState = NULL;
-  free(cell->stateHistory);
-  free(cell);
-  
-}
-
 void gr_destroy_grid(Grid *grid) {
 
-  const size_t ysize = grid->yDim;
   const size_t xsize = grid->xDim;
+  const size_t ysize = grid->yDim;
 
   for (int x = 0; x < xsize; x++) {
     for (int y = 0; y < ysize; y++) {
-     gr_destroy_cell(grid, x, y);
+     GridCell *cell = gr_get_cell(grid,x,y);
+     gc_destroy_cell(cell);
      }
   }
-  //free(grid->gridData);
+  
+  free(grid->gridData);
   free(grid);
 }
 

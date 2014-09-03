@@ -105,7 +105,6 @@ void gc_destroy_cell(GridCell *cell) {
 
   cell->currentState = NULL;
   free(cell->stateHistory);
-  free(cell);
 
 }
 
