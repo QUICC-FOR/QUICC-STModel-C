@@ -6,26 +6,25 @@
 #include "../src/grid.c"
 #include "../src/grid_cell.c"
 
-static int gr_test_alloc();
-static int gr_test_init();
-static int gr_test_get();
-static int gr_test_neighbors();
+void gr_test_alloc();
+void gr_test_init();
+void gr_test_get();
+void gr_test_neighbors();
 
 int main() {
 	
-	int failedTests = 0;
 
-	failedTests += gr_test_alloc();
-	failedTests += gr_test_init();
-	failedTests += gr_test_get();
-	failedTests += gr_test_neighbors();
+	gr_test_alloc();
+	gr_test_init();
+	gr_test_get();
+	gr_test_neighbors();
 
 	return EXIT_SUCCESS;
 
 }
 
 
-static int gr_test_alloc() {
+void gr_test_alloc() {
 
 	/* DESC: Test memory allocated to the grid */
 
@@ -34,43 +33,29 @@ static int gr_test_alloc() {
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
-	// Declare variables
-	int fail = 0;
+
 	int xSize = 10;
 	int ySize = 15;
-	int timeSteps = 100;
+	int timeSteps = 10;
 
 	// Create grid
 	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
 	assert(grid);
 	
-	// Test
-	fail += (grid->xDim == xSize);
-	fail += (grid->yDim == ySize);
-	fail += (grid->gridData != NULL);
+
+	assert(grid->xDim == xSize);
+	assert(grid->yDim == ySize);
+	assert(grid->gridData != NULL);
 	
 	//gr_destroy_grid(grid);
 
-	return fail;
 }
 
-static int gr_test_init() {
-	int fail = 0;
-
-	fail++;	//until this function is implemented
-	return fail;
+void gr_test_init() {
 }
 
-static int gr_test_get() {
-	int fail = 0;
-
-	fail++;	//until this function is implemented
-	return fail;
+void gr_test_get() {
 }
 
-static int gr_test_neighbors () {
-	int fail = 0;
-
-	fail++;	//until this function is implemented
-	return fail;
+void gr_test_neighbors () {
 }
