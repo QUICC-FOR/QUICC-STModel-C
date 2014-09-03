@@ -30,4 +30,5 @@ endmacro(add_libstmodel_test)
 
 add_libstmodel_test(gr_test_alloc)
 add_libstmodel_test(gc_test_alloc)
+add_libstmodel_test(gc_test_neighbors)
 
