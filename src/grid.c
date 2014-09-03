@@ -25,7 +25,7 @@ GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
   assert(x < grid->xDim);
 
   // note the arrow operator: grid->yDim === (*grid).yDim
-  if (x < y ) {
+  if (grid->xDim < grid->yDim ) {
     index = grid->xDim * y + x;
   }
   else {

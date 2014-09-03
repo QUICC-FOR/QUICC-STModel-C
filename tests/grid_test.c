@@ -33,8 +33,8 @@ void gr_test_alloc() {
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// Create rectangular lattice
-	size_t xSize = 5;
-	size_t ySize = 4;
+	size_t xSize = 10;
+	size_t ySize = 10;
 	size_t timeSteps = 100;
 
 	// Create grid
