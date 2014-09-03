@@ -16,9 +16,9 @@ int main() {
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// Random var		
-	size_t xSize = 10;
-	size_t ySize = 10;
-	size_t timeSteps = 10;
+	size_t xSize = gsl_rng_uniform_int(rng, 100);
+	size_t ySize = gsl_rng_uniform_int(rng, 100);
+	size_t timeSteps = gsl_rng_uniform_int(rng, 100);
 
 
 	  //  Fix number of neighbor cells
@@ -38,15 +38,16 @@ int main() {
 	assert(grid);
 	gr_view_grid(grid);
 
-	// init array to store neighbor states of the cell
+	// Take coordinates of the middle cell
+	size_t xMid= xSize/2,  yMid= ySize/2;
+
+	// init and fill array with neighbor states of the cell
 	State *neighborStates = malloc(nbSize * sizeof(State));
+  	gr_get_neighbor_states(grid, neighborStates, xMid, yMid, MOORE);
 
-  	gr_get_neighbor_states(grid, neighborStates, xSize/2, ySize/2, MOORE);
+  	// Compare state returned (by the function) to the state value content in the cell of the grid 
 
-
-
-  	// Compare states returned to value content in cells 
-
+  	assert(*(gr_get_cell(grid, xMid, yMid - 1)->currentState)==neighborStates[0]);
 
 
 	// Free memory

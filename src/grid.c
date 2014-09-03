@@ -44,6 +44,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   // pointer validation
   assert(grid);
 
+  //  Fix number of neighbor cells
   NeighType neighType = MOORE;
   size_t nbSize;
 
@@ -54,7 +55,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
     nbSize = 4;  
   }
   
-
+// init prevalence
   double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
   double increment = 1 / nbSize;
 
