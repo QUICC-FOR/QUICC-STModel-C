@@ -189,7 +189,7 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
       // Pickup a random state
-      int rand = gsl_rng_uniform_int(rng, 4);
+      int rand = gsl_rng_uniform_int(rng, 3);
       // Set state based on the random value
       switch(rand){
         case CONIFEROUS:
@@ -203,45 +203,44 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
         case  MIXED:
         gr_set_cell(grid, MIXED, x, y);
         break;
-
-        case TRANSITIONAL:
-        gr_set_cell(grid, TRANSITIONAL, x, y);
-        break;
       }
     }
   }
+    gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
 
   // Get y dimension
   int ysize = grid->yDim;
-  State chosenState;
 
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
 
       if (y < (ysize / 3)) {
-        chosenState = CONIFEROUS;
-        gr_set_cell(grid,chosenState,x,y);
-      } else if (y < 2 * (ysize / 3)) {
-        chosenState = MIXED;
-        gr_set_cell(grid,chosenState,x,y);
-      } else if (y < ysize) {
-        chosenState = DECIDUOUS;
-        gr_set_cell(grid,chosenState,x,y);
-      } else {
+        gr_set_cell(grid,CONIFEROUS,x,y);
+      } 
+
+      else if (y < 2 * (ysize / 3)) {
+        gr_set_cell(grid,MIXED,x,y);
+      } 
+
+      else if (y < ysize) { 
+        gr_set_cell(grid,DECIDUOUS,x,y);
+      } 
+      
+      else {
         printf("%s \n", "State undefined...");
         abort();
       }
     }
   }
   gr_set_disturb_grid(grid, THRESDIST, rng);
-
 }
 
 
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
+
 }
 
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
@@ -268,12 +267,18 @@ void  gr_view_grid(Grid *grid) {
     size_t xsize = grid->xDim;
 
     for (int y = 0; y < ysize; ++y) {
+        
         printf("%d    |", y);
+            
             for (int x = 0; x < xsize; ++x) {
+
                 const GridCell *c = gr_get_cell(grid, x, y);
                 printf(" %d |", (int)*(c->currentState));
+            
             }
+        
         printf("\n");
+    
     }
 
 }
