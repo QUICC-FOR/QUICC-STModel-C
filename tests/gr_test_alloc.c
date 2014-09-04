@@ -10,13 +10,12 @@ int main() {
 	/* DESC: Test memory allocated to the grid */
 
 	// Init random number generator
-
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// number of iterations
-	int nTest = 10;
+	int nTest = 100;
 
 	//  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 
 

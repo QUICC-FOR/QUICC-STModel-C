@@ -7,7 +7,7 @@
 
 int main() {
 
-	/* DESC: Test gr_get_neighbor_states */
+	/* DESC: Create a grid and try to get neighbors of cells located on boundaries and middle */
 
 	// Init random number generator
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
