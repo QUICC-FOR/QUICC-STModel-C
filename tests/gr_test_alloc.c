@@ -22,9 +22,9 @@ int main() {
 
 	for(int i = 0; i < nTest+1; i++){
 		// Random var		
-		size_t xSize = gsl_rng_uniform_int(rng, 100);
-		size_t ySize = gsl_rng_uniform_int(rng, 100);
-		size_t timeSteps = gsl_rng_uniform_int(rng, 100);
+		size_t xSize = gsl_rng_uniform_int(rng, 99)+1;
+		size_t ySize = gsl_rng_uniform_int(rng, 99)+1;
+		size_t timeSteps = gsl_rng_uniform_int(rng, 99)+1;
 
 		// Create grid
 		Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);

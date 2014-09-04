@@ -20,8 +20,8 @@ GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 
   assert(grid);
 
-  assert(y < grid->yDim);
-  assert(x < grid->xDim);
+  assert(y <= grid->yDim);
+  assert(x <= grid->xDim);
 
   // note the arrow operator: grid->yDim === (*grid).yDim
   size_t  index = grid->xDim * y + x; 
