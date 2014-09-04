@@ -10,6 +10,7 @@
 #define GC_NUM_STATES 4
 typedef enum { DECIDUOUS,CONIFEROUS,TRANSITIONAL,MIXED} State;
 typedef double StateData [GC_NUM_STATES];
+
 typedef enum { MOORE, VONNE} NeighType;
 
 

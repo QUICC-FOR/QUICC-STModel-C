@@ -4,6 +4,7 @@
 #include "grid_cell.h"
 #include "grid.h"
 
+
 // prototypes for functions defining model parameters
 static double beta_d(Climate climate);
 static double beta_c(Climate climate);

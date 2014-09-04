@@ -10,16 +10,14 @@ int main() {
 	/* DESC: Test gr_get_neighbor_states */
 
 	// Init random number generator
-
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// Random var		
-	size_t xSize = gsl_rng_uniform_int(rng, 100);
-	size_t ySize = gsl_rng_uniform_int(rng, 100);
-	size_t timeSteps = gsl_rng_uniform_int(rng, 100);
-
+	size_t xSize = 3;
+	size_t ySize = 3;
+	size_t timeSteps = 10;
 
 	  //  Fix number of neighbor cells
 	  NeighType neighType = MOORE;
@@ -31,10 +29,9 @@ int main() {
 	  else if(neighType == VONNE){
 	    nbSize = 4;  
 	  }
-	  
 
 	// Create grid
-	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
+	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,RANDOM,rng);
 	assert(grid);
 	gr_view_grid(grid);
 
