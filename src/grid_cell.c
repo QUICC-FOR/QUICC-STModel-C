@@ -109,6 +109,29 @@ void gc_destroy_cell(GridCell *cell) {
 
 }
 
+char * gc_get_state(GridCell *cell){
+   char* strState = malloc(sizeof(char));
+
+  switch(*(cell->currentState)){
+  	case CONIFEROUS:
+  	*strState = 'C';
+  	break;
+
+  	case TRANSITIONAL:
+  	*strState = 'T';
+  	break;
+
+  	case DECIDUOUS:
+  	*strState = 'D';
+  	break;
+
+  	case MIXED:
+  	*strState = 'M';
+  	break;
+  }
+  return strState;
+}
+
 // TO IMPLEMENT
 // FOR NOW, THESE RETURN A DUMMY VALUE; EVENTUALLY WILL RETURN THE RESULTS OF
 // STATISTICAL MODELS
