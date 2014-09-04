@@ -24,7 +24,7 @@ int main() {
 		// Random var		
 		size_t xSize = gsl_rng_uniform_int(rng, 99)+1;
 		size_t ySize = gsl_rng_uniform_int(rng, 99)+1;
-		size_t timeSteps = gsl_rng_uniform_int(rng, 99)+1;
+		size_t timeSteps = 10;
 
 		// Create grid
 		Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
@@ -34,7 +34,6 @@ int main() {
 		assert(grid->xDim == xSize);
 		assert(grid->yDim == ySize);
 		assert(grid->gridData != NULL);
-		assert(gr_get_cell(grid,1,1)->historySize == timeSteps);
 		
 		// Free memory
 		gr_destroy_grid(grid);
