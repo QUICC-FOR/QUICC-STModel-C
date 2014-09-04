@@ -38,18 +38,23 @@ int main() {
 	assert(grid);
 	gr_view_grid(grid);
 
-	// Take coordinates of the middle cell
+	// Take coordinates of tested cells
 	size_t xMid= xSize/2,  yMid= ySize/2;
+	//size_t xUp= xSize,  yUp= ySize;
+	//size_t xDown= 0,  yDown= ySize/2;	
 
 	// init and fill array with neighbor states of the cell
 	State *neighborStates = malloc(nbSize * sizeof(State));
+
+	// Assertion of four cells in the corners and in the middle
   	gr_get_neighbor_states(grid, neighborStates, xMid, yMid, MOORE);
-
-  	// Compare state returned (by the function) to the state value content in the cell of the grid 
-
-  	assert(*(gr_get_cell(grid, xMid, yMid - 1)->currentState)==neighborStates[0]);
-
-
+  	//gr_get_neighbor_states(grid, neighborStates, xMid, yDown, MOORE);
+  	//gr_get_neighbor_states(grid, neighborStates, xDown, yMid, MOORE);
+  	//gr_get_neighbor_states(grid, neighborStates, xDown, yUp, MOORE);
+  	//gr_get_neighbor_states(grid, neighborStates, xUp, yDown, MOORE);
+  	//gr_get_neighbor_states(grid, neighborStates, xUp, yUp, MOORE);
+  	//gr_get_neighbor_states(grid, neighborStates, xDown, yDown, MOORE);
+  	
 	// Free memory
 	gr_destroy_grid(grid);
 	
