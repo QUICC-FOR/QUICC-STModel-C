@@ -27,7 +27,7 @@ int main() {
 		size_t timeSteps = 10;
 
 		// Create grid
-		Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
+		Grid * grid = gr_make_grid(xSize,ySize,timeSteps,RANDOM,rng);
 		assert(grid);
 
 		// Assertions

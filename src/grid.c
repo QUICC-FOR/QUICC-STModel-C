@@ -189,9 +189,9 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
       // Pickup a random state
-      int rand = gsl_rng_uniform_int(rng, 3);
+      int rn = gsl_rng_uniform_int(rng, 3);
       // Set state based on the random value
-      switch(rand){
+      switch(rn){
         case CONIFEROUS:
         gr_set_cell(grid, CONIFEROUS, x, y);
         break;
@@ -211,21 +211,24 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
 
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
 
+  assert(grid->xDim>=3);
+  assert(grid->yDim>=3);
+
   // Get y dimension
-  int ysize = grid->yDim;
+  int ylim = grid->yDim/3;
 
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
 
-      if (y < (ysize / 3)) {
+      if (y < ylim) {
         gr_set_cell(grid,CONIFEROUS,x,y);
       } 
 
-      else if (y < 2 * (ysize / 3)) {
+      else if (y < 2 * ylim) {
         gr_set_cell(grid,MIXED,x,y);
       } 
 
-      else if (y < ysize) { 
+      else if (y  >= 2 * ylim) { 
         gr_set_cell(grid,DECIDUOUS,x,y);
       } 
       
@@ -240,7 +243,63 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
 
 
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
+  assert(grid->xDim>=5);
+  assert(grid->yDim>=5);
 
+  int ylim = grid->yDim/5;
+
+  for (int x = 0; x < grid->xDim; x++) {
+    for (int y = 0; y < grid->yDim; y++) {
+
+      int rn = gsl_rng_uniform_int(rng, 2);
+
+      if (y < ylim) {
+        gr_set_cell(grid,CONIFEROUS,x,y);
+      } 
+
+      else if (y < 2 * ylim) {
+          switch(rn){
+            
+            case 0:
+            gr_set_cell(grid,CONIFEROUS,x,y);
+            break;
+
+            case 1:
+            gr_set_cell(grid,MIXED,x,y);
+            break;
+
+          }
+        } 
+
+      else if (y < 3 * ylim) { 
+        gr_set_cell(grid,MIXED,x,y);
+      } 
+
+      else if (y < 4 * ylim) { 
+          switch(rn){
+            
+            case 0:
+            gr_set_cell(grid,DECIDUOUS,x,y);
+            break;
+
+            case 1:
+            gr_set_cell(grid,MIXED,x,y);
+            break;
+
+          }
+      } 
+
+      else if (y >= 4 * ylim) { 
+        gr_set_cell(grid,DECIDUOUS,x,y);
+      } 
+      
+      else {
+        printf("%s \n", "State undefined...");
+        abort();
+      }
+    }
+  }
+  gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
