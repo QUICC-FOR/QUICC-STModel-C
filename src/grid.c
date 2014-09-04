@@ -186,16 +186,28 @@ void gr_destroy_grid(Grid *grid) {
 
 void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
 
-  State chosenState;
-  State GC_POSSIBLE_STATES [GC_NUM_STATES];
-
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
       // Pickup a random state
-      chosenState = gsl_ran_choose(rng, &chosenState, 1, GC_POSSIBLE_STATES,
-                                   GC_NUM_STATES, sizeof(State));
+      int rand = gsl_rng_uniform_int(rng, 4);
       // Set state based on the random value
-      gr_set_cell(grid, chosenState, x, y);
+      switch(rand){
+        case CONIFEROUS:
+        gr_set_cell(grid, CONIFEROUS, x, y);
+        break;
+
+        case DECIDUOUS:
+        gr_set_cell(grid, DECIDUOUS, x, y);
+        break;
+
+        case  MIXED:
+        gr_set_cell(grid, MIXED, x, y);
+        break;
+
+        case TRANSITIONAL:
+        gr_set_cell(grid, TRANSITIONAL, x, y);
+        break;
+      }
     }
   }
 }
