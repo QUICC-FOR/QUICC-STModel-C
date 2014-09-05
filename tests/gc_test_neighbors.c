@@ -15,10 +15,12 @@ int main() {
 	assert(rng);
 	gsl_rng_set(rng, (int) time(NULL)); 
 
-	// Random var		
+	// vars declaration	
 	size_t xSize = 3; // Last expression +1: Ensured grid min size != 0;
 	size_t ySize = 3; // Last expression +1: Ensured grid min size != 0;
 	size_t timeSteps = 10;
+	int sum_grid = 0;
+	int sum_neiCells =0;
 
 	  //  Fix number of neighbor cells
 	  NeighType neighType = MOORE;
@@ -38,10 +40,8 @@ int main() {
 	// init and fill array with neighbor states of the cell
 	State *neighborStates = malloc(nbSize * sizeof(State));
 
-	//get sum of the grid - should equal to 0
-	int sum_grid = 0;
-	int sum_neiCells =0;
 
+	//get sum of the grid - should equal to 0
 	for(int x=0; x<xSize;x++){
 		for(int y=0; y<ySize;y++){
 			sum_grid += *(gr_get_cell(grid,x,y)->currentState);
@@ -50,7 +50,6 @@ int main() {
 
 	// First assertion on initial grid
 	assert(sum_grid == 0);
-
 
 	for(int x=0; x<xSize;x++){
 	  for(int y=0; y<ySize;y++){
