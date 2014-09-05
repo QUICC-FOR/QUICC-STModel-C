@@ -96,8 +96,8 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
 
 void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighType neighType) {
 
-  assert(y < grid->yDim);
-  assert(x < grid->xDim);
+  assert(y <= grid->yDim);
+  assert(x <= grid->xDim);
 
   int i = 0;
   size_t xmax = grid->xDim-1;
@@ -200,6 +200,10 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     gr_set_mixed_grid(newGrid, rng);
     break;
 
+  case GRID_NULL:
+    gr_set_null_grid(newGrid,rng);
+    break;
+
   default:
     abort();
     break;
@@ -250,6 +254,15 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
     }
   }
     gr_set_disturb_grid(grid, THRESDIST, rng);
+}
+
+void gr_set_null_grid(Grid *grid, gsl_rng *rng) {
+
+  for (int x = 0; x < grid->xDim; x++) {
+    for (int y = 0; y < grid->yDim; y++) {
+      gr_set_cell(grid,0,x,y);
+    }
+  }
 }
 
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
