@@ -99,8 +99,40 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
   assert(y <= grid->yDim);
   assert(x <= grid->xDim);
 
-  
+  int i = 0;
 
+  for(int dx= -1; dx<=1; dx++){
+    for(int dy= -1; dy<=1; dy++){
+      
+      // if Cell located in the middle (0,0), skip
+      if(dx == dy == 0){
+        continue;
+      }
+
+      if(neighType == VONNE){
+      // Skip cells unused in VON NEUMAN neighboors
+        if(dx == dy == -1){
+          continue;
+        }
+        else if(dx == dy == 1){
+          continue;
+        }
+        else if(dx == 1 && dy == -1){
+          continue;
+        }
+        else if(dx == -1 && dy == 1){
+          continue;
+        }
+      }
+
+      int new_x = x + dx;
+      int new_y = x + dy;
+
+      dest[0] = *(gr_get_cell(grid, new_x, y - 1)->currentState);
+
+      i++; // Moove pos in dest array
+    }
+  }
 
 
 
