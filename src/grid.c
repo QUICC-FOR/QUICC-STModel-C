@@ -96,25 +96,29 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
 
 void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighType neighType) {
 
-  assert(y <= grid->yDim);
-  assert(x <= grid->xDim);
+  assert(y < grid->yDim);
+  assert(x < grid->xDim);
 
   int i = 0;
+  size_t xmax = grid->xDim-1;
+  size_t ymax = grid->yDim-1;
 
   for(int dx= -1; dx<=1; dx++){
     for(int dy= -1; dy<=1; dy++){
       
-      // if Cell located in the middle (0,0), skip
-      if(dx == dy == 0){
+      // EXCEPTIONS
+
+      // if Cell located in the middle (0,0), skip it
+      if(dx ==0  && dy == 0){
         continue;
       }
 
       if(neighType == VONNE){
       // Skip cells unused in VON NEUMAN neighboors
-        if(dx == dy == -1){
+        if(dx == -1 && dy == -1){
           continue;
         }
-        else if(dx == dy == 1){
+        else if(dx == 1 &&dy == 1){
           continue;
         }
         else if(dx == 1 && dy == -1){
@@ -125,39 +129,38 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
         }
       }
 
+      // new coord
+
       int new_x = x + dx;
       int new_y = x + dy;
 
-      dest[0] = *(gr_get_cell(grid, new_x, y - 1)->currentState);
+      // static state boundary on y
+      if(new_y > ymax){
+        dest[i] = CONIFEROUS;
+        i++; // Moove pos in dest array
+        continue;
+      }
+      else if(new_y < 0){
+        dest[i] = DECIDUOUS;
+        i++; // Moove pos in dest array
+        continue;
+      }
+
+      // Torus on x
+      if(new_x > xmax){
+        dest[i] = *(gr_get_cell(grid, 0, new_y )->currentState);
+      }
+      else if(new_x < 0){
+        dest[i] = *(gr_get_cell(grid, xmax, new_y )->currentState);
+      } 
+      else {
+        dest[i] = *(gr_get_cell(grid, new_x, new_y )->currentState);        
+      }
 
       i++; // Moove pos in dest array
+    
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-// Von neumann neighboors
-  dest[0] = *(gr_get_cell(grid, x, y - 1)->currentState);
-  dest[1] = *(gr_get_cell(grid, x, y + 1)->currentState);
-  dest[2] = *(gr_get_cell(grid, x + 1, y)->currentState);
-  dest[3] = *(gr_get_cell(grid, x - 1, y)->currentState);
-
-// Moore neighboors
-  if (neighType == MOORE) {
-    dest[4] = *(gr_get_cell(grid, x - 1, y + 1)->currentState);
-    dest[5] = *(gr_get_cell(grid, x - 1, y - 1)->currentState);
-    dest[6] = *(gr_get_cell(grid, x + 1, y + 1)->currentState);
-    dest[7] = *(gr_get_cell(grid, x + 1, y - 1)->currentState);
-  }
-
 }
 
 Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {

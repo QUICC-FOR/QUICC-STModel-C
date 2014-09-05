@@ -15,8 +15,8 @@ int main() {
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// Random var		
-	size_t xSize = 20;
-	size_t ySize = 20;
+	size_t xSize = 3;
+	size_t ySize = 3;
 	size_t timeSteps = 10;
 
 	  //  Fix number of neighbor cells
@@ -31,7 +31,7 @@ int main() {
 	  }
 
 	// Create grid
-	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,MIX,rng);
+	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,RANDOM,rng);
 	assert(grid);
 	gr_view_grid(grid);
 
