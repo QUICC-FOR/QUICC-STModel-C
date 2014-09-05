@@ -39,19 +39,15 @@ void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   *(cell->currentState) = chosenState;
 }
 
-void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
+void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType) {
 
   // pointer validation
   assert(grid);
 
   //  Fix number of neighbor cells
-  NeighType neighType = MOORE;
-  size_t nbSize;
+  size_t nbSize = 8;
 
-  if(neighType == MOORE){
-    nbSize = 8;  
-  } 
-  else if(neighType == VONNE){
+ if(neighType == VONNE){
     nbSize = 4;  
   }
   
@@ -90,18 +86,30 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   }
 
   // Stored in cell
-  gr_get_cell(grid, x, y)->prevalence[0] = count_C;
-  gr_get_cell(grid, x, y)->prevalence[1] = count_D;
-  gr_get_cell(grid, x, y)->prevalence[2] = count_M;
-  gr_get_cell(grid, x, y)->prevalence[3] = count_T;
+  gr_get_cell(grid, x, y)->prevalence[CONIFEROUS] = count_C;
+  gr_get_cell(grid, x, y)->prevalence[DECIDUOUS] = count_D;
+  gr_get_cell(grid, x, y)->prevalence[MIXED] = count_M;
+  gr_get_cell(grid, x, y)->prevalence[TRANSITIONAL] = count_T;
 
   free(neighborStates);
 }
 
 void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighType neighType) {
 
-  assert(y < grid->yDim);
-  assert(x < grid->xDim);
+  assert(y <= grid->yDim);
+  assert(x <= grid->xDim);
+
+  
+
+
+
+
+
+
+
+
+
+
 
 
 // Von neumann neighboors
