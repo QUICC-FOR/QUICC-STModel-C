@@ -332,7 +332,7 @@ void  gr_view_grid(Grid *grid) {
 
                 GridCell *cell = gr_get_cell(grid,x,y);
                 char *strState= gc_get_state(cell);
-                printf("| %c  ", *(strState));
+                printf("| %c ", *(strState));
 
             }
         

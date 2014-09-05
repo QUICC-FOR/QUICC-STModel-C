@@ -30,7 +30,7 @@ typedef struct {
 } GridCell;
 
 
-/*.
+/*
     FUNCTION PROTOTYPES
 */
 

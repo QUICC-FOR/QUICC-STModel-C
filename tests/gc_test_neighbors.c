@@ -31,7 +31,7 @@ int main() {
 	  }
 
 	// Create grid
-	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,UNIFORM,rng);
+	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,MIX,rng);
 	assert(grid);
 	gr_view_grid(grid);
 

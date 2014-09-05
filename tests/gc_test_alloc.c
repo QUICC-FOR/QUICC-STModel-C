@@ -19,15 +19,10 @@ int main() {
 	assert(cell->stateHistory[0] == DECIDUOUS);
 	assert(cell->historySize == histSize);
 
-	// printf("currentState[%d]:%d \t",0,(int)*(cell->currentState) );
-	// printf("stateHistory[%d]:%d \n",0,(int) cell->stateHistory[0] );
-
 	// Fill state history
 	for(int i = 1; i < histSize; i++) {
 		cell->currentState++;
 		*(cell->currentState) = TRANSITIONAL;
-		// printf("currentState[%d]:%d \t",i,(int)*(cell->currentState) );
-		// printf("stateHistory[%d]:%d \n",i,(int) cell->stateHistory[i] );
 	}
 
 	// Assert value of the last time step
