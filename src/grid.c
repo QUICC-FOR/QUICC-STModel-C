@@ -100,8 +100,8 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
   assert(x <= grid->xDim);
 
   int i = 0;
-  size_t xmax = grid->xDim-1;
-  size_t ymax = grid->yDim-1;
+  size_t xSize = grid->xDim-1;
+  size_t ySize = grid->yDim-1;
 
   for(int dx= -1; dx<=1; dx++){
     for(int dy= -1; dy<=1; dy++){
@@ -132,31 +132,28 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
       // new coord
 
       int new_x = x + dx;
-      int new_y = x + dy;
+      int new_y = y + dy;
 
-      // static state boundary on y
-      if(new_y > ymax){
+      // static state boundaries on y
+      if(new_y > ySize-1){
         dest[i] = CONIFEROUS;
-        i++; // Moove pos in dest array
-        continue;
       }
       else if(new_y < 0){
         dest[i] = DECIDUOUS;
-        i++; // Moove pos in dest array
-        continue;
-      }
-
-      // Torus on x
-      if(new_x > xmax){
-        dest[i] = *(gr_get_cell(grid, 0, new_y )->currentState);
-      }
-      else if(new_x < 0){
-        dest[i] = *(gr_get_cell(grid, xmax, new_y )->currentState);
       } 
       else {
-        dest[i] = *(gr_get_cell(grid, new_x, new_y )->currentState);        
+        // Torus on x
+        if(new_x > xSize-1){
+          dest[i] = *(gr_get_cell(grid, 0, new_y )->currentState);
+        }
+        else if(new_x < 0){
+          dest[i] = *(gr_get_cell(grid, xSize-1, new_y )->currentState);
+        } 
+        else {
+          dest[i] = *(gr_get_cell(grid, new_x, new_y )->currentState);        
+        }
       }
-
+      
       i++; // Moove pos in dest array
     
     }
@@ -208,7 +205,6 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     abort();
     break;
   }
-
 
   return newGrid;
 }
