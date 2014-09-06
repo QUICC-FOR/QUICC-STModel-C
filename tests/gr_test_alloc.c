@@ -21,8 +21,8 @@ int main() {
 
 	for(int i = 0; i < nTest+1; i++){
 		// Random var		
-		size_t xSize = gsl_rng_uniform_int(rng, 99)+1;
-		size_t ySize = gsl_rng_uniform_int(rng, 99)+1;
+		size_t xSize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
+		size_t ySize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
 		size_t timeSteps = 10;
 
 		// Create grid

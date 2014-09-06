@@ -39,19 +39,15 @@ void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   *(cell->currentState) = chosenState;
 }
 
-void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
+void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType) {
 
   // pointer validation
   assert(grid);
 
   //  Fix number of neighbor cells
-  NeighType neighType = MOORE;
-  size_t nbSize;
+  size_t nbSize = 8;
 
-  if(neighType == MOORE){
-    nbSize = 8;  
-  } 
-  else if(neighType == VONNE){
+ if(neighType == VONNE){
     nbSize = 4;  
   }
   
@@ -90,10 +86,10 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y) {
   }
 
   // Stored in cell
-  gr_get_cell(grid, x, y)->prevalence[0] = count_C;
-  gr_get_cell(grid, x, y)->prevalence[1] = count_D;
-  gr_get_cell(grid, x, y)->prevalence[2] = count_M;
-  gr_get_cell(grid, x, y)->prevalence[3] = count_T;
+  gr_get_cell(grid, x, y)->prevalence[CONIFEROUS] = count_C;
+  gr_get_cell(grid, x, y)->prevalence[DECIDUOUS] = count_D;
+  gr_get_cell(grid, x, y)->prevalence[MIXED] = count_M;
+  gr_get_cell(grid, x, y)->prevalence[TRANSITIONAL] = count_T;
 
   free(neighborStates);
 }
@@ -103,21 +99,65 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
   assert(y < grid->yDim);
   assert(x < grid->xDim);
 
+  int i = 0;
+  size_t xSize = grid->xDim-1;
+  size_t ySize = grid->yDim-1;
 
-// Von neumann neighboors
-  dest[0] = *(gr_get_cell(grid, x, y - 1)->currentState);
-  dest[1] = *(gr_get_cell(grid, x, y + 1)->currentState);
-  dest[2] = *(gr_get_cell(grid, x + 1, y)->currentState);
-  dest[3] = *(gr_get_cell(grid, x - 1, y)->currentState);
+  for(int dx= -1; dx<=1; dx++){
+    for(int dy= -1; dy<=1; dy++){
+      
+      // EXCEPTIONS
 
-// Moore neighboors
-  if (neighType == MOORE) {
-    dest[4] = *(gr_get_cell(grid, x - 1, y + 1)->currentState);
-    dest[5] = *(gr_get_cell(grid, x - 1, y - 1)->currentState);
-    dest[6] = *(gr_get_cell(grid, x + 1, y + 1)->currentState);
-    dest[7] = *(gr_get_cell(grid, x + 1, y - 1)->currentState);
+      // if Cell located in the middle (0,0), skip it
+      if(dx ==0  && dy == 0){
+        continue;
+      }
+
+      if(neighType == VONNE){
+      // Skip cells unused in VON NEUMAN neighboors
+        if(dx == -1 && dy == -1){
+          continue;
+        }
+        else if(dx == 1 &&dy == 1){
+          continue;
+        }
+        else if(dx == 1 && dy == -1){
+          continue;
+        }
+        else if(dx == -1 && dy == 1){
+          continue;
+        }
+      }
+
+      // new coord
+
+      int new_x = x + dx;
+      int new_y = y + dy;
+
+      // static state boundaries on y
+     if(new_y < 0){
+        dest[i] = DECIDUOUS;
+      } 
+     else if(new_y > ySize){
+        dest[i] = CONIFEROUS;
+      }
+      else {
+        // Torus on x
+        if(new_x > xSize){
+          dest[i] = *(gr_get_cell(grid, 0, new_y )->currentState);
+        }
+        else if(new_x < 0){
+          dest[i] = *(gr_get_cell(grid, xSize-1, new_y )->currentState);
+        } 
+        else {
+          dest[i] = *(gr_get_cell(grid, new_x, new_y )->currentState);        
+        }
+      }
+      
+      i++; // Moove pos in dest array
+    
+    }
   }
-
 }
 
 Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
@@ -157,11 +197,14 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     gr_set_mixed_grid(newGrid, rng);
     break;
 
+  case GRID_NULL:
+    gr_set_null_grid(newGrid,rng);
+    break;
+
   default:
     abort();
     break;
   }
-
 
   return newGrid;
 }
@@ -207,6 +250,15 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
     }
   }
     gr_set_disturb_grid(grid, THRESDIST, rng);
+}
+
+void gr_set_null_grid(Grid *grid, gsl_rng *rng) {
+
+  for (int x = 0; x < grid->xDim; x++) {
+    for (int y = 0; y < grid->yDim; y++) {
+      gr_set_cell(grid,0,x,y);
+    }
+  }
 }
 
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
@@ -326,8 +378,6 @@ void  gr_view_grid(Grid *grid) {
     size_t xsize = grid->xDim;
 
     for (int y = 0; y < ysize; ++y) {
-        
-            
             for (int x = 0; x < xsize; ++x) {
 
                 GridCell *cell = gr_get_cell(grid,x,y);
