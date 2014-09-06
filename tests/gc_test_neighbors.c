@@ -16,11 +16,11 @@ int main() {
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// vars declaration	
-	size_t xSize = 3; // Last expression +1: Ensured grid min size != 0;
-	size_t ySize = 3; // Last expression +1: Ensured grid min size != 0;
+	size_t xSize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
+	size_t ySize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
 	size_t timeSteps = 10;
 	int sum_grid = 0;
-	int sum_neiCells =0;
+	int sum_neiCells = 0;
 
 	  //  Fix number of neighbor cells
 	  NeighType neighType = MOORE;
@@ -55,18 +55,12 @@ int main() {
 	  for(int y=0; y<ySize;y++){
 		
 		gr_get_neighbor_states(grid,neighborStates,x,y,MOORE);	
-		
-		printf("Coords = %d, %d \n", x,y );
-
-		printf("Neighbors: \n" );
 
 		for(int i=0; i < nbSize; i ++){
-		printf("  %d", neighborStates[i] );
 		    sum_neiCells += neighborStates[i];
 		}
-		printf(" \n Sum:  %d \n", sum_neiCells);
 
-		// Test conditions
+		// Test static state boundaries on Y
 
 		if(y == 0){
 		  assert(sum_neiCells == 0 + (3 * DECIDUOUS));
@@ -75,14 +69,21 @@ int main() {
 		  assert(sum_neiCells == 0 + (3* CONIFEROUS));
 		}
 		
+		// Test torus on X
+
+		if(x== 0 && y==(ySize-1)/2){
+		  assert(sum_neiCells == 0);
+		} 
+		else if (x == xSize-1 && y==(ySize-1)/2){
+		  assert(sum_neiCells == 0);
+		}
+		
 		sum_neiCells = 0;
 	  }
 	}
 
-
-
-
 	// Free memory
 	gr_destroy_grid(grid);
+	free(neighborStates);
 	
 }

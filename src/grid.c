@@ -96,8 +96,8 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
 
 void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighType neighType) {
 
-  assert(y <= grid->yDim);
-  assert(x <= grid->xDim);
+  assert(y < grid->yDim);
+  assert(x < grid->xDim);
 
   int i = 0;
   size_t xSize = grid->xDim-1;
@@ -135,15 +135,15 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
       int new_y = y + dy;
 
       // static state boundaries on y
-      if(new_y > ySize-1){
-        dest[i] = CONIFEROUS;
-      }
-      else if(new_y < 0){
+     if(new_y < 0){
         dest[i] = DECIDUOUS;
       } 
+     else if(new_y > ySize){
+        dest[i] = CONIFEROUS;
+      }
       else {
         // Torus on x
-        if(new_x > xSize-1){
+        if(new_x > xSize){
           dest[i] = *(gr_get_cell(grid, 0, new_y )->currentState);
         }
         else if(new_x < 0){
@@ -378,8 +378,6 @@ void  gr_view_grid(Grid *grid) {
     size_t xsize = grid->xDim;
 
     for (int y = 0; y < ysize; ++y) {
-        
-            
             for (int x = 0; x < xsize; ++x) {
 
                 GridCell *cell = gr_get_cell(grid,x,y);
