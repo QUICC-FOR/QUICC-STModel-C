@@ -53,7 +53,6 @@ int main(int argc, char **argv) {
     gr_view_grid(grid);
 
   }
-  }
   // io_write_output(grid, OUTPUT_FILE);
 
   // cleanup
