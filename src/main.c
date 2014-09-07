@@ -13,6 +13,7 @@
 
 #define  MAX_TIME   10
 #define GR_SIZE 10
+#define NEIGHTYPE MOORE
 #define OUTPUT_FILE "test_output.csv"
 
 int main(int argc, char **argv) {
