@@ -25,7 +25,6 @@ int main(int argc, char **argv) {
 
   // set up the grid
   Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE, MAX_TIME, UNIFORM, rng);
-  gr_view_grid(grid);
 
   // main loop in time
   for (int year = 0; year < MAX_TIME; year++) {
