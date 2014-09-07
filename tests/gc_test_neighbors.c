@@ -16,8 +16,8 @@ int main() {
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// vars declaration	
-	size_t xSize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
-	size_t ySize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
+	size_t xSize = 3;
+	size_t ySize = 3;
 	size_t timeSteps = 10;
 	int sum_grid = 0;
 	int sum_neiCells = 0;
