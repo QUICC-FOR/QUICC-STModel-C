@@ -24,6 +24,9 @@ typedef struct {
 	GridCell * 	gridData; //might want  to change to **
 } Grid;
 
+typedef int bool;
+#define TRUE 1
+#define FALSE 0
 
 /*
 	FUNCTION PROTOTYPES
@@ -31,7 +34,7 @@ typedef struct {
 
 // TODO: add parameters and function description
 
-Grid * 		gr_make_grid		               (size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng* rng);
+Grid * 		gr_make_grid		               (size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, bool disturbances,gsl_rng* rng);
 GridCell *	gr_get_cell		               (Grid * grid, size_t x, size_t y);
 void	           	gr_set_cell	                           (Grid* grid, State chosenState, size_t x, size_t y);
 void                	gr_get_neighbor_states      (Grid *grid, State *dest, size_t x, size_t y, NeighType neighType);

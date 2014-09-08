@@ -160,7 +160,7 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
   }
 }
 
-Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
+Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType,  bool disturb, gsl_rng *rng) {
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
@@ -183,6 +183,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     //newGrid->gridData[i] = gc_make_cell(numTimeSteps);
   }
 
+ // Setup initial spatial config of the grid 
 
   switch (gridType) {
   case RANDOM:
@@ -205,6 +206,18 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     abort();
     break;
   }
+
+switch(disturb){
+  case TRUE:
+  gr_set_disturb_grid(newGrid,THRESDIST,rng);
+  break;
+
+  case FALSE:
+  break;
+
+  default:
+  break;
+}
 
   return newGrid;
 }
@@ -249,7 +262,6 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-    gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_null_grid(Grid *grid, gsl_rng *rng) {
@@ -290,7 +302,6 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-  gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 
@@ -351,7 +362,6 @@ void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-  gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
