@@ -53,36 +53,36 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
   
 // init prevalence
   double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
-  double increment = 1 / nbSize;
+  double increment = 1.0 / nbSize;
 
   // set aside some memory for the neighbors
   State *neighborStates = malloc(nbSize * sizeof(State));
+  assert(neighborStates);
+
   gr_get_neighbor_states(grid, neighborStates, x, y, neighType );
 
   // Compute prevalence
-
   for (int i = 0; i < nbSize; i++) {
+
     switch (neighborStates[i]) {
 
     case TRANSITIONAL:
-      count_T = count_T + increment;
+      count_T += increment;
       break;
 
     case MIXED:
-      count_M = count_M + increment;
+      count_M += increment;
       break;
 
     case DECIDUOUS:
-      count_D = count_D + increment;
+      count_D += increment;
       break;
 
     case CONIFEROUS:
-      count_C = count_C + increment;
-      break;
-
-    default:
+      count_C += increment;
       break;
     }
+  
   }
 
   // Stored in cell
