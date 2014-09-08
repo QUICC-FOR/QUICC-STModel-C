@@ -86,5 +86,6 @@ int main() {
 	// Free memory
 	gr_destroy_grid(grid);
 	free(neighborStates);
+	gsl_rng_free(rng);
 	
 }

@@ -37,5 +37,6 @@ int main() {
 		
 		// Free memory
 		gr_destroy_grid(grid);
+		 gsl_rng_free(rng);
 	}
 }
