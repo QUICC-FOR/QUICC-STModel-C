@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE, MAX_TIME, UNIFORM, DISTURB, rng);
 
 // main loop in time
-  //for (int year = 0; year < MAX_TIME; year++) {
+  for (int year = 0; year < MAX_TIME; year++) {
     
     // View grid
     printf(" T ------------------------------------------------ \n");
@@ -41,29 +41,20 @@ int main(int argc, char **argv) {
             //Compute prevalence of cell
             gr_compute_prevalence(grid, x, y,  NEIGHTYPE);
 
-            printf("Coniferous prev: %f \n",gr_get_cell(grid,x,y)->prevalence[CONIFEROUS]);
-            printf("Mixed prev: %f \n",gr_get_cell(grid,x,y)->prevalence[MIXED]);
-            printf("Deciduous prev: %f \n",gr_get_cell(grid,x,y)->prevalence[DECIDUOUS]);
-            printf("Transitional prev: %f \n",gr_get_cell(grid,x,y)->prevalence[TRANSITIONAL]);
 
             //Compute trans probabilities 
             gc_get_trans_prob (gr_get_cell(grid,x,y));
 
-            printf("Coniferous trans_prob: %f \n",gr_get_cell(grid,x,y)->transitionProbs[CONIFEROUS]);
-            printf("Mixed trans_prob: %f \n",gr_get_cell(grid,x,y)->transitionProbs[MIXED]);
-            printf("Deciduous trans_prob: %f \n",gr_get_cell(grid,x,y)->transitionProbs[DECIDUOUS]);
-            printf("Transitional trans_prob: %f \n",gr_get_cell(grid,x,y)->transitionProbs[TRANSITIONAL]);
-
             //Select the new state of the actual cell 
-            //gc_select_new_state (gr_get_cell(grid,x,y), rng);
+            gc_select_new_state (gr_get_cell(grid,x,y), rng);
         }
     }
 
     // View grid
-    //printf(" T+1 ------------------------------------------------ \n");
-    //gr_view_grid(grid);
+    printf(" T+1 ------------------------------------------------ \n");
+    gr_view_grid(grid);
 
-  //}
+  }
   // io_write_output(grid, OUTPUT_FILE);
 
   // cleanup

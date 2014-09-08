@@ -23,14 +23,14 @@ int main() {
 
 	for(int z = 0; z < nTest; z++){
 		// vars declaration	
-		size_t xSize = gsl_rng_uniform_int(rng, 99)+1;
-		size_t ySize = gsl_rng_uniform_int(rng, 99)+1;
+		size_t xSize = gsl_rng_uniform_int(rng, 97)+3;
+		size_t ySize = gsl_rng_uniform_int(rng, 97)+3;
 		size_t timeSteps = gsl_rng_uniform_int(rng, 99)+1;
 
 
 		// Init grid
 		Grid *grid = gr_make_grid(xSize,ySize,timeSteps, UNIFORM,disturb,rng);
-		gr_view_grid(grid);
+
 		for(int x = 0 ; x < xSize; x++){
 			for(int y = 0 ; y < ySize; y++){
 				gr_compute_prevalence(grid, x, y,  MOORE);
