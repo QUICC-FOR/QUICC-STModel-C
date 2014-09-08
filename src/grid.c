@@ -53,36 +53,36 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
   
 // init prevalence
   double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
-  double increment = 1 / nbSize;
+  double increment = 1.0 / nbSize;
 
   // set aside some memory for the neighbors
   State *neighborStates = malloc(nbSize * sizeof(State));
+  assert(neighborStates);
+
   gr_get_neighbor_states(grid, neighborStates, x, y, neighType );
 
   // Compute prevalence
-
   for (int i = 0; i < nbSize; i++) {
+
     switch (neighborStates[i]) {
 
     case TRANSITIONAL:
-      count_T = count_T + increment;
+      count_T += increment;
       break;
 
     case MIXED:
-      count_M = count_M + increment;
+      count_M += increment;
       break;
 
     case DECIDUOUS:
-      count_D = count_D + increment;
+      count_D += increment;
       break;
 
     case CONIFEROUS:
-      count_C = count_C + increment;
-      break;
-
-    default:
+      count_C += increment;
       break;
     }
+  
   }
 
   // Stored in cell
@@ -160,7 +160,7 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
   }
 }
 
-Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType, gsl_rng *rng) {
+Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType,  bool disturb, gsl_rng *rng) {
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
@@ -183,6 +183,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     //newGrid->gridData[i] = gc_make_cell(numTimeSteps);
   }
 
+ // Setup initial spatial config of the grid 
 
   switch (gridType) {
   case RANDOM:
@@ -205,6 +206,18 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     abort();
     break;
   }
+
+switch(disturb){
+  case TRUE:
+  gr_set_disturb_grid(newGrid,THRESDIST,rng);
+  break;
+
+  case FALSE:
+  break;
+
+  default:
+  break;
+}
 
   return newGrid;
 }
@@ -249,7 +262,6 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-    gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_null_grid(Grid *grid, gsl_rng *rng) {
@@ -290,7 +302,6 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-  gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 
@@ -351,7 +362,6 @@ void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
       }
     }
   }
-  gr_set_disturb_grid(grid, THRESDIST, rng);
 }
 
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {

@@ -19,12 +19,13 @@ int main() {
 	size_t xSize = 3;
 	size_t ySize = 3;
 	size_t timeSteps = 10;
+	bool disturb = FALSE;
 	int sum_grid = 0;
 	int sum_neiCells = 0;
+	size_t nbSize;
 
 	  //  Fix number of neighbor cells
 	  NeighType neighType = MOORE;
-	  size_t nbSize;
 
 	  if(neighType == MOORE){
 	    nbSize = 8;  
@@ -34,7 +35,7 @@ int main() {
 	  }
 
 	// Create RANDOM grid
-	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,GRID_NULL,rng);
+	Grid * grid = gr_make_grid(xSize,ySize,timeSteps,GRID_NULL, disturb,rng);
 	assert(grid);
 	
 	// init and fill array with neighbor states of the cell
@@ -85,5 +86,6 @@ int main() {
 	// Free memory
 	gr_destroy_grid(grid);
 	free(neighborStates);
+	gsl_rng_free(rng);
 	
 }
