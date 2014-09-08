@@ -13,7 +13,6 @@ typedef double StateData [GC_NUM_STATES];
 
 typedef enum { MOORE, VONNE} NeighType;
 
-
 typedef struct {
     double meanTemp;
     /*Task: list all variables need to be used*/

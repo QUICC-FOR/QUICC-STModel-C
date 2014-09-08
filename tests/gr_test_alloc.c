@@ -15,7 +15,7 @@ int main() {
 	gsl_rng_set(rng, (int) time(NULL)); 
 
 	// number of iterations
-	int nTest = 10;
+	int nTest = 100;
 	bool disturb = TRUE;
 
 	//  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 

@@ -83,7 +83,7 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   double rValue = gsl_rng_uniform(rng);
   double testVal = 0;
   State newState = 0;
-  State GC_POSSIBLE_STATES[GC_NUM_STATES];
+  State GC_POSSIBLE_STATES[GC_NUM_STATES] = {MIXED,DECIDUOUS,CONIFEROUS,TRANSITIONAL};
 
   for (int i = 0; i < GC_NUM_STATES; i++) {
     State curState = GC_POSSIBLE_STATES[i];
@@ -97,7 +97,7 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   cell->currentState++;
 
   // check that we haven't wandered into invalid memory
-  assert(cell->currentState < (cell->stateHistory + (cell->historySize - 1)));
+  assert(cell->currentState <= (cell->stateHistory + (cell->historySize)));
 
   *(cell->currentState) = newState;
 }

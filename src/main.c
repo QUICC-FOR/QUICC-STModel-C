@@ -11,7 +11,7 @@
 
 // length of time to run the model
 
-#define  MAX_TIME   10
+#define  MAX_TIME   100
 #define GR_SIZE 10
 #define NEIGHTYPE MOORE
 #define OUTPUT_FILE "test_output.csv"
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   for (int year = 0; year < MAX_TIME; year++) {
     
     // View grid
-    printf(" T ------------------------------------------------ \n");
+    printf(" Year %d ------------------------------------------------ \n",year);
     gr_view_grid(grid);
 
     for(int x =0; x < GR_SIZE; x++){
@@ -50,11 +50,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    // View grid
-    printf(" T+1 ------------------------------------------------ \n");
-    gr_view_grid(grid);
-
-  }
+  } 
   // io_write_output(grid, OUTPUT_FILE);
 
   // cleanup
