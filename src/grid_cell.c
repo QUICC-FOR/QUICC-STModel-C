@@ -4,7 +4,6 @@
 #include "grid_cell.h"
 #include "grid.h"
 
-
 // prototypes for functions defining model parameters
 static double beta_d(Climate climate);
 static double beta_c(Climate climate);
@@ -83,7 +82,8 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   double rValue = gsl_rng_uniform(rng);
   double testVal = 0;
   State newState = 0;
-  State GC_POSSIBLE_STATES[GC_NUM_STATES] = {MIXED,DECIDUOUS,CONIFEROUS,TRANSITIONAL};
+  State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS,
+                                              TRANSITIONAL };
 
   for (int i = 0; i < GC_NUM_STATES; i++) {
     State curState = GC_POSSIBLE_STATES[i];
@@ -106,28 +106,27 @@ void gc_destroy_cell(GridCell *cell) {
 
   cell->currentState = NULL;
   free(cell->stateHistory);
-
 }
 
-char * gc_get_state(GridCell *cell){
-   char* strState = malloc(sizeof(char));
+char *gc_get_state(GridCell *cell) {
+  char *strState = malloc(sizeof(char));
 
-  switch(*(cell->currentState)){
-  	case CONIFEROUS:
-  	*strState = 'C';
-  	break;
+  switch (*(cell->currentState)) {
+  case CONIFEROUS:
+    *strState = 'C';
+    break;
 
-  	case TRANSITIONAL:
-  	*strState = 'T';
-  	break;
+  case TRANSITIONAL:
+    *strState = 'T';
+    break;
 
-  	case DECIDUOUS:
-  	*strState = 'D';
-  	break;
+  case DECIDUOUS:
+    *strState = 'D';
+    break;
 
-  	case MIXED:
-  	*strState = 'M';
-  	break;
+  case MIXED:
+    *strState = 'M';
+    break;
   }
   return strState;
 }

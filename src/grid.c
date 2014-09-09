@@ -24,12 +24,10 @@ GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
   assert(x <= grid->xDim);
 
   // note the arrow operator: grid->yDim === (*grid).yDim
-  size_t  index = grid->xDim * y + x; 
-  
+  size_t index = grid->xDim * y + x;
 
   // printf("Coord(%d, %d): %d \n",(int)x,(int)y,(int)index);
   return &(grid->gridData[index]);
-
 }
 
 void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
@@ -39,7 +37,8 @@ void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   *(cell->currentState) = chosenState;
 }
 
-void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType) {
+void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
+                           NeighType neighType) {
 
   // pointer validation
   assert(grid);
@@ -47,11 +46,11 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
   //  Fix number of neighbor cells
   size_t nbSize = 8;
 
- if(neighType == VONNE){
-    nbSize = 4;  
+  if (neighType == VONNE) {
+    nbSize = 4;
   }
-  
-// init prevalence
+
+  // init prevalence
   double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
   double increment = 1.0 / nbSize;
 
@@ -59,7 +58,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
   State *neighborStates = malloc(nbSize * sizeof(State));
   assert(neighborStates);
 
-  gr_get_neighbor_states(grid, neighborStates, x, y, neighType );
+  gr_get_neighbor_states(grid, neighborStates, x, y, neighType);
 
   // Compute prevalence
   for (int i = 0; i < nbSize; i++) {
@@ -82,7 +81,6 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
       count_C += increment;
       break;
     }
-  
   }
 
   // Stored in cell
@@ -94,37 +92,35 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,  NeighType neighType)
   free(neighborStates);
 }
 
-void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighType neighType) {
+void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
+                            NeighType neighType) {
 
   assert(y < grid->yDim);
   assert(x < grid->xDim);
 
   int i = 0;
-  size_t xSize = grid->xDim-1;
-  size_t ySize = grid->yDim-1;
+  size_t xSize = grid->xDim - 1;
+  size_t ySize = grid->yDim - 1;
 
-  for(int dx= -1; dx<=1; dx++){
-    for(int dy= -1; dy<=1; dy++){
-      
+  for (int dx = -1; dx <= 1; dx++) {
+    for (int dy = -1; dy <= 1; dy++) {
+
       // EXCEPTIONS
 
       // if Cell located in the middle (0,0), skip it
-      if(dx ==0  && dy == 0){
+      if (dx == 0 && dy == 0) {
         continue;
       }
 
-      if(neighType == VONNE){
-      // Skip cells unused in VON NEUMAN neighboors
-        if(dx == -1 && dy == -1){
+      if (neighType == VONNE) {
+        // Skip cells unused in VON NEUMAN neighboors
+        if (dx == -1 && dy == -1) {
           continue;
-        }
-        else if(dx == 1 &&dy == 1){
+        } else if (dx == 1 && dy == 1) {
           continue;
-        }
-        else if(dx == 1 && dy == -1){
+        } else if (dx == 1 && dy == -1) {
           continue;
-        }
-        else if(dx == -1 && dy == 1){
+        } else if (dx == -1 && dy == 1) {
           continue;
         }
       }
@@ -135,32 +131,28 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y, NeighTy
       int new_y = y + dy;
 
       // static state boundaries on y
-     if(new_y < 0){
+      if (new_y < 0) {
         dest[i] = DECIDUOUS;
-      } 
-     else if(new_y > ySize){
+      } else if (new_y > ySize) {
         dest[i] = CONIFEROUS;
-      }
-      else {
+      } else {
         // Torus on x
-        if(new_x > xSize){
-          dest[i] = *(gr_get_cell(grid, 0, new_y )->currentState);
-        }
-        else if(new_x < 0){
-          dest[i] = *(gr_get_cell(grid, xSize-1, new_y )->currentState);
-        } 
-        else {
-          dest[i] = *(gr_get_cell(grid, new_x, new_y )->currentState);        
+        if (new_x > xSize) {
+          dest[i] = *(gr_get_cell(grid, 0, new_y)->currentState);
+        } else if (new_x < 0) {
+          dest[i] = *(gr_get_cell(grid, xSize - 1, new_y)->currentState);
+        } else {
+          dest[i] = *(gr_get_cell(grid, new_x, new_y)->currentState);
         }
       }
-      
+
       i++; // Moove pos in dest array
-    
     }
   }
 }
 
-Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gridType,  bool disturb, gsl_rng *rng) {
+Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
+                   GridType gridType, bool disturb, gsl_rng *rng) {
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
@@ -180,10 +172,10 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
   // for loop across all gridData and call
   for (int i = 0; i < dim; i++) {
     newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
-    //newGrid->gridData[i] = gc_make_cell(numTimeSteps);
+    // newGrid->gridData[i] = gc_make_cell(numTimeSteps);
   }
 
- // Setup initial spatial config of the grid 
+  // Setup initial spatial config of the grid
 
   switch (gridType) {
   case RANDOM:
@@ -199,7 +191,7 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     break;
 
   case GRID_NULL:
-    gr_set_null_grid(newGrid,rng);
+    gr_set_null_grid(newGrid, rng);
     break;
 
   default:
@@ -207,17 +199,17 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, GridType gr
     break;
   }
 
-switch(disturb){
+  switch (disturb) {
   case TRUE:
-  gr_set_disturb_grid(newGrid,THRESDIST,rng);
-  break;
+    gr_set_disturb_grid(newGrid, THRESDIST, rng);
+    break;
 
   case FALSE:
-  break;
+    break;
 
   default:
-  break;
-}
+    break;
+  }
 
   return newGrid;
 }
@@ -229,16 +221,16 @@ void gr_destroy_grid(Grid *grid) {
 
   for (int x = 0; x < xsize; x++) {
     for (int y = 0; y < ysize; y++) {
-     GridCell *cell = gr_get_cell(grid,x,y);
-     gc_destroy_cell(cell);
-     }
+      GridCell *cell = gr_get_cell(grid, x, y);
+      gc_destroy_cell(cell);
+    }
   }
-  
+
   free(grid->gridData);
   free(grid);
 }
 
-/*	 	GRID INITIALIZATION FUNCTIONS		*/
+/*    GRID INITIALIZATION FUNCTIONS   */
 
 void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
 
@@ -247,16 +239,16 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
       // Pickup a random state
       int rn = gsl_rng_uniform_int(rng, 3);
       // Set state based on the random value
-      switch(rn){
-        case CONIFEROUS:
+      switch (rn) {
+      case CONIFEROUS:
         gr_set_cell(grid, CONIFEROUS, x, y);
         break;
 
-        case DECIDUOUS:
+      case DECIDUOUS:
         gr_set_cell(grid, DECIDUOUS, x, y);
         break;
 
-        case  MIXED:
+      case MIXED:
         gr_set_cell(grid, MIXED, x, y);
         break;
       }
@@ -268,35 +260,29 @@ void gr_set_null_grid(Grid *grid, gsl_rng *rng) {
 
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
-      gr_set_cell(grid,0,x,y);
+      gr_set_cell(grid, 0, x, y);
     }
   }
 }
 
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
 
-  assert(grid->xDim>=3);
-  assert(grid->yDim>=3);
+  assert(grid->xDim >= 3);
+  assert(grid->yDim >= 3);
 
   // Get y dimension
-  int ylim = grid->yDim/3;
+  int ylim = grid->yDim / 3;
 
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
 
       if (y < ylim) {
-        gr_set_cell(grid,CONIFEROUS,x,y);
-      } 
-
-      else if (y < 2 * ylim) {
-        gr_set_cell(grid,MIXED,x,y);
-      } 
-
-      else if (y  >= 2 * ylim) { 
-        gr_set_cell(grid,DECIDUOUS,x,y);
-      } 
-      
-      else {
+        gr_set_cell(grid, CONIFEROUS, x, y);
+      } else if (y < 2 * ylim) {
+        gr_set_cell(grid, MIXED, x, y);
+      } else if (y >= 2 * ylim) {
+        gr_set_cell(grid, DECIDUOUS, x, y);
+      } else {
         printf("%s \n", "State undefined...");
         abort();
       }
@@ -304,12 +290,11 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
   }
 }
 
-
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
-  assert(grid->xDim>=5);
-  assert(grid->yDim>=5);
+  assert(grid->xDim >= 5);
+  assert(grid->yDim >= 5);
 
-  int ylim = grid->yDim/5;
+  int ylim = grid->yDim / 5;
 
   for (int x = 0; x < grid->xDim; x++) {
     for (int y = 0; y < grid->yDim; y++) {
@@ -317,46 +302,34 @@ void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
       int rn = gsl_rng_uniform_int(rng, 2);
 
       if (y < ylim) {
-        gr_set_cell(grid,CONIFEROUS,x,y);
-      } 
+        gr_set_cell(grid, CONIFEROUS, x, y);
+      } else if (y < 2 * ylim) {
+        switch (rn) {
 
-      else if (y < 2 * ylim) {
-          switch(rn){
-            
-            case 0:
-            gr_set_cell(grid,CONIFEROUS,x,y);
-            break;
+        case 0:
+          gr_set_cell(grid, CONIFEROUS, x, y);
+          break;
 
-            case 1:
-            gr_set_cell(grid,MIXED,x,y);
-            break;
+        case 1:
+          gr_set_cell(grid, MIXED, x, y);
+          break;
+        }
+      } else if (y < 3 * ylim) {
+        gr_set_cell(grid, MIXED, x, y);
+      } else if (y < 4 * ylim) {
+        switch (rn) {
 
-          }
-        } 
+        case 0:
+          gr_set_cell(grid, DECIDUOUS, x, y);
+          break;
 
-      else if (y < 3 * ylim) { 
-        gr_set_cell(grid,MIXED,x,y);
-      } 
-
-      else if (y < 4 * ylim) { 
-          switch(rn){
-            
-            case 0:
-            gr_set_cell(grid,DECIDUOUS,x,y);
-            break;
-
-            case 1:
-            gr_set_cell(grid,MIXED,x,y);
-            break;
-
-          }
-      } 
-
-      else if (y >= 4 * ylim) { 
-        gr_set_cell(grid,DECIDUOUS,x,y);
-      } 
-      
-      else {
+        case 1:
+          gr_set_cell(grid, MIXED, x, y);
+          break;
+        }
+      } else if (y >= 4 * ylim) {
+        gr_set_cell(grid, DECIDUOUS, x, y);
+      } else {
         printf("%s \n", "State undefined...");
         abort();
       }
@@ -382,23 +355,20 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
 void gr_update_grid(Grid *grid) {
 }
 
-void  gr_view_grid(Grid *grid) {
+void gr_view_grid(Grid *grid) {
 
-    size_t ysize = grid->yDim;
-    size_t xsize = grid->xDim;
+  size_t ysize = grid->yDim;
+  size_t xsize = grid->xDim;
 
-    for (int y = 0; y < ysize; ++y) {
-            for (int x = 0; x < xsize; ++x) {
+  for (int y = 0; y < ysize; ++y) {
+    for (int x = 0; x < xsize; ++x) {
 
-                GridCell *cell = gr_get_cell(grid,x,y);
-                char *strState= gc_get_state(cell);
-                printf("| %c ", *(strState));
-
-            }
-        
-        printf("|   %d", y);
-        printf("\n");
-    
+      GridCell *cell = gr_get_cell(grid, x, y);
+      char *strState = gc_get_state(cell);
+      printf("| %c ", *(strState));
     }
 
+    printf("|   %d", y);
+    printf("\n");
+  }
 }
