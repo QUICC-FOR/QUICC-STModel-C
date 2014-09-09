@@ -51,12 +51,12 @@ for year in range(nYears):
     for coords in gridData.keys():
         grid.append((coords[0], coords[1], interpretVal(gridData[coords][year])))
     display.update(grid)
-    if(year == 0):
-        raw_input("Press enter to begin")
-    elapsed = time.clock() - stTime
-    if elapsed < waitTime:
-        time.sleep(waitTime - elapsed)
-    
+    raw_input("Press Enter to continue")
+#    if(year == 0):
+#        raw_input("Press enter to begin")
+#    elapsed = time.clock() - stTime
+#    if elapsed < waitTime:
+#        time.sleep(waitTime - elapsed)
 
 
 

@@ -19,6 +19,9 @@ int main() {
     bool disturb = TRUE;
 
     //  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 
+    // Think about negative tests
+
+    // Test for square vs rectangular + big vs small    
 
     for(int i = 0; i < nTest; i++){
         // Random var       
@@ -33,7 +36,7 @@ int main() {
         // Assertions
         assert(grid->xDim == xSize);
         assert(grid->yDim == ySize);
-        assert(grid->gridData != NULL);
+        assert(grid->gridData);
         
         // Free memory
         gr_destroy_grid(grid);

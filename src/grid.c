@@ -352,23 +352,19 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
   }
 }
 
-void gr_update_grid(Grid *grid) {
-}
+void gr_output(Grid *grid){
 
-void gr_view_grid(Grid *grid) {
-
-  size_t ysize = grid->yDim;
   size_t xsize = grid->xDim;
+  size_t ysize = grid->yDim;
 
-  for (int y = 0; y < ysize; ++y) {
-    for (int x = 0; x < xsize; ++x) {
-
-      GridCell *cell = gr_get_cell(grid, x, y);
-      char *strState = gc_get_state(cell);
-      printf("| %c ", *(strState));
-    }
-
-    printf("|   %d", y);
-    printf("\n");
+  for(int x =0 ; x < xsize;  x++){
+    for(int y =0 ; y < ysize;  y++){
+        GridCell *cell  = gr_get_cell(grid,x,y);
+        printf("%d,%d",x,y);
+        for(int t =0; t<cell->historySize;t++){
+          printf(",%c", st_state_to_char(cell->stateHistory[t]));
+        }
+         printf("\n");    
+       }    
   }
 }

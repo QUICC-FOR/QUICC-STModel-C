@@ -34,3 +34,6 @@ Makefile
 CMakeFiles
 Testing
 
+#output 
+*.csv
+

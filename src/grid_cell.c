@@ -108,27 +108,28 @@ void gc_destroy_cell(GridCell *cell) {
   free(cell->stateHistory);
 }
 
-char *gc_get_state(GridCell *cell) {
-  char *strState = malloc(sizeof(char));
+char st_state_to_char(State s) {
 
-  switch (*(cell->currentState)) {
+  switch (s) {
   case CONIFEROUS:
-    *strState = 'C';
+    return 'C';
     break;
 
   case TRANSITIONAL:
-    *strState = 'T';
+    return 'T';
     break;
 
   case DECIDUOUS:
-    *strState = 'D';
+    return 'D';
     break;
 
   case MIXED:
-    *strState = 'M';
+    return 'M';
     break;
   }
-  return strState;
+
+  return 0;
+
 }
 
 // TO IMPLEMENT
