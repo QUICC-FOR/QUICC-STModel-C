@@ -82,6 +82,7 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   double rValue = gsl_rng_uniform(rng);
   double testVal = 0;
   State newState = 0;
+  // refactor: why is this defined here????
   State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS,
                                               TRANSITIONAL };
 
@@ -106,8 +107,7 @@ void gc_destroy_cell(GridCell *cell) {
 
   cell->currentState = NULL;
   free(cell->stateHistory);
-  // refactor:
-  // free(cell)
+  free(cell);
 }
 
 char st_state_to_char(State s) {

@@ -28,7 +28,7 @@ typedef int bool;
 typedef struct {
 	size_t xDim;
 	size_t yDim;
-	GridCell * gridData; //might want  to change to **
+	GridCell ** gridData;
 } Grid;
 
 

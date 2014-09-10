@@ -27,7 +27,7 @@ GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
   size_t index = grid->xDim * y + x;
 
   // printf("Coord(%d, %d): %d \n",(int)x,(int)y,(int)index);
-  return &(grid->gridData[index]);
+  return grid->gridData[index];
 }
 
 void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
@@ -51,6 +51,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
   }
 
   // init prevalence
+  // refactor into stateData type; rename to prevalence
   double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
   double increment = 1.0 / nbSize;
 
@@ -63,6 +64,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
   // Compute prevalence
   for (int i = 0; i < nbSize; i++) {
 
+	// refactor: prevalence[neighborStates[i]] += increment
     switch (neighborStates[i]) {
 
     case TRANSITIONAL:
@@ -84,6 +86,9 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
   }
 
   // Stored in cell
+  // refactor: since it is computing and saving, might rename the function to reflect this
+  // refactor: gr_get_cell(grid, x, y)->prevalence = prevalence
+  // these changes will make the model robust to changes to the states; ONLY have to change the definitions in grid_cell.h
   gr_get_cell(grid, x, y)->prevalence[CONIFEROUS] = count_C;
   gr_get_cell(grid, x, y)->prevalence[DECIDUOUS] = count_D;
   gr_get_cell(grid, x, y)->prevalence[MIXED] = count_M;
@@ -166,15 +171,8 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
   newGrid->gridData = malloc(dim * sizeof(GridCell));
   assert(newGrid->gridData);
 
-  // **Alloc memory GridCell level**
-
-  // for loop across all gridData and call
-  for (int i = 0; i < dim; i++) {
-  	// refactor: this is a bug; we are copying a dereferenced malloc'ed pointer by value, meaning we lose the original memory (leak!)
-  	// this should be changed to store the pointer directly; will need to change several associated functions as well
-    newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
-    // newGrid->gridData[i] = gc_make_cell(numTimeSteps);
-  }
+  for (int i = 0; i < dim; i++)
+    newGrid->gridData[i] = gc_make_cell(numTimeSteps);
 
   // Setup initial spatial config of the grid
 
