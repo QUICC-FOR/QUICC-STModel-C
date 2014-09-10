@@ -36,6 +36,7 @@ typedef struct {
 
 // refactor:
 // move "private" functions to .c and make static
+void gr_update_all_cells(Grid * grid, gsl_rng *rng);
 Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, NeighborhoodType nbType,
 		StartingConditionType startingCondition, bool startWithDisturbance, gsl_rng* rng);
 GridCell * gr_get_cell(Grid * grid, size_t x, size_t y);

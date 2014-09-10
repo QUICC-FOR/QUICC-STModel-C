@@ -29,25 +29,8 @@ int main(int argc, char **argv) {
 
   // main loop in time
   for (int year = 0; year < MAX_TIME; year++) {
-
-	// refactor this to be within grid.c
-	// gr_update_all_cells(grid, NEIGHTYPE)
-	// or possibly pass the NEIGHTYPE constant to the grid constructor (better?)
-    for (int x = 0; x < GR_SIZE; x++) {
-      for (int y = 0; y < GR_SIZE; y++) {
-
-        // Compute prevalence of cell
-        gr_compute_prevalence(grid, x, y);
-
-        // Compute trans probabilities
-        gc_get_trans_prob(gr_get_cell(grid, x, y));
-
-        // Select the new state of the actual cell
-        gc_select_new_state(gr_get_cell(grid, x, y), rng);
-      }
-    }
+  	gr_update_all_cells(grid, rng);
   }
-
   gr_output(grid);
 
   // cleanup

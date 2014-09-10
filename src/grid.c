@@ -16,6 +16,23 @@ void gr_set_mixed_grid(Grid *grid, gsl_rng *rng);
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng);
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng);
 
+
+
+
+void gr_update_all_cells(Grid * grid, gsl_rng *rng)
+{
+	for (int x = 0; x < grid->xDim; x++) {
+		for (int y = 0; y < grid->yDim; y++) {
+			gr_compute_prevalence(grid, x, y);
+			gc_get_trans_prob(gr_get_cell(grid, x, y));
+			gc_select_new_state(gr_get_cell(grid, x, y), rng);
+      }
+    }
+}
+
+
+
+
 GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 
   assert(grid);
