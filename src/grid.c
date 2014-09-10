@@ -156,8 +156,11 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
   }
 }
 
+
+
+
 Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
-                   GridType gridType, bool disturb, gsl_rng *rng) {
+                   StartingConditionType startingCondition, bool disturb, gsl_rng *rng) {
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
@@ -176,7 +179,7 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
 
   // Setup initial spatial config of the grid
 
-  switch (gridType) {
+  switch (startingCondition) {
   case RANDOM:
     gr_set_random_grid(newGrid, rng);
     break;
@@ -214,6 +217,9 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
 
   return newGrid;
 }
+
+
+
 
 void gr_destroy_grid(Grid *grid) {
 
