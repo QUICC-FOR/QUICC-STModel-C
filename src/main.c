@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include <gsl/gsl_rng.h>
 
@@ -14,7 +15,7 @@
 static const int MAX_TIME = 2000;
 static const int GR_SIZE = 50;
 static const NeighType NEIGHTYPE = MOORE;
-static const bool DISTURB = TRUE;
+static const bool DISTURB = true;
 
 int main(int argc, char **argv) {
 

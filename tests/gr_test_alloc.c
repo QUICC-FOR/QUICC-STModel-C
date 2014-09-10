@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <time.h>
 #include <gsl/gsl_rng.h>
+#include <stdbool.h>
 
 #include "../src/grid_cell.c"
 #include "../src/grid.c"
@@ -16,7 +17,7 @@ int main() {
 
     // number of iterations
     int nTest = 100;
-    bool disturb = TRUE;
+    bool disturb = true;
 
     //  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 
     // Think about negative tests

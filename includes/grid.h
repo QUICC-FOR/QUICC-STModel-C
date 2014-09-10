@@ -9,6 +9,7 @@
 
 #include <assert.h>	// for assert()
 #include <stdlib.h> // for size_t
+#include <stdbool.h>
 
 /*
 	DATA STRUCTURES
@@ -18,12 +19,6 @@
 
 typedef enum {RANDOM, UNIFORM, MIX,GRID_NULL} StartingConditionType;
 typedef enum { MOORE, VONNE} NeighType;
-
-// refactor to use stdbool.h
-// need to change uses of TRUE to true and FALSE to false
-typedef int bool;
-#define TRUE 1
-#define FALSE 0
 
 typedef struct {
 	size_t xDim;

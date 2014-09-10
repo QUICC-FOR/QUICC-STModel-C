@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <time.h>
 #include <gsl/gsl_rng.h>
+#include <stdbool.h>
 
 #include "../src/grid_cell.c"
 #include "../src/grid.c"
@@ -19,7 +20,7 @@ int main() {
   size_t xSize = 3;
   size_t ySize = 3;
   size_t timeSteps = 10;
-  bool disturb = FALSE;
+  bool disturb = false;
   int sum_grid = 0;
   int sum_neiCells = 0;
   size_t nbSize;
