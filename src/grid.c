@@ -120,8 +120,6 @@ static OffsetType * gr_get_neighborhood_offsets(Grid * grid)
 
 
 
-// refactor: be sure fix malloc calls: obj = malloc(len * sizeof(*obj))
-
 
 Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, NeighborhoodType nbType,
                    StartingConditionType startingCondition, bool startWithDisturbance, gsl_rng *rng) {
@@ -167,24 +165,20 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, Neighborhoo
 
 
 void gr_destroy_grid(Grid *grid) {
-
-  const size_t xsize = grid->xDim;
-  const size_t ysize = grid->yDim;
-
-  for (int x = 0; x < xsize; x++) {
-    for (int y = 0; y < ysize; y++) {
-    	// refactor: no need to do this by x and y; can simply loop through the data directly
+  for (int x = 0; x < grid->xDim; x++) {
+    for (int y = 0; y < grid->yDim; y++) {
       GridCell *cell = gr_get_cell(grid, x, y);
       gc_destroy_cell(cell);
     }
   }
-
   free(grid->gridData);
   free(grid);
 }
 
-/*    GRID INITIALIZATION FUNCTIONS   */
 
+
+
+/*    GRID INITIALIZATION FUNCTIONS   */
 void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
 
   for (int x = 0; x < grid->xDim; x++) {
