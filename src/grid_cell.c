@@ -4,6 +4,9 @@
 #include "grid_cell.h"
 #include "grid.h"
 
+// globals
+const State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS, TRANSITIONAL };
+
 // prototypes for functions defining model parameters
 static double beta_d(Climate climate);
 static double beta_c(Climate climate);
@@ -82,9 +85,6 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
   double rValue = gsl_rng_uniform(rng);
   double testVal = 0;
   State newState = 0;
-  // refactor: why is this defined here????
-  State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS,
-                                              TRANSITIONAL };
 
   for (int i = 0; i < GC_NUM_STATES; i++) {
     State curState = GC_POSSIBLE_STATES[i];

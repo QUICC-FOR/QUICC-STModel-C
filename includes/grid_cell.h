@@ -10,6 +10,7 @@
 #define GC_NUM_STATES 4
 typedef enum {MIXED,DECIDUOUS,CONIFEROUS,TRANSITIONAL} State;
 typedef double StateData [GC_NUM_STATES];
+extern const State GC_POSSIBLE_STATES[GC_NUM_STATES];
 
 
 typedef struct {
