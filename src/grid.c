@@ -37,8 +37,8 @@ void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   *(cell->currentState) = chosenState;
 }
 
-void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
-                           NeighType neighType) {
+void gr_compute_prevalence(Grid *grid, size_t x, size_t y) 
+{
 
   // pointer validation
   assert(grid);
@@ -46,7 +46,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
   //  Fix number of neighbor cells
   size_t nbSize = 8;
 
-  if (neighType == VONNE) {
+  if (grid->neighborhood == VONNE) {
     nbSize = 4;
   }
 
@@ -59,7 +59,7 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
   State *neighborStates = malloc(nbSize * sizeof(State));
   assert(neighborStates);
 
-  gr_get_neighbor_states(grid, neighborStates, x, y, neighType);
+  gr_get_neighbor_states(grid, neighborStates, x, y);
 
   // Compute prevalence
   for (int i = 0; i < nbSize; i++) {
@@ -97,8 +97,8 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y,
   free(neighborStates);
 }
 
-void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
-                            NeighType neighType) {
+void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y) 
+{
 
   assert(y < grid->yDim);
   assert(x < grid->xDim);
@@ -117,7 +117,7 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
         continue;
       }
 
-      if (neighType == VONNE) {
+      if (grid->neighborhood == VONNE) {
         // Skip cells unused in VON NEUMAN neighboors
         if (dx == -1 && dy == -1) {
           continue;
@@ -159,7 +159,7 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
 // refactor: be sure fix malloc calls: obj = malloc(len * sizeof(*obj))
 
 
-Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
+Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, NeighborhoodType nbType,
                    StartingConditionType startingCondition, bool startWithDisturbance, gsl_rng *rng) {
 
   int dim = xsize * ysize;
@@ -167,6 +167,7 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
   assert(newGrid);
   newGrid->xDim = xsize;
   newGrid->yDim = ysize;
+  newGrid->neighborhood = nbType;
   
   newGrid->gridData = malloc(dim * sizeof(*(newGrid->gridData)));
   assert(newGrid->gridData);

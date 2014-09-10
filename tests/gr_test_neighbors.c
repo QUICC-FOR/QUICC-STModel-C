@@ -26,7 +26,7 @@ int main() {
   size_t nbSize;
 
   //  Fix number of neighbor cells
-  NeighType neighType = MOORE;
+  NeighborhoodType neighType = MOORE;
 
   if (neighType == MOORE) {
     nbSize = 8;
@@ -35,7 +35,7 @@ int main() {
   }
 
   // Create RANDOM grid
-  Grid *grid = gr_make_grid(xSize, ySize, timeSteps, GRID_NULL, disturb, rng);
+  Grid *grid = gr_make_grid(xSize, ySize, timeSteps, neighType, GRID_NULL, disturb, rng);
   assert(grid);
 
   // init and fill array with neighbor states of the cell
@@ -54,7 +54,7 @@ int main() {
   for (int x = 0; x < xSize; x++) {
     for (int y = 0; y < ySize; y++) {
 
-      gr_get_neighbor_states(grid, neighborStates, x, y, MOORE);
+      gr_get_neighbor_states(grid, neighborStates, x, y);
 
       for (int i = 0; i < nbSize; i++) {
         sum_neiCells += neighborStates[i];

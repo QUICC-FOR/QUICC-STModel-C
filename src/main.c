@@ -14,7 +14,7 @@
 // set global modelling constants
 static const int MAX_TIME = 2000;
 static const int GR_SIZE = 50;
-static const NeighType NEIGHTYPE = MOORE;
+static const NeighborhoodType NBTYPE = MOORE;
 static const bool DISTURB = true;
 
 int main(int argc, char **argv) {
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   gsl_rng_set(rng, (int)time(NULL));
 
   // set up the grid
-  Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE, MAX_TIME, UNIFORM, DISTURB, rng);
+  Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE, MAX_TIME, NBTYPE, UNIFORM, DISTURB, rng);
 
   // main loop in time
   for (int year = 0; year < MAX_TIME; year++) {
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
       for (int y = 0; y < GR_SIZE; y++) {
 
         // Compute prevalence of cell
-        gr_compute_prevalence(grid, x, y, NEIGHTYPE);
+        gr_compute_prevalence(grid, x, y);
 
         // Compute trans probabilities
         gc_get_trans_prob(gr_get_cell(grid, x, y));

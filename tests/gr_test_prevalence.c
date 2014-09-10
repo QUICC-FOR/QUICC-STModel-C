@@ -23,12 +23,12 @@ int main() {
     size_t timeSteps = gsl_rng_uniform_int(rng, 99) + 1;
     
     // Init grid
-    Grid *grid = gr_make_grid(xSize, ySize, timeSteps, RANDOM, disturb, rng);
+    Grid *grid = gr_make_grid(xSize, ySize, timeSteps, MOORE, RANDOM, disturb, rng);
 
     for (int x = 0; x < xSize; x++) {
       for (int y = 0; y < ySize; y++) {
 
-        gr_compute_prevalence(grid, x, y, MOORE);
+        gr_compute_prevalence(grid, x, y);
         double sum_prev = 0.0;
         
         for (int z = 0; z < GC_NUM_STATES; z++) {
