@@ -7,15 +7,14 @@
 #include <gsl/gsl_rng.h>
 
 #include "grid.h"
+// remove grid_cell.h with refactors below -- don't need this level of specificity in main
 #include "grid_cell.h"
 
-// length of time to run the model
-
-#define MAX_TIME 2000
-#define GR_SIZE 50
-#define NEIGHTYPE MOORE
-#define OUTPUT_FILE "test_output.csv"
-#define DISTURB TRUE
+// set global modelling constants
+static const int MAX_TIME = 2000;
+static const int GR_SIZE = 50;
+static const NeighType NEIGHTYPE = MOORE;
+static const bool DISTURB = TRUE;
 
 int main(int argc, char **argv) {
 
@@ -30,6 +29,9 @@ int main(int argc, char **argv) {
   // main loop in time
   for (int year = 0; year < MAX_TIME; year++) {
 
+	// refactor this to be within grid.c
+	// gr_update_all_cells(grid, NEIGHTYPE)
+	// or possibly pass the NEIGHTYPE constant to the grid constructor (better?)
     for (int x = 0; x < GR_SIZE; x++) {
       for (int y = 0; y < GR_SIZE; y++) {
 
@@ -44,7 +46,6 @@ int main(int argc, char **argv) {
       }
     }
   }
-  // io_write_output(grid, OUTPUT_FILE);
 
   gr_output(grid);
 

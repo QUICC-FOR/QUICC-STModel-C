@@ -106,6 +106,8 @@ void gc_destroy_cell(GridCell *cell) {
 
   cell->currentState = NULL;
   free(cell->stateHistory);
+  // refactor:
+  // free(cell)
 }
 
 char st_state_to_char(State s) {

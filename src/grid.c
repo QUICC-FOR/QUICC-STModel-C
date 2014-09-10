@@ -10,7 +10,7 @@
 #define THRESDIST 0.20
 
 /* FUNCTION PROTOTYPES */
-
+// refactor: make static
 void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng);
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng);
@@ -156,7 +156,6 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
 
   int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(Grid));
-
   assert(newGrid);
 
   newGrid->xDim = xsize;
@@ -171,6 +170,8 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
 
   // for loop across all gridData and call
   for (int i = 0; i < dim; i++) {
+  	// refactor: this is a bug; we are copying a dereferenced malloc'ed pointer by value, meaning we lose the original memory (leak!)
+  	// this should be changed to store the pointer directly; will need to change several associated functions as well
     newGrid->gridData[i] = *(gc_make_cell(numTimeSteps));
     // newGrid->gridData[i] = gc_make_cell(numTimeSteps);
   }
@@ -199,6 +200,8 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
     break;
   }
 
+// refactor:
+// NEVER use switch with a boolean; that's what if/else is for!
   switch (disturb) {
   case TRUE:
     gr_set_disturb_grid(newGrid, THRESDIST, rng);
@@ -221,6 +224,7 @@ void gr_destroy_grid(Grid *grid) {
 
   for (int x = 0; x < xsize; x++) {
     for (int y = 0; y < ysize; y++) {
+    	// refactor: no need to do this by x and y; can simply loop through the data directly
       GridCell *cell = gr_get_cell(grid, x, y);
       gc_destroy_cell(cell);
     }
@@ -290,6 +294,7 @@ void gr_set_uniform_grid(Grid *grid, gsl_rng *rng) {
   }
 }
 
+// refactor this
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
   assert(grid->xDim >= 5);
   assert(grid->yDim >= 5);
