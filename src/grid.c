@@ -7,7 +7,7 @@
 #include "grid.h"
 #include "grid_cell.h"
 
-#define THRESDIST 0.20
+static const double THRESHDIST = 0.20;
 
 /* FUNCTION PROTOTYPES */
 // refactor: make static
@@ -156,29 +156,24 @@ void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y,
   }
 }
 
-
+// refactor: be sure fix malloc calls: obj = malloc(len * sizeof(*obj))
 
 
 Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
-                   StartingConditionType startingCondition, bool disturb, gsl_rng *rng) {
+                   StartingConditionType startingCondition, bool startWithDisturbance, gsl_rng *rng) {
 
   int dim = xsize * ysize;
-  Grid *newGrid = malloc(sizeof(Grid));
+  Grid *newGrid = malloc(sizeof(*newGrid));
   assert(newGrid);
-
   newGrid->xDim = xsize;
   newGrid->yDim = ysize;
-
-  // **Alloc memory**
-
-  newGrid->gridData = malloc(dim * sizeof(GridCell));
+  
+  newGrid->gridData = malloc(dim * sizeof(*(newGrid->gridData)));
   assert(newGrid->gridData);
-
   for (int i = 0; i < dim; i++)
     newGrid->gridData[i] = gc_make_cell(numTimeSteps);
 
   // Setup initial spatial config of the grid
-
   switch (startingCondition) {
   case RANDOM:
     gr_set_random_grid(newGrid, rng);
@@ -195,25 +190,10 @@ Grid *gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps,
   case GRID_NULL:
     gr_set_null_grid(newGrid, rng);
     break;
-
-  default:
-    abort();
-    break;
   }
 
-// refactor:
-// NEVER use switch with a boolean; that's what if/else is for!
-  switch (disturb) {
-  case TRUE:
-    gr_set_disturb_grid(newGrid, THRESDIST, rng);
-    break;
-
-  case FALSE:
-    break;
-
-  default:
-    break;
-  }
+  if(startWithDisturbance)
+    gr_set_disturb_grid(newGrid, THRESHDIST, rng);
 
   return newGrid;
 }
@@ -346,9 +326,12 @@ void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
   }
 }
 
+// refactor: remove extra definitions; even better
+// change THRESHDIST to a startingDisturbanceRate parameter that is passed to the constructor
+// and defined in main
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng) {
 
-  thresDist = THRESDIST;
+  thresDist = THRESHDIST;
 
   int totalCells = grid->xDim * grid->yDim; // Get total number of cells
   int numDist = totalCells *
