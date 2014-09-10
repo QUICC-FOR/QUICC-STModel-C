@@ -15,7 +15,9 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng);
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng);
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng);
+
 static GridCell * gr_get_cell(Grid * grid, size_t x, size_t y);
+static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t y);
 
 
 
@@ -25,7 +27,7 @@ void gr_update_all_cells(Grid * grid, gsl_rng *rng)
 	for (int x = 0; x < grid->xDim; x++) {
 		for (int y = 0; y < grid->yDim; y++) {
 			GridCell * currentCell = gr_get_cell(grid, x, y);
-			gr_compute_prevalence(grid, x, y);
+			gr_compute_prevalence(grid, currentCell, x, y);
 			gc_get_trans_prob(currentCell);
 			gc_select_new_state(currentCell, rng);
       }
@@ -44,30 +46,18 @@ static GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 	return grid->gridData[index];
 }
 
-// refactor this out of existence
-void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
-  // pointers validation
-  assert(grid);
-  GridCell *cell = gr_get_cell(grid, x, y);
-  *(cell->currentState) = chosenState;
-}
 
-void gr_compute_prevalence(Grid *grid, size_t x, size_t y) 
+
+
+static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t y) 
 {
-
-  // pointer validation
   assert(grid);
 
   //  Fix number of neighbor cells
-  size_t nbSize = 8;
+  size_t nbSize = (grid->neighborhood == MOORE ? 8 : 4);
 
-  if (grid->neighborhood == VONNE) {
-    nbSize = 4;
-  }
-
-  // init prevalence
-  // refactor into stateData type; rename to prevalence
-  double count_D = 0.0, count_C = 0.0, count_T = 0.0, count_M = 0.0;
+  StateData prevalence;
+  for(int i = 0; i < GC_NUM_STATES; i++) prevalence[i] = 0.0;
   double increment = 1.0 / nbSize;
 
   // set aside some memory for the neighbors
@@ -77,40 +67,16 @@ void gr_compute_prevalence(Grid *grid, size_t x, size_t y)
   gr_get_neighbor_states(grid, neighborStates, x, y);
 
   // Compute prevalence
-  for (int i = 0; i < nbSize; i++) {
+  for (int i = 0; i < nbSize; i++)
+	prevalence[neighborStates[i]] += increment;
 
-	// refactor: prevalence[neighborStates[i]] += increment
-    switch (neighborStates[i]) {
-
-    case TRANSITIONAL:
-      count_T += increment;
-      break;
-
-    case MIXED:
-      count_M += increment;
-      break;
-
-    case DECIDUOUS:
-      count_D += increment;
-      break;
-
-    case CONIFEROUS:
-      count_C += increment;
-      break;
-    }
-  }
-
-  // Stored in cell
-  // refactor: since it is computing and saving, might rename the function to reflect this
-  // refactor: gr_get_cell(grid, x, y)->prevalence = prevalence
-  // these changes will make the model robust to changes to the states; ONLY have to change the definitions in grid_cell.h
-  gr_get_cell(grid, x, y)->prevalence[CONIFEROUS] = count_C;
-  gr_get_cell(grid, x, y)->prevalence[DECIDUOUS] = count_D;
-  gr_get_cell(grid, x, y)->prevalence[MIXED] = count_M;
-  gr_get_cell(grid, x, y)->prevalence[TRANSITIONAL] = count_T;
+  for(int i = 0; i < GC_NUM_STATES; i++) cell->prevalence[i] = prevalence[i];
 
   free(neighborStates);
 }
+
+
+
 
 void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y) 
 {
@@ -387,3 +353,16 @@ void gr_view_grid(Grid *grid) {
     fprintf(stderr,"|   %d\n", y);
   }
 }
+
+// refactor this out of existence
+void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
+  // pointers validation
+  assert(grid);
+  GridCell *cell = gr_get_cell(grid, x, y);
+  *(cell->currentState) = chosenState;
+}
+
+
+
+
+

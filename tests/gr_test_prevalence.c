@@ -27,12 +27,13 @@ int main() {
 
     for (int x = 0; x < xSize; x++) {
       for (int y = 0; y < ySize; y++) {
+      	GridCell * currentCell = gr_get_cell(grid, x, y);
 
-        gr_compute_prevalence(grid, x, y);
+        gr_compute_prevalence(grid, currentCell, x, y);
         double sum_prev = 0.0;
         
         for (int z = 0; z < GC_NUM_STATES; z++) {
-          sum_prev += gr_get_cell(grid, x, y)->prevalence[z];
+          sum_prev += currentCell->prevalence[z];
         }
         
         assert(sum_prev == 1.0);
