@@ -42,9 +42,10 @@ int main() {
     }
     
     for(int i = 0; i < numDraws; i++) {
-        gc_select_new_state(cell, rng);
+        gc_select_next_state(cell, rng);
+        // we don't care to keep the history, so just set the current state equal to the next
+        *(cell->currentState) = *(cell->currentState + 1);
         testCounts[*(cell->currentState)]++;
-        cell->currentState--;   // move it back so we don't walk off the end
     }
     
     // test proportions
@@ -60,9 +61,10 @@ int main() {
         }
     
         for(int i = 0; i < numDraws; i++) {
-            gc_select_new_state(cell, rng);
-            testCounts[*(cell->currentState)]++;
-            cell->currentState--;   // move it back so we don't walk off the end
+	        gc_select_next_state(cell, rng);
+	        // we don't care to keep the history, so just set the current state equal to the next
+	        *(cell->currentState) = *(cell->currentState + 1);
+	        testCounts[*(cell->currentState)]++;
         }
 
         for(int i = 0; i < GC_NUM_STATES; i++) {

@@ -81,7 +81,8 @@ GridCell *gc_make_cell(size_t numTimeSteps) {
   return cell;
 }
 
-void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
+void gc_select_next_state(GridCell *cell, gsl_rng *rng)
+{
   double rValue = gsl_rng_uniform(rng);
   double testVal = 0;
   State newState = 0;
@@ -94,14 +95,23 @@ void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
       break;
     }
   }
+  
+	State * nextState = cell->currentState + 1;
 
-  cell->currentState++;
-
-  // check that we haven't wandered into invalid memory
-  assert(cell->currentState <= (cell->stateHistory + (cell->historySize)));
-
-  *(cell->currentState) = newState;
+	// check that we haven't wandered into invalid memory
+	assert(nextState <= (cell->stateHistory + (cell->historySize)));
+	*nextState = newState;
 }
+
+
+void gc_update_current_state(GridCell *cell)
+{
+	cell->currentState++;
+
+	// check that we haven't wandered into invalid memory
+	assert(cell->currentState <= (cell->stateHistory + (cell->historySize)));
+}
+
 
 void gc_destroy_cell(GridCell *cell) {
 

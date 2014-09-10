@@ -35,7 +35,8 @@ typedef struct {
 
 GridCell* gc_make_cell(size_t numTimeSteps); // allocate memory and null initialize cell, initialize pointers
 void gc_get_trans_prob(GridCell* cell);
-void gc_select_new_state(GridCell* cell, gsl_rng* rng);
+void gc_select_next_state(GridCell* cell, gsl_rng* rng);
+void gc_update_current_state(GridCell *cell);
 void gc_destroy_cell(GridCell *cell);
 char st_state_to_char(State s);
 

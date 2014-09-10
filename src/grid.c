@@ -41,9 +41,16 @@ void gr_update_all_cells(Grid * grid, gsl_rng *rng)
 			GridCell * currentCell = gr_get_cell(grid, x, y);
 			gr_compute_prevalence(grid, currentCell, x, y);
 			gc_get_trans_prob(currentCell);
-			gc_select_new_state(currentCell, rng);
-      }
+			gc_select_next_state(currentCell, rng);
+		}
     }
+    
+   	for (int x = 0; x < grid->xDim; x++) {
+		for (int y = 0; y < grid->yDim; y++) {
+			GridCell * currentCell = gr_get_cell(grid, x, y);
+			gc_update_current_state(currentCell);
+		}
+	}
 }
 
 
