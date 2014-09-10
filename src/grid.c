@@ -9,6 +9,12 @@
 
 static const double THRESHDIST = 0.20;
 
+typedef struct {
+	short int x;
+	short int y;
+} OffsetType;
+
+
 /* FUNCTION PROTOTYPES */
 // refactor: make static
 void gr_set_random_grid(Grid *grid, gsl_rng *rng);
@@ -18,7 +24,12 @@ void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng);
 
 static GridCell * gr_get_cell(Grid * grid, size_t x, size_t y);
 static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t y);
-
+static OffsetType * gr_get_neighborhood_offsets(Grid * grid);
+static void ot_set(OffsetType * o, short x, short y)
+{
+	o->x = x;
+	o->y = y;
+}
 
 
 
@@ -51,91 +62,63 @@ static GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 
 static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t y) 
 {
-  assert(grid);
+	assert(grid);
 
-  //  Fix number of neighbor cells
-  size_t nbSize = (grid->neighborhood == MOORE ? 8 : 4);
+	size_t nbSize = (grid->neighborhood == MOORE ? 8 : 4);
+	double increment = 1.0 / nbSize;
+	OffsetType * offsets = gr_get_neighborhood_offsets(grid);
 
-  StateData prevalence;
-  for(int i = 0; i < GC_NUM_STATES; i++) prevalence[i] = 0.0;
-  double increment = 1.0 / nbSize;
+	// reset prevalence to 0
+	for(int i = 0; i < GC_NUM_STATES; i++) cell->prevalence[i] = 0.0;
 
-  // set aside some memory for the neighbors
-  State *neighborStates = malloc(nbSize * sizeof(State));
-  assert(neighborStates);
-
-  gr_get_neighbor_states(grid, neighborStates, x, y);
-
-  // Compute prevalence
-  for (int i = 0; i < nbSize; i++)
-	prevalence[neighborStates[i]] += increment;
-
-  for(int i = 0; i < GC_NUM_STATES; i++) cell->prevalence[i] = prevalence[i];
-
-  free(neighborStates);
+	// Compute prevalence
+	for(int i = 0; i < nbSize; i++) {
+		int new_x = x + offsets[i].x;
+		int new_y = y + offsets[i].y;
+		State neighborState;
+		// set up torus; if we go out of bounds in the y direction we assume the type is
+		// deciduous if we are in the south and coniferous if in the north
+		if(new_y < 0) {
+			neighborState = DECIDUOUS;
+		} else if (new_y >= grid->yDim) {
+			neighborState = CONIFEROUS;
+		} else {
+			// for x, we just wrap around
+			if(new_x < 0) {
+				new_x = grid->xDim - 1;
+			} else if(new_x >= grid->xDim) {
+				new_x = 0;
+			}
+			neighborState = *(gr_get_cell(grid, new_x, new_y)->currentState);
+		}
+		cell->prevalence[neighborState] += increment;
+	}
+	free(offsets);
 }
 
 
 
 
-void gr_get_neighbor_states(Grid *grid, State *dest, size_t x, size_t y) 
+static OffsetType * gr_get_neighborhood_offsets(Grid * grid) 
 {
+	size_t nbSize = (grid->neighborhood == MOORE ? 8 : 4);
+	OffsetType * offsets = malloc(nbSize * sizeof(*offsets));
 
-  assert(y < grid->yDim);
-  assert(x < grid->xDim);
+	ot_set(&(offsets[0]),-1,0);
+	ot_set(&(offsets[1]),1,0);
+	ot_set(&(offsets[2]),0,-1);
+	ot_set(&(offsets[3]),0,1);
 
-  int i = 0;
-  size_t xSize = grid->xDim - 1;
-  size_t ySize = grid->yDim - 1;
-
-  for (int dx = -1; dx <= 1; dx++) {
-    for (int dy = -1; dy <= 1; dy++) {
-
-      // EXCEPTIONS
-
-      // if Cell located in the middle (0,0), skip it
-      if (dx == 0 && dy == 0) {
-        continue;
-      }
-
-      if (grid->neighborhood == VONNE) {
-        // Skip cells unused in VON NEUMAN neighboors
-        if (dx == -1 && dy == -1) {
-          continue;
-        } else if (dx == 1 && dy == 1) {
-          continue;
-        } else if (dx == 1 && dy == -1) {
-          continue;
-        } else if (dx == -1 && dy == 1) {
-          continue;
-        }
-      }
-
-      // new coord
-
-      int new_x = x + dx;
-      int new_y = y + dy;
-
-      // static state boundaries on y
-      if (new_y < 0) {
-        dest[i] = DECIDUOUS;
-      } else if (new_y > ySize) {
-        dest[i] = CONIFEROUS;
-      } else {
-        // Torus on x
-        if (new_x > xSize) {
-          dest[i] = *(gr_get_cell(grid, 0, new_y)->currentState);
-        } else if (new_x < 0) {
-          dest[i] = *(gr_get_cell(grid, xSize - 1, new_y)->currentState);
-        } else {
-          dest[i] = *(gr_get_cell(grid, new_x, new_y)->currentState);
-        }
-      }
-
-      i++; // Moove pos in dest array
-    }
-  }
+	if(grid->neighborhood == MOORE) {
+		ot_set(&(offsets[4]),-1,-1);
+		ot_set(&(offsets[5]),-1,1);
+		ot_set(&(offsets[6]),1,-1);
+		ot_set(&(offsets[7]),1,1);
+	}
+	return offsets;
 }
+
+
 
 // refactor: be sure fix malloc calls: obj = malloc(len * sizeof(*obj))
 
