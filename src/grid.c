@@ -15,6 +15,7 @@ void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 void gr_set_mixed_grid(Grid *grid, gsl_rng *rng);
 void gr_set_uniform_grid(Grid *grid, gsl_rng *rng);
 void gr_set_disturb_grid(Grid *grid, double thresDist, gsl_rng *rng);
+static GridCell * gr_get_cell(Grid * grid, size_t x, size_t y);
 
 
 
@@ -23,9 +24,10 @@ void gr_update_all_cells(Grid * grid, gsl_rng *rng)
 {
 	for (int x = 0; x < grid->xDim; x++) {
 		for (int y = 0; y < grid->yDim; y++) {
+			GridCell * currentCell = gr_get_cell(grid, x, y);
 			gr_compute_prevalence(grid, x, y);
-			gc_get_trans_prob(gr_get_cell(grid, x, y));
-			gc_select_new_state(gr_get_cell(grid, x, y), rng);
+			gc_get_trans_prob(currentCell);
+			gc_select_new_state(currentCell, rng);
       }
     }
 }
@@ -33,20 +35,16 @@ void gr_update_all_cells(Grid * grid, gsl_rng *rng)
 
 
 
-GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
+static GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
+	assert(grid);
+	assert(y <= grid->yDim);
+	assert(x <= grid->xDim);
 
-  assert(grid);
-
-  assert(y <= grid->yDim);
-  assert(x <= grid->xDim);
-
-  // note the arrow operator: grid->yDim === (*grid).yDim
-  size_t index = grid->xDim * y + x;
-
-  // printf("Coord(%d, %d): %d \n",(int)x,(int)y,(int)index);
-  return grid->gridData[index];
+	size_t index = grid->xDim * y + x;
+	return grid->gridData[index];
 }
 
+// refactor this out of existence
 void gr_set_cell(Grid *grid, State chosenState, size_t x, size_t y) {
   // pointers validation
   assert(grid);
