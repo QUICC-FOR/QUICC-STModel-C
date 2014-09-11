@@ -21,7 +21,7 @@ int main() {
 
     // declare variables
     size_t histSize = 10;
-    GridCell * cell = gc_make_cell(histSize);
+    GridCell * cell = gc_make_cell(histSize, 0, 0);
     cell->currentState[0] = CONIFEROUS;
     int numDraws = 100000;
 

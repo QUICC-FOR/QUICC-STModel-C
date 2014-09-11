@@ -9,6 +9,7 @@
 
 #include <assert.h>	// for assert()
 #include <stdlib.h> // for size_t
+#include <stdbool.h>
 
 /*
 	DATA STRUCTURES
@@ -39,5 +40,10 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, Neighborhoo
 void gr_destroy_grid(Grid * grid);
 void gr_output(Grid *grid);
 void gr_view_grid(Grid *grid);
+
+/* The functions below provide an iterator-like interface to the grid
+	This can be used to loop through the grid without worrying about x-y coordinates */
+GridCell * gr_first(Grid * grid);
+GridCell * gr_next(Grid * grid, GridCell * cell);
 
 #endif

@@ -24,20 +24,15 @@ int main() {
     // Init grid
     Grid *grid = gr_make_grid(xSize, ySize, timeSteps, MOORE, RANDOM, disturb, rng);
 
-    for (int x = 0; x < xSize; x++) {
-      for (int y = 0; y < ySize; y++) {
-      	GridCell * currentCell = gr_get_cell(grid, x, y);
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
 
-        gr_compute_prevalence(grid, currentCell, x, y);
+        gr_compute_prevalence(grid, currentCell);
         double sum_prev = 0.0;
         
         for (int z = 0; z < GC_NUM_STATES; z++) {
           sum_prev += currentCell->prevalence[z];
         }
-        
         assert(sum_prev == 1.0);
-      
-      }
     }
     // Free memory
     gr_destroy_grid(grid);

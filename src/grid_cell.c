@@ -70,7 +70,7 @@ void gc_get_trans_prob(GridCell *cell) {
   }
 }
 
-GridCell *gc_make_cell(size_t numTimeSteps) {
+GridCell *gc_make_cell(size_t numTimeSteps, size_t x, size_t y) {
   // allocates memory for the state history, initializes other values to 0
   // initializes the current state to the first record in stateHistory
   GridCell *cell = malloc(sizeof(*cell));
@@ -78,6 +78,8 @@ GridCell *gc_make_cell(size_t numTimeSteps) {
   assert(cell->stateHistory);
   cell->currentState = cell->stateHistory;
   cell->historySize = numTimeSteps;
+  cell->x = x;
+  cell-> y = y;
   return cell;
 }
 

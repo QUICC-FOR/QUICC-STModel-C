@@ -19,38 +19,51 @@ typedef struct {
 
 /* FUNCTION PROTOTYPES */
 static GridCell * gr_get_cell(Grid * grid, size_t x, size_t y);
-static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t y);
+static void gr_compute_prevalence(Grid *grid, GridCell * cell);
 static OffsetType * gr_get_neighborhood_offsets(Grid * grid);
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 static void gr_set_null_grid(Grid *grid);
 static void gr_set_uniform_grid(Grid *grid);
 static void gr_set_mixed_grid(Grid *grid, gsl_rng *rng);
 static void gr_set_disturb_grid(Grid *grid, double distRate, gsl_rng *rng);
-static void ot_set(OffsetType * o, short x, short y)
+static void ot_set(OffsetType * o, short x, short y);
+
+
+
+GridCell * gr_first(Grid * grid)
 {
-	o->x = x;
-	o->y = y;
+	return gr_get_cell(grid, 0, 0);
+}
+
+
+
+GridCell * gr_next(Grid * grid, GridCell * cell)
+{
+	assert(grid && cell);
+	size_t newx = cell->x + 1;
+	size_t newy = cell->y;
+	if(newx >= grid->xDim) {
+		newx = 0;
+		newy++;
+	}
+
+	if(newy >= grid->yDim)
+		return NULL;		
+	return gr_get_cell(grid, newx, newy);
 }
 
 
 
 void gr_update_all_cells(Grid * grid, gsl_rng *rng)
 {
-	for (int x = 0; x < grid->xDim; x++) {
-		for (int y = 0; y < grid->yDim; y++) {
-			GridCell * currentCell = gr_get_cell(grid, x, y);
-			gr_compute_prevalence(grid, currentCell, x, y);
-			gc_get_trans_prob(currentCell);
-			gc_select_next_state(currentCell, rng);
-		}
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+		gr_compute_prevalence(grid, currentCell);
+		gc_get_trans_prob(currentCell);
+		gc_select_next_state(currentCell, rng);
     }
     
-   	for (int x = 0; x < grid->xDim; x++) {
-		for (int y = 0; y < grid->yDim; y++) {
-			GridCell * currentCell = gr_get_cell(grid, x, y);
-			gc_update_current_state(currentCell);
-		}
-	}
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell))
+		gc_update_current_state(currentCell);
 }
 
 
@@ -61,16 +74,16 @@ static GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 	assert(y <= grid->yDim);
 	assert(x <= grid->xDim);
 
-	size_t index = grid->xDim * y + x;
+	size_t index = grid->yDim * x + y;
 	return grid->gridData[index];
 }
 
 
 
 
-static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t y) 
+static void gr_compute_prevalence(Grid *grid, GridCell * cell) 
 {
-	assert(grid);
+	assert(grid && cell);
 
 	size_t nbSize = (grid->neighborhood == MOORE ? 8 : 4);
 	double increment = 1.0 / nbSize;
@@ -81,23 +94,23 @@ static void gr_compute_prevalence(Grid *grid, GridCell * cell, size_t x, size_t 
 
 	// Compute prevalence
 	for(int i = 0; i < nbSize; i++) {
-		int new_x = x + offsets[i].x;
-		int new_y = y + offsets[i].y;
+		int newx = cell->x + offsets[i].x;
+		int newy = cell->y + offsets[i].y;
 		State neighborState;
 		// set up torus; if we go out of bounds in the y direction we assume the type is
 		// deciduous if we are in the south and coniferous if in the north
-		if(new_y < 0) {
+		if(newy < 0) {
 			neighborState = DECIDUOUS;
-		} else if (new_y >= grid->yDim) {
+		} else if (newy >= grid->yDim) {
 			neighborState = CONIFEROUS;
 		} else {
 			// for x, we just wrap around
-			if(new_x < 0) {
-				new_x = grid->xDim - 1;
-			} else if(new_x >= grid->xDim) {
-				new_x = 0;
+			if(newx < 0) {
+				newx = grid->xDim - 1;
+			} else if(newx >= grid->xDim) {
+				newx = 0;
 			}
-			neighborState = *(gr_get_cell(grid, new_x, new_y)->currentState);
+			neighborState = *(gr_get_cell(grid, newx, newy)->currentState);
 		}
 		cell->prevalence[neighborState] += increment;
 	}
@@ -133,17 +146,20 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, Neighborhoo
                    StartingConditionType startingCondition, double startDisturbanceRate, gsl_rng *rng) {
 
   assert(startDisturbanceRate > 0 && startDisturbanceRate <= GR_MAX_DISTURBANCE_RATE);
-  int dim = xsize * ysize;
   Grid *newGrid = malloc(sizeof(*newGrid));
   assert(newGrid);
   newGrid->xDim = xsize;
   newGrid->yDim = ysize;
   newGrid->neighborhood = nbType;
   
-  newGrid->gridData = malloc(dim * sizeof(*(newGrid->gridData)));
+  newGrid->gridData = malloc(xsize*ysize * sizeof(*(newGrid->gridData)));
   assert(newGrid->gridData);
-  for (int i = 0; i < dim; i++)
-    newGrid->gridData[i] = gc_make_cell(numTimeSteps);
+  int i = 0;
+  for (int x = 0; x < newGrid->xDim; x++) {
+    for (int y = 0; y < newGrid->yDim; y++) {
+      newGrid->gridData[i++] = gc_make_cell(numTimeSteps, x, y);
+    }
+  }
 
   // Setup initial spatial config of the grid
   switch (startingCondition) {
@@ -173,14 +189,10 @@ Grid * gr_make_grid(size_t xsize, size_t ysize, size_t numTimeSteps, Neighborhoo
 
 
 void gr_destroy_grid(Grid *grid) {
-  for (int x = 0; x < grid->xDim; x++) {
-    for (int y = 0; y < grid->yDim; y++) {
-      GridCell *cell = gr_get_cell(grid, x, y);
-      gc_destroy_cell(cell);
-    }
-  }
-  free(grid->gridData);
-  free(grid);
+	for(int i = 0; i < (grid->xDim * grid->yDim); i++)
+		gc_destroy_cell(grid->gridData[i]);
+	free(grid->gridData);
+	free(grid);
 }
 
 
@@ -189,12 +201,10 @@ void gr_destroy_grid(Grid *grid) {
 /*    GRID INITIALIZATION FUNCTIONS   */
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
   State allowedStates [] = {CONIFEROUS, DECIDUOUS, MIXED};
-  for (int x = 0; x < grid->xDim; x++) {
-    for (int y = 0; y < grid->yDim; y++) {
-      State * cellState = (gr_get_cell(grid, x, y))->currentState;
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+      State * cellState = currentCell->currentState;
       gsl_ran_choose(rng, cellState, 1, allowedStates, 3, sizeof(State));
     }
-  }
 }
 
 
@@ -202,12 +212,8 @@ static void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
 
 // what is the purpose of this?
 static void gr_set_null_grid(Grid *grid) {
-
-  for (int x = 0; x < grid->xDim; x++) {
-    for (int y = 0; y < grid->yDim; y++) {
-      *((gr_get_cell(grid, x, y))->currentState) = 0;
-    }
-  }
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell))
+      *(currentCell->currentState) = 0;
 }
 
 
@@ -221,18 +227,15 @@ static void gr_set_uniform_grid(Grid *grid) {
   int deciduousUpperLimit = grid->yDim / 3; // from 0 to 1/3
   int coniferousLowerLimit = (grid->yDim * 2) / 3; // from 2/3 to max
 
-  for (int x = 0; x < grid->xDim; x++) {
-    for (int y = 0; y < grid->yDim; y++) {
-      GridCell * cell = gr_get_cell(grid, x, y);
-      if(y < deciduousUpperLimit) {
-        *(cell->currentState) = DECIDUOUS;
-      } else if(y >= coniferousLowerLimit) {
-        *(cell->currentState) = CONIFEROUS;      
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+      if(currentCell->y < deciduousUpperLimit) {
+        *(currentCell->currentState) = DECIDUOUS;
+      } else if(currentCell->y >= coniferousLowerLimit) {
+        *(currentCell->currentState) = CONIFEROUS;      
       } else {
-        *(cell->currentState) = MIXED;      
+        *(currentCell->currentState) = MIXED;      
       }
     }
-  }
 }
 
 
@@ -245,31 +248,28 @@ static void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
 
   int yIncrement = grid->yDim / 5;
 
-  for (int x = 0; x < grid->xDim; x++) {
-    for (int y = 0; y < grid->yDim; y++) {
-      State * cellState = gr_get_cell(grid, x, y)->currentState;
-      if (y < yIncrement) {
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+      State * cellState = currentCell->currentState;
+      if (currentCell->y < yIncrement) {
         *cellState = CONIFEROUS;      
-      } else if (y < 2 * yIncrement) {
+      } else if (currentCell->y < 2 * yIncrement) {
         states[0] = CONIFEROUS;
         gsl_ran_choose(rng, cellState, 1, states, 2, sizeof(State));      
-      } else if (y < 3 * yIncrement) {
+      } else if (currentCell->y < 3 * yIncrement) {
         *cellState = MIXED;      
-      } else if (y < 4 * yIncrement) {
+      } else if (currentCell->y < 4 * yIncrement) {
         states[0] = DECIDUOUS;
         gsl_ran_choose(rng, cellState, 1, states, 2, sizeof(State));      
       } else {
         *cellState = DECIDUOUS;      
       }
     }
-  }
 }
 
 
 
 
 static void gr_set_disturb_grid(Grid *grid, double disturbanceRate, gsl_rng *rng) {
-
   if(disturbanceRate == 0)
   	return;
 
@@ -290,27 +290,30 @@ static void gr_set_disturb_grid(Grid *grid, double disturbanceRate, gsl_rng *rng
 
 
 void gr_output(Grid *grid){
-  for(int x =0 ; x < grid->xDim;  x++){
-    for(int y =0 ; y < grid->yDim;  y++){
-        GridCell *cell = gr_get_cell(grid,x,y);
-        printf("%d,%d",x,y);
-        for(int t =0; t<cell->historySize;t++){
-          printf(",%c", st_state_to_char(cell->stateHistory[t]));
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+        printf("%d,%d",(int)currentCell->x,(int)currentCell->y);
+        for(int t =0; t<currentCell->historySize;t++){
+          printf(",%c", st_state_to_char(currentCell->stateHistory[t]));
         }
-         printf("\n");    
-       }    
-  }
+	printf("\n");      
+	}
 }
 
 
 
 
 void gr_view_grid(Grid *grid) {
-  for (int y = 0; y < grid->yDim; ++y) {
-    for (int x = 0; x < grid->xDim; ++x) {
-      GridCell *cell = gr_get_cell(grid, x, y);
-      fprintf(stderr,"| %c ", st_state_to_char(*(cell->currentState)));
-    }
-    fprintf(stderr,"|   %d\n", y);
-  }
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+		fprintf(stderr,"| %c ", st_state_to_char(*(currentCell->currentState)));
+		if(currentCell->x == (grid->xDim - 1))
+		    fprintf(stderr,"|   %d\n", (int) currentCell->y);
+	}
+}
+
+
+
+static void ot_set(OffsetType * o, short x, short y)
+{
+	o->x = x;
+	o->y = y;
 }

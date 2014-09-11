@@ -10,7 +10,7 @@
 
 // set global modelling constants
 static const int MAX_TIME = 2000;
-static const int GR_SIZE = 50;
+static const int GR_SIZE = 5;
 static const NeighborhoodType NBTYPE = MOORE;
 static const double DISTURB_RATE = 0.20;
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   gsl_rng_set(rng, (int)time(NULL));
 
   // set up the grid
-  Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE, MAX_TIME, NBTYPE, UNIFORM, DISTURB_RATE, rng);
+  Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE+2, MAX_TIME, NBTYPE, UNIFORM, DISTURB_RATE, rng);
 
   // main loop in time
   for (int year = 0; year < MAX_TIME; year++) {

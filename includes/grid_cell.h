@@ -26,6 +26,8 @@ typedef struct {
     StateData prevalence;
     StateData transitionProbs;
     size_t historySize;
+    size_t x;
+    size_t y;
 } GridCell;
 
 
@@ -33,7 +35,7 @@ typedef struct {
     FUNCTION PROTOTYPES
 */
 
-GridCell* gc_make_cell(size_t numTimeSteps); // allocate memory and null initialize cell, initialize pointers
+GridCell* gc_make_cell(size_t numTimeSteps, size_t x, size_t y); // allocate memory and null initialize cell, initialize pointers
 void gc_get_trans_prob(GridCell* cell);
 void gc_select_next_state(GridCell* cell, gsl_rng* rng);
 void gc_update_current_state(GridCell *cell);
