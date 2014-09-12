@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
-
+#include <stdio.h>
 #include "grid_cell.h"
 #include "grid.h"
 
@@ -79,44 +79,18 @@ GridCell *gc_make_cell(size_t numTimeSteps, size_t x, size_t y) {
   cell->currentState = cell->stateHistory;
   cell->historySize = numTimeSteps;
   cell->x = x;
-  cell-> y = y;
+  cell->y = y;
   return cell;
-}
-
-void gc_select_next_state(GridCell *cell, gsl_rng *rng)
-{
-  double rValue = gsl_rng_uniform(rng);
-  double testVal = 0;
-  State newState = 0;
-
-  for (int i = 0; i < GC_NUM_STATES; i++) {
-    State curState = GC_POSSIBLE_STATES[i];
-    testVal += cell->transitionProbs[curState];
-    if (rValue < testVal) {
-      newState = curState;
-      break;
-    }
-  }
-  
-	State * nextState = cell->currentState + 1;
-
-	// check that we haven't wandered into invalid memory
-	assert(nextState <= (cell->stateHistory + (cell->historySize)));
-	*nextState = newState;
 }
 
 
 void gc_update_current_state(GridCell *cell)
 {
 	cell->currentState++;
-
-	// check that we haven't wandered into invalid memory
-	assert(cell->currentState <= (cell->stateHistory + (cell->historySize)));
 }
 
 
 void gc_destroy_cell(GridCell *cell) {
-
   cell->currentState = NULL;
   free(cell->stateHistory);
   free(cell);

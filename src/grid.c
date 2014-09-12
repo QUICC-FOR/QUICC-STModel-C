@@ -75,7 +75,9 @@ static GridCell *gr_get_cell(Grid *grid, size_t x, size_t y) {
 	assert(x <= grid->xDim);
 
 	size_t index = grid->yDim * x + y;
-	return grid->gridData[index];
+	GridCell *cell = grid->gridData[index];
+	
+	return cell;
 }
 
 
@@ -110,7 +112,9 @@ static void gr_compute_prevalence(Grid *grid, GridCell * cell)
 			} else if(newx >= grid->xDim) {
 				newx = 0;
 			}
-			neighborState = *(gr_get_cell(grid, newx, newy)->currentState);
+			GridCell * newcell = gr_get_cell(grid, newx, newy);
+			State * cellState = newcell->currentState;
+			neighborState = *(cellState);
 		}
 		cell->prevalence[neighborState] += increment;
 	}
@@ -200,11 +204,9 @@ void gr_destroy_grid(Grid *grid) {
 
 /*    GRID INITIALIZATION FUNCTIONS   */
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng) {
-  State allowedStates [] = {CONIFEROUS, DECIDUOUS, MIXED};
-	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
-      State * cellState = currentCell->currentState;
-      gsl_ran_choose(rng, cellState, 1, allowedStates, 3, sizeof(State));
-    }
+	State allowedStates [] = {CONIFEROUS, DECIDUOUS, MIXED};
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell))
+      gsl_ran_choose(rng, currentCell->currentState, 1, allowedStates, 3, sizeof(State));
 }
 
 
@@ -251,17 +253,17 @@ static void gr_set_mixed_grid(Grid *grid, gsl_rng *rng) {
 	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
       State * cellState = currentCell->currentState;
       if (currentCell->y < yIncrement) {
-        *cellState = CONIFEROUS;      
+        *cellState = DECIDUOUS;      
       } else if (currentCell->y < 2 * yIncrement) {
-        states[0] = CONIFEROUS;
+        states[0] = DECIDUOUS;
         gsl_ran_choose(rng, cellState, 1, states, 2, sizeof(State));      
       } else if (currentCell->y < 3 * yIncrement) {
         *cellState = MIXED;      
       } else if (currentCell->y < 4 * yIncrement) {
-        states[0] = DECIDUOUS;
+        states[0] = CONIFEROUS;
         gsl_ran_choose(rng, cellState, 1, states, 2, sizeof(State));      
       } else {
-        *cellState = DECIDUOUS;      
+        *cellState = CONIFEROUS;      
       }
     }
 }
