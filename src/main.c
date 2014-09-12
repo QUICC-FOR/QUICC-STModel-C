@@ -3,21 +3,31 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <string.h>
 
 #include <gsl/gsl_rng.h>
 
 #include "grid.h"
-#include "grid_cell.h"
 
-// length of time to run the model
-
-#define MAX_TIME 2000
-#define GR_SIZE 50
-#define NEIGHTYPE MOORE
-#define OUTPUT_FILE "test_output.csv"
-#define DISTURB TRUE
+// set global modelling constants
+static int MAX_TIME = 21;
+static int GR_SIZE_X = 3;
+static int GR_SIZE_Y = 3;
+static const NeighborhoodType NBTYPE = MOORE;
+static const double DISTURB_RATE = 0.20;
 
 int main(int argc, char **argv) {
+
+	for(int i = 0; i < argc; i++) {
+		if(strncmp(argv[i],"-t",2)==0)
+			MAX_TIME = atoi(argv[++i]);
+		if(strncmp(argv[i],"-s",2)==0)
+			GR_SIZE_X = GR_SIZE_Y = atoi(argv[++i]);
+		if(strncmp(argv[i],"-x",2)==0)
+			GR_SIZE_X = atoi(argv[++i]);
+		if(strncmp(argv[i],"-y",2)==0)
+			GR_SIZE_Y = atoi(argv[++i]);
+	}
 
   // set up RNG
   gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
@@ -25,26 +35,12 @@ int main(int argc, char **argv) {
   gsl_rng_set(rng, (int)time(NULL));
 
   // set up the grid
-  Grid *grid = gr_make_grid(GR_SIZE, GR_SIZE, MAX_TIME, UNIFORM, DISTURB, rng);
+  Grid *grid = gr_make_grid(GR_SIZE_X, GR_SIZE_Y, MAX_TIME, NBTYPE, UNIFORM, DISTURB_RATE, rng);
 
-  // main loop in time
-  for (int year = 0; year < MAX_TIME; year++) {
-
-    for (int x = 0; x < GR_SIZE; x++) {
-      for (int y = 0; y < GR_SIZE; y++) {
-
-        // Compute prevalence of cell
-        gr_compute_prevalence(grid, x, y, NEIGHTYPE);
-
-        // Compute trans probabilities
-        gc_get_trans_prob(gr_get_cell(grid, x, y));
-
-        // Select the new state of the actual cell
-        gc_select_new_state(gr_get_cell(grid, x, y), rng);
-      }
-    }
-  }
-  // io_write_output(grid, OUTPUT_FILE);
+  // main loop in time -- we start on year 1, end on MAX_TIME - 1; this gives us
+  // MAX_TIME total time steps (including the initial conditions)
+  for (int year = 1; year < MAX_TIME; year++)
+  	gr_update_all_cells(grid, rng);
 
   gr_output(grid);
 

@@ -35,3 +35,4 @@ add_libstmodel_test(gr_test_prevalence)
 add_libstmodel_test(gc_test_new_state)
 add_libstmodel_test(gc_test_trans_prob)
 
+set(CMAKE_CXX_FLAGS "-O0")
