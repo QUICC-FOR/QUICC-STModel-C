@@ -1,8 +1,11 @@
 #include <stdlib.h>
 #include <assert.h>
-
+#include <stdio.h>
 #include "grid_cell.h"
 #include "grid.h"
+
+// globals
+const State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS, TRANSITIONAL };
 
 // prototypes for functions defining model parameters
 static double beta_d(Climate climate);
@@ -67,45 +70,30 @@ void gc_get_trans_prob(GridCell *cell) {
   }
 }
 
-GridCell *gc_make_cell(size_t numTimeSteps) {
+GridCell *gc_make_cell(size_t numTimeSteps, size_t x, size_t y) {
   // allocates memory for the state history, initializes other values to 0
   // initializes the current state to the first record in stateHistory
-  GridCell *cell = (GridCell *)malloc(sizeof(GridCell));
-  cell->stateHistory = (State *)malloc(numTimeSteps * sizeof(State));
+  GridCell *cell = malloc(sizeof(*cell));
+  cell->stateHistory = malloc(numTimeSteps * sizeof(*(cell->stateHistory)));
   assert(cell->stateHistory);
   cell->currentState = cell->stateHistory;
   cell->historySize = numTimeSteps;
+  cell->x = x;
+  cell->y = y;
   return cell;
 }
 
-void gc_select_new_state(GridCell *cell, gsl_rng *rng) {
-  double rValue = gsl_rng_uniform(rng);
-  double testVal = 0;
-  State newState = 0;
-  State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS,
-                                              TRANSITIONAL };
 
-  for (int i = 0; i < GC_NUM_STATES; i++) {
-    State curState = GC_POSSIBLE_STATES[i];
-    testVal += cell->transitionProbs[curState];
-    if (rValue < testVal) {
-      newState = curState;
-      break;
-    }
-  }
-
-  cell->currentState++;
-
-  // check that we haven't wandered into invalid memory
-  assert(cell->currentState <= (cell->stateHistory + (cell->historySize)));
-
-  *(cell->currentState) = newState;
+void gc_update_current_state(GridCell *cell)
+{
+	cell->currentState++;
 }
 
-void gc_destroy_cell(GridCell *cell) {
 
+void gc_destroy_cell(GridCell *cell) {
   cell->currentState = NULL;
   free(cell->stateHistory);
+  free(cell);
 }
 
 char st_state_to_char(State s) {

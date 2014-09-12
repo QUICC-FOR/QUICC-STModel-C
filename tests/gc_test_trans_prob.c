@@ -6,7 +6,7 @@
 #include "../src/grid_cell.c"
 #include "../src/grid.c"
 
-#define  TEST_ERROR_THRESHOLD 0.01
+#define  TEST_ERROR_THRESHOLD 0.0001
 
 int main() {
 
@@ -15,7 +15,7 @@ int main() {
 
     // Declare variables
     size_t histSize = 10;
-    GridCell * cell = gc_make_cell(histSize);   
+    GridCell * cell = gc_make_cell(histSize, 0, 0);   
 
     // define prevalence conditions to test
     // currently testing equality, plus complete dominance by each state

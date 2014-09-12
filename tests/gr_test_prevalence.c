@@ -12,7 +12,7 @@ int main() {
   gsl_rng_set(rng, (int)time(NULL));
   // number of iterations
   int nTest = 100;
-  bool disturb = FALSE;
+  double disturb = 0.20;
   // Start iterations, test memory allocation for 10 grids with size and
   // timeSteps randomly setup;
   for (int i = 0; i < nTest; i++) {
@@ -22,21 +22,17 @@ int main() {
     size_t timeSteps = gsl_rng_uniform_int(rng, 99) + 1;
     
     // Init grid
-    Grid *grid = gr_make_grid(xSize, ySize, timeSteps, RANDOM, disturb, rng);
+    Grid *grid = gr_make_grid(xSize, ySize, timeSteps, MOORE, RANDOM, disturb, rng);
 
-    for (int x = 0; x < xSize; x++) {
-      for (int y = 0; y < ySize; y++) {
+	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
 
-        gr_compute_prevalence(grid, x, y, MOORE);
+        gr_compute_prevalence(grid, currentCell);
         double sum_prev = 0.0;
         
         for (int z = 0; z < GC_NUM_STATES; z++) {
-          sum_prev += gr_get_cell(grid, x, y)->prevalence[z];
+          sum_prev += currentCell->prevalence[z];
         }
-        
         assert(sum_prev == 1.0);
-      
-      }
     }
     // Free memory
     gr_destroy_grid(grid);

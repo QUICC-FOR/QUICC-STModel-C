@@ -16,7 +16,7 @@ int main() {
 
     // number of iterations
     int nTest = 100;
-    bool disturb = TRUE;
+    double disturb = 0.2;
 
     //  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 
     // Think about negative tests
@@ -30,7 +30,7 @@ int main() {
         size_t timeSteps = 10;
 
         // Create grid
-        Grid * grid = gr_make_grid(xSize,ySize,timeSteps,RANDOM,disturb,rng);
+        Grid * grid = gr_make_grid(xSize,ySize,timeSteps,MOORE,RANDOM,disturb,rng);
         assert(grid);
 
         // Assertions
