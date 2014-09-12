@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include "grid_cell.h"
-#include "grid.h"
 
 // globals
 const State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS, TRANSITIONAL };
@@ -16,6 +15,31 @@ static double phi_d(Climate climate);
 static double phi_c(Climate climate);
 static double phi_m(Climate climate);
 static double epsi(Climate climate);
+
+
+void gc_select_next_state(GridCell *cell, gsl_rng *rng)
+{
+  double rValue = gsl_rng_uniform(rng);
+  double testVal = 0;
+  State newState = 0;
+
+  for (int i = 0; i < GC_NUM_STATES; i++) {
+    State curState = GC_POSSIBLE_STATES[i];
+    testVal += cell->transitionProbs[curState];
+    if (rValue < testVal) {
+      newState = curState;
+      break;
+    }
+  }
+  
+	State * nextState = cell->currentState + 1;
+
+	// check that we haven't wandered into invalid memory
+	assert(nextState <= (cell->stateHistory + (cell->historySize)));
+	*nextState = newState;
+}
+
+
 
 void gc_get_trans_prob(GridCell *cell) {
   /*

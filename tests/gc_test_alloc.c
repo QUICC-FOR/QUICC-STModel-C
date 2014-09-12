@@ -5,15 +5,14 @@
 #include "../src/grid_cell.c"
 
 int main() {
-
-	/* DESC: creates a cell, assigns values to it, and tries to get them back out */ 
-	
-	// Init cell
-	size_t histSize = 10;
-	GridCell * cell = gc_make_cell(histSize, 0, 0);
-	
-	// Define first state
-	*(cell->currentState) = DECIDUOUS;
+    /* DESC: creates a cell, assigns values to it, and tries to get them back out */ 
+    
+    // Init cell
+    size_t histSize = 10;
+    GridCell * cell = gc_make_cell(histSize,0,0);
+    
+    // Define first state
+    *(cell->currentState) = DECIDUOUS;
 
     // Assertion of the state and the cell
     assert(cell->stateHistory[0] == DECIDUOUS);
