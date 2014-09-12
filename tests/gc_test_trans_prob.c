@@ -4,7 +4,6 @@
 #include <gsl/gsl_rng.h>
 
 #include "../src/grid_cell.c"
-#include "../src/grid.c"
 
 #define  TEST_ERROR_THRESHOLD 0.0001
 
