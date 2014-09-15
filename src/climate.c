@@ -6,9 +6,41 @@
 
 #define MAX_LINE_LEN 4095
 
+/*
+	TEMPORARY: here is some R code for generating fake climate data for testing
+	
+xm = 9
+ym = 9
+yrm = 19
+
+xd = 0:xm
+yd = 0:ym
+yr = 0:yrm
+
+xx = rep(xd, length(yd))
+yy = rep(yd, each=length(xd))
+
+testClim = data.frame(
+	x = rep(xx, length(yr)),
+	y = rep(yy, length(yr)),
+	year = rep(yr, each=length(xx))
+)
+testClim$meanTemp = rnorm(nrow(testClim))
+write.table(testClim, "/Users/mtalluto/Documents/git_projects/C-STMFor/climate_test.csv", sep=',', row.names=FALSE)
+
+*/
+
 static void cg_add_climate_record(ClimateGrid * cg, char * line);
 static int cg_check_for_missing_climate_data(ClimateGrid * cg);
 static void readline(FILE * file, char * line);
+
+Climate * cg_climate_from_grid(ClimateGrid * cg, int year, int x, int y, int xdim, int ydim)
+{
+	int cgX = x / (xdim/cg->xdim);
+	int cgY = y / (ydim/cg->ydim);
+	return cg->data[cgX][cgY][year];
+}
+
 
 ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, int numYears)
 {
@@ -95,7 +127,7 @@ static void cg_add_climate_record(ClimateGrid * cg, char * line)
 
 	// make sure we aren't writing over anything
 	if(cg->data[longitude][latitude][year] != NULL) {
-		fprintf(stderr, "Duplicate data for long=%d, lat=%d, year=%d\n", longitude, latitude, year);
+		fprintf(stderr, "Duplicate data for long=%d, lat=%d, year=%d, val=%f\n", longitude, latitude, year,cg->data[longitude][latitude][year]->meanTemp);
 		exit(EXIT_FAILURE);
 	}
 
