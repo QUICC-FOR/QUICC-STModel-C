@@ -2,6 +2,7 @@
 #define GRIDCELL_H
 
 #include <gsl/gsl_rng.h>
+#include "climate.h"
 
 /*
     DATA STRUCTURES
@@ -12,17 +13,10 @@ typedef enum {MIXED,DECIDUOUS,CONIFEROUS,TRANSITIONAL} State;
 typedef double StateData [GC_NUM_STATES];
 extern const State GC_POSSIBLE_STATES[GC_NUM_STATES];
 
-
-typedef struct {
-    double meanTemp;
-    /*Task: list all variables need to be used*/
-    // Fill later
-} Climate;
-
 typedef struct {
     State* currentState;
     State* stateHistory;
-    Climate climate;
+    Climate* climate;
     StateData prevalence;
     StateData transitionProbs;
     size_t historySize;

@@ -7,14 +7,14 @@
 const State GC_POSSIBLE_STATES[GC_NUM_STATES] = { MIXED, DECIDUOUS, CONIFEROUS, TRANSITIONAL };
 
 // prototypes for functions defining model parameters
-static double beta_d(Climate climate);
-static double beta_c(Climate climate);
-static double theta_c(Climate climate);
-static double theta_d(Climate climate);
-static double phi_d(Climate climate);
-static double phi_c(Climate climate);
-static double phi_m(Climate climate);
-static double epsi(Climate climate);
+static double beta_d(Climate *climate);
+static double beta_c(Climate *climate);
+static double theta_c(Climate *climate);
+static double theta_d(Climate *climate);
+static double phi_d(Climate *climate);
+static double phi_c(Climate *climate);
+static double phi_m(Climate *climate);
+static double epsi(Climate *climate);
 
 
 void gc_select_next_state(GridCell *cell, gsl_rng *rng)
@@ -147,27 +147,27 @@ char st_state_to_char(State s) {
 // TO IMPLEMENT
 // FOR NOW, THESE RETURN A DUMMY VALUE; EVENTUALLY WILL RETURN THE RESULTS OF
 // STATISTICAL MODELS
-static double beta_d(Climate climate) {
+static double beta_d(Climate *climate) {
   return 0.5;
 }
-static double beta_c(Climate climate) {
+static double beta_c(Climate *climate) {
   return 0.5;
 }
-static double theta_c(Climate climate) {
+static double theta_c(Climate *climate) {
   return 0.25;
 }
-static double theta_d(Climate climate) {
+static double theta_d(Climate *climate) {
   return 0.25;
 }
-static double phi_d(Climate climate) {
+static double phi_d(Climate *climate) {
   return 0.2;
 }
-static double phi_c(Climate climate) {
+static double phi_c(Climate *climate) {
   return 0.2;
 }
-static double phi_m(Climate climate) {
+static double phi_m(Climate *climate) {
   return 0.2;
 }
-static double epsi(Climate climate) {
+static double epsi(Climate *climate) {
   return 0.1;
 }

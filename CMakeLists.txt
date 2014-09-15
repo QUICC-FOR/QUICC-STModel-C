@@ -12,6 +12,7 @@ add_executable(stmodel
   src/main.c
   src/grid.c
   src/grid_cell.c
+  src/climate.c
 )
 
 target_link_libraries(stmodel m gsl gslcblas)
