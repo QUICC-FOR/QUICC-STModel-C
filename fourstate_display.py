@@ -3,11 +3,11 @@ import time
 import tkDisplay
 
 def interpretVal(value):
-    if value == 'D':
+    if value == 'T':
         result = 0
     elif value == 'M':
         result = 1
-    elif value == 'C':
+    elif value == 'B':
         result = 2
     else:
         result = 3
@@ -51,7 +51,6 @@ for year in range(nYears):
     for coords in gridData.keys():
         grid.append((coords[0], coords[1], interpretVal(gridData[coords][year])))
     display.update(grid)
-    raw_input("Press Enter to continue")
 #    if(year == 0):
 #        raw_input("Press enter to begin")
 #    elapsed = time.clock() - stTime

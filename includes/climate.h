@@ -34,6 +34,15 @@ typedef struct {
 
 ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, int numYears);
 
+/*
+	cg_climate_from_grid: extract climate data from the climate grid cg
+	year: the year at which to extract data
+	x: the x-coordinate of the FINE-SCALE grid from which to extract data
+	y: the y-coordinate of the FINE-SCALE grid from which to extract data
+	xdim, ydim: the dimensions of the fine scale grid; will be used for finding the
+		appropriate coordinates in the climate dimension
+*/
+Climate * cg_climate_from_grid(ClimateGrid * cg, int year, int x, int y, int xdim, int ydim);
 
 
 #endif

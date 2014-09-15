@@ -1,41 +1,50 @@
 #include <assert.h>
 #include <time.h>
 #include <gsl/gsl_rng.h>
-#include "../src/grid_cell.c"
+//#include "../src/grid_cell.c"
 #include "../src/grid.c"
 
 int main() {
-  /* DESC: Tests on prevalence function */
-  // set up RNG
-  gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
-  assert(rng);
-  gsl_rng_set(rng, (int)time(NULL));
-  // number of iterations
-  int nTest = 100;
-  double disturb = 0.20;
-  // Start iterations, test memory allocation for 10 grids with size and
-  // timeSteps randomly setup;
-  for (int i = 0; i < nTest; i++) {
-    // vars declaration
-    size_t xSize = gsl_rng_uniform_int(rng, 97) + 3;
-    size_t ySize = gsl_rng_uniform_int(rng, 97) + 3;
-    size_t timeSteps = gsl_rng_uniform_int(rng, 99) + 1;
-    
-    // Init grid
-    Grid *grid = gr_make_grid(xSize, ySize, timeSteps, MOORE, RANDOM, disturb, rng);
 
-	for(GridCell * currentCell = gr_first(grid); currentCell; currentCell = gr_next(grid, currentCell)) {
+	/*
+		test out the computation of prevalence on a small controlled grid
+	*/
+	
+	int testResult = 0;
 
-        gr_compute_prevalence(grid, currentCell);
-        double sum_prev = 0.0;
-        
-        for (int z = 0; z < GC_NUM_STATES; z++) {
-          sum_prev += currentCell->prevalence[z];
-        }
-        assert(sum_prev == 1.0);
-    }
-    // Free memory
-    gr_destroy_grid(grid);
-  }
-  gsl_rng_free(rng);
+	// verify that st_state_to_index fails properly
+	testResult += (st_state_to_index('D') != -1);
+	
+	// test both neighborhood types
+	Grid * testGr = gr_make_grid(3, 3, MOORE, UNIFORM, 0, NULL);
+	StateData prevalence;
+	gr_compute_prevalence(testGr, 1, 1, prevalence);
+	testResult += prevalence[st_state_to_index('T')] != 3.0/8.0;
+	testResult += prevalence[st_state_to_index('B')] != 3.0/8.0;
+	testResult += prevalence[st_state_to_index('M')] != 2.0/8.0;
+	testResult += prevalence[st_state_to_index('R')] != 0;
+
+	testGr = gr_make_grid(3, 3, VONNE, UNIFORM, 0, NULL);
+	gr_compute_prevalence(testGr, 1, 1, prevalence);
+	testResult += prevalence[st_state_to_index('T')] != 1.0/4.0;
+	testResult += prevalence[st_state_to_index('B')] != 1.0/4.0;
+	testResult += prevalence[st_state_to_index('M')] != 2.0/4.0;
+	testResult += prevalence[st_state_to_index('R')] != 0;
+	
+	// test torus in each direction with MOORE neighborhoods, also add an R
+	testGr = gr_make_grid(3, 3, MOORE, UNIFORM, 0, NULL);
+	testGr->stateCurrent[1][2] = 'R';
+	gr_compute_prevalence(testGr, 2, 2, prevalence);
+	testResult += prevalence[st_state_to_index('T')] != 0;
+	testResult += prevalence[st_state_to_index('B')] != 4.0/8.0;
+	testResult += prevalence[st_state_to_index('M')] != 3.0/8.0;
+	testResult += prevalence[st_state_to_index('R')] != 1.0/8.0;
+	
+	gr_compute_prevalence(testGr, 0, 0, prevalence);
+	testResult += prevalence[st_state_to_index('T')] != 5.0/8.0;
+	testResult += prevalence[st_state_to_index('B')] != 0;
+	testResult += prevalence[st_state_to_index('M')] != 3.0/8.0;
+	testResult += prevalence[st_state_to_index('R')] != 0;
+
+	return testResult;
 }
