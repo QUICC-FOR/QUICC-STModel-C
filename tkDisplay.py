@@ -18,9 +18,9 @@ class tkDisplay(object):
                 startingGrid.append((xx, yy, 0))
         self.update(startingGrid)
 
-    def update(self, grid, colRamp = ['#004400', '#339933', '#77cc77', 'white']):
+#    def update(self, grid, colRamp = ['#004400', '#339933', '#77cc77', 'white']):
+    def update(self, grid, colRamp = ['#7fc97f', '#beaed4', '#fdc086', 'white']):
         """ update grid display with the current grid contents """
-                    
         # update the cell colors
         for cell in grid:
             # this assumes the coordinates in cell are indexed to 0, and 0 is the southernmost point

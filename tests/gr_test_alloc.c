@@ -2,7 +2,7 @@
 #include <time.h>
 #include <gsl/gsl_rng.h>
 
-#include "../src/grid_cell.c"
+//#include "../src/grid_cell.c"
 #include "../src/grid.c"
 
 int main() {
@@ -14,33 +14,18 @@ int main() {
     assert(rng);
     gsl_rng_set(rng, (int) time(NULL)); 
 
-    // number of iterations
-    int nTest = 100;
-    double disturb = 0.2;
-
-    //  Start iterations, test memory allocation for 10 grids with size and timeSteps randomly setup; 
-    // Think about negative tests
-
-    // Test for square vs rectangular + big vs small    
-
-    for(int i = 0; i < nTest; i++){
-        // Random var       
-        size_t xSize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
-        size_t ySize = gsl_rng_uniform_int(rng, 99)+1; // Last expression +1: Ensured grid min size != 0;
-        size_t timeSteps = 10;
-
-        // Create grid
-        Grid * grid = gr_make_grid(xSize,ySize,timeSteps,MOORE,RANDOM,disturb,rng);
-        assert(grid);
-
-        // Assertions
-        assert(grid->xDim == xSize);
-        assert(grid->yDim == ySize);
-        assert(grid->gridData);
-        
-        // Free memory
-        gr_destroy_grid(grid);
-    
-    }
+	Grid * testGr;
+	// try square, rectangular, and some very large configurations
+	unsigned int xs [] = {100, 100, 200, 20000};
+	unsigned int ys [] = {100, 200, 100, 20000};
+	GrStartingConditionType sc [] = {RANDOM, RANDOM, MIX, UNIFORM};
+	double d [] = {0.5, 0.3, 0.1, 0};
+	for(int i = 0; i < 4; i++) {
+		testGr = gr_make_grid(xs[i], ys[i], MOORE, sc[i], d[i], rng);
+		assert(testGr->stateCurrent && testGr->stateCurrent[xs[i]-1]);
+		assert(testGr->stateNext && testGr->stateNext[xs[i]-1]);
+		gr_destroy_grid(testGr);
+	}
     gsl_rng_free(rng);
+    return 0;
 }

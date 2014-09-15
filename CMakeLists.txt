@@ -11,7 +11,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -g -Wall -std=c99")
 add_executable(stmodel
   src/main.c
   src/grid.c
-  src/grid_cell.c
+  src/climate.c
 )
 
 target_link_libraries(stmodel m gsl gslcblas)
@@ -29,10 +29,10 @@ macro(add_libstmodel_test NAME)
 endmacro(add_libstmodel_test)
 
 add_libstmodel_test(gr_test_alloc)
-add_libstmodel_test(gc_test_alloc)
 add_libstmodel_test(gr_test_neighbors)
 add_libstmodel_test(gr_test_prevalence)
-add_libstmodel_test(gc_test_new_state)
-add_libstmodel_test(gc_test_trans_prob)
+add_libstmodel_test(gr_test_new_state)
+add_libstmodel_test(gr_test_trans_prob)
+add_libstmodel_test(cl_test)
 
 set(CMAKE_CXX_FLAGS "-O0")

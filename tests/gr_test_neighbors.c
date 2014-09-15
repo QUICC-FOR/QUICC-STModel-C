@@ -3,7 +3,7 @@
 #include <gsl/gsl_rng.h>
 #include <stdbool.h>
 
-#include "../src/grid_cell.c"
+//#include "../src/grid_cell.c"
 #include "../src/grid.c"
 
 int main() {
