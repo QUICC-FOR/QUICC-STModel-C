@@ -10,9 +10,9 @@
 #include "grid.h"
 
 // set global modelling constants
-static int MAX_TIME = 21;
-static int GR_SIZE_X = 3;
-static int GR_SIZE_Y = 3;
+static int MAX_TIME = 1000;
+static int GR_SIZE_X = 200;
+static int GR_SIZE_Y = 200;
 static const NeighborhoodType NBTYPE = MOORE;
 static const double DISTURB_RATE = 0.20;
 

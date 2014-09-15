@@ -1,7 +1,7 @@
 State and transition landscape model 
 ========
 <p align='right'>
-  <img src='https://travis-ci.org/QUICC-FOR/QUICC-STModel-C.svg?branch=master' alt='travis status'/>
+  <img src='https://travis-ci.org/QUICC-FOR/STModel-Simulation.svg?branch=master' alt='travis status'/>
 </p>
 
 **Model spatially explicit built on C**
