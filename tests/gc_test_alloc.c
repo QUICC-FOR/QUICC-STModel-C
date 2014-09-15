@@ -28,7 +28,7 @@ int main() {
     assert(cell->stateHistory[histSize-1] == TRANSITIONAL);
     
     // Basic writing test in cell struct
-    cell->climate->meanTemp = 0;
+//    cell->climate->meanTemp = 0;
     cell->prevalence[0] = cell->transitionProbs[0] = 0.5;
     
     // Free memory

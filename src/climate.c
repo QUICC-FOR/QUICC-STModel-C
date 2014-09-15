@@ -41,8 +41,9 @@ ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, i
 		exit(EXIT_FAILURE);
 	}
 	char line [MAX_LINE_LEN+1];
+	readline(iFile, line);				// get rid of the header line
 	readline(iFile, line);
-	while(line) {
+	while(line[0]) {
 		cg_add_climate_record(newClimateGrid, line);
 		readline(iFile, line);
 	}
@@ -52,7 +53,6 @@ ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, i
 	if(cg_check_for_missing_climate_data(newClimateGrid))
 		exit(EXIT_FAILURE);
 
-	free(line);
 	return newClimateGrid;
 }
 
@@ -71,9 +71,6 @@ static void readline(FILE * file, char * line) {
 		ch = getc(file);
 	}
 	line[len] = '\0';
-	
-	if(len == 0)
-		line = NULL;
 }
 
 
