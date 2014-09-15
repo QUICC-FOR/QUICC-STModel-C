@@ -1,5 +1,15 @@
 // #define NDEBUG   // enable this to switch off debugging/assertions
 
+/*
+	some performance notes
+	with a ~ 1 ha cell size (15000x15000)
+		mem use: ~450 MB
+		running time: ~ 11.5 mins
+	with 10000x10000 cells:
+		mem use: ~150 MB
+		running time ~ 5 mins
+*/
+
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
