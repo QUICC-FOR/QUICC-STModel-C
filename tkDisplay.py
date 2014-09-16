@@ -19,7 +19,7 @@ class tkDisplay(object):
         self.update(startingGrid)
 
 #    def update(self, grid, colRamp = ['#004400', '#339933', '#77cc77', 'white']):
-    def update(self, grid, colRamp = ['#7fc97f', '#beaed4', '#fdc086', 'white']):
+    def update(self, grid, colRamp = ['#7fc97f', '#beaed4', '#fdc086', 'white', 'black']):
         """ update grid display with the current grid contents """
         # update the cell colors
         for cell in grid:

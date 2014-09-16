@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
-
+#include <stdio.h>
+#include <string.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
@@ -12,6 +13,7 @@ const char GR_POSSIBLE_STATES [GR_NUM_STATES] = {'T', 'B', 'R', 'M'};
 
 /* FUNCTION PROTOTYPES */
 static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData prevalence) ;
+static inline void gr_set_null_grid(Grid * gr);
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 static void gr_set_uniform_grid(Grid *grid);
 static void gr_set_mixed_grid(Grid *grid, gsl_rng *rng);
@@ -21,6 +23,7 @@ static inline void ot_set(OffsetType * o, short x, short y);
 static inline int st_state_to_index(char state);
 static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, StateData destProbs);
 static inline char st_select_state(StateData transProbs, gsl_rng * rng);
+static inline int gr_check_grid(Grid * grid);
 
 // prototypes for functions defining model parameters
 static inline double beta_t(Climate *climate);
@@ -33,6 +36,48 @@ static inline double epsi_m(Climate *climate);
 static inline double epsi_b(Climate *climate);
 static inline double epsi_t(Climate *climate);
 
+
+
+Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType, const char * gridDataFile)
+{
+	// first create the grid in memory
+	Grid * newGrid = gr_make_grid(xsize, ysize, nbType, GR_NULL, 0, NULL);
+	fprintf(stderr, "Reading grid state from file <%s>...\n", gridDataFile);
+	
+	// borrow some code functions from climate.h for reading in the data
+	FILE * iFile = fopen(gridDataFile, "r");
+	if(!iFile) {
+		fprintf(stderr, "Cannot open file %s\n", gridDataFile);
+		exit(EXIT_FAILURE);
+	}
+	char line [MAX_LINE_LEN+1];
+	int lineno = 0;
+	readline(iFile, line);
+	lineno++;
+	while(line[0]) {
+		char * cell = strtok(line, ",;");
+		int x = strtol(cell, NULL, 0);
+		cell = strtok(NULL, ",;");
+		int y = strtol(cell, NULL, 0);
+		cell = strtok(NULL, ",;");
+		char st = cell[0];
+		
+		if(x < 0 || x >= newGrid->xdim || y < 0 || y >= newGrid->ydim) {
+			fprintf(stderr, "Error: coordinates (%d,%d) are invalid for grid dimensions of (%d,%d)\n", x, y, newGrid->xdim, newGrid->ydim);
+			exit(EXIT_FAILURE);
+		}
+		newGrid->stateCurrent[x][y] = st;
+		readline(iFile, line);
+		lineno++;
+	}
+	fclose(iFile);
+	if(gr_check_grid(newGrid)) {
+		fprintf(stderr, "Problem reading from the input file\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	return newGrid;
+}
 
 
 void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, gsl_rng *rng)
@@ -175,10 +220,10 @@ static inline int st_state_to_index(char state)
 Grid * gr_make_grid(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType,
 	GrStartingConditionType startingCondition, double startDisturbanceRate, gsl_rng *rng)
 {
-	fprintf(stderr, "Building grid...\n");
+	fprintf(stderr, "Initializing (%d x %d) grid...\n", xsize, ysize);
 	// check for runtime errors
 	if(xsize > GR_MAX_DIM_SIZE || ysize > GR_MAX_DIM_SIZE) {
-		fprintf(stderr, "Error allocating grid; one dimension is greater than the maximum allowable dimension of %d\n", GR_MAX_DIM_SIZE);
+		fprintf(stderr, "Error allocating grid; a dimension is greater than the maximum allowable dimension of %d\n", GR_MAX_DIM_SIZE);
 		exit(EXIT_FAILURE);
 	}
 	if(startDisturbanceRate < 0 || startDisturbanceRate > GR_MAX_DISTURBANCE_RATE) {
@@ -212,6 +257,10 @@ Grid * gr_make_grid(unsigned int xsize, unsigned int ysize, GrNeighborhoodType n
 	case MIX:
 		gr_set_mixed_grid(newGrid, rng);
 		break;
+	
+	case GR_NULL:
+		gr_set_null_grid(newGrid);
+		break;
 	}
 	gr_disturb_grid(newGrid, startDisturbanceRate, rng);
 	return newGrid;
@@ -235,6 +284,15 @@ void gr_destroy_grid(Grid *grid)
 
 
 /*    GRID INITIALIZATION FUNCTIONS   */
+static inline void gr_set_null_grid(Grid * gr)
+{
+	for(int x = 0; x < gr->xdim; x++) {
+		for(int y = 0; y < gr->ydim; y++) {
+			gr->stateCurrent[x][y] = 0;
+		}
+	}	
+}
+
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng)
 {
 	char allowedStates [] = {'B', 'T', 'M'};
@@ -332,6 +390,29 @@ void gr_view_grid(Grid *grid) {
 	    fprintf(stderr,"|   %d\n", y);
 	}
 }
+
+
+
+static inline int gr_check_grid(Grid * grid)
+{
+	int error = 0;
+	for(int x = 0; x < grid->xdim; x++) {
+		for(int y = 0; y < grid->ydim; y++) {
+			char st = grid->stateCurrent[x][y];
+			int found = 0;
+			for(int i = 0; i < GR_NUM_STATES && !found; i++) {
+				char checkState = GR_POSSIBLE_STATES[i];
+				found = (checkState == st);
+			}
+			if(!found) {
+				error++;
+				fprintf(stderr, "Grid has a problem at (%d,%d); state [%c] is invalid\n", x, y, st);
+			}
+		}
+	}
+	return error;
+}
+
 
 
 

@@ -9,8 +9,10 @@ def interpretVal(value):
         result = 1
     elif value == 'B':
         result = 2
-    else:
+    elif value == 'R':
         result = 3
+    else:
+        result = 4
     return result
 
 

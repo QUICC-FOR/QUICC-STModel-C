@@ -13,7 +13,7 @@
 #define GR_NUM_STATES 4
 extern const char GR_POSSIBLE_STATES [GR_NUM_STATES];
 //typedef enum {RANDOM, UNIFORM, MIX, GRID_NULL} GrStartingConditionType;
-typedef enum {RANDOM, UNIFORM, MIX} GrStartingConditionType;
+typedef enum {RANDOM, UNIFORM, MIX, GR_NULL} GrStartingConditionType;
 typedef enum {MOORE, VONNE} GrNeighborhoodType;
 
 //#include "grid_cell.h"
@@ -69,6 +69,7 @@ typedef struct {
 // TODO: add parameters and function description
 
 void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, gsl_rng *rng);
+Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType, const char * gridDataFile);
 Grid * gr_make_grid(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType,
 	GrStartingConditionType startingCondition, double startDisturbanceRate, gsl_rng *rng);
 void gr_destroy_grid(Grid * grid);
