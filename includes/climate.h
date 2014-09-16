@@ -15,28 +15,41 @@
 			note that coordinates and time should be scaled, so that the minimum is 0, and the
 			increment is 1. For time, the resolution is the same as the time step of the model
 		subsequent columns are the data, with decimals separated by a .
-		fourth: mean annual temperature
+		fourth: mean annual temperature (?)
+		fifth: mean annual precipitation (?)
 
 */
 #include <stdio.h>
 
 #define MAX_LINE_LEN 4095
+#define CL_NUM_TERMS 7
 
 
 typedef struct {
-    double meanTemp;
-    /*Task: list all variables need to be used*/
-    // Fill later
+    double env1;
+    double env2;
 } Climate;
+
+typedef struct {
+	double alphaB [CL_NUM_TERMS];
+	double alphaT [CL_NUM_TERMS];
+	double betaB [CL_NUM_TERMS];
+	double betaT [CL_NUM_TERMS];
+	double thetaB [CL_NUM_TERMS];
+	double thetaT [CL_NUM_TERMS];
+	double epsi [CL_NUM_TERMS];
+} ClimatePars;
 
 typedef struct {
 	Climate **** data;
 	int xdim;
 	int ydim;
 	int numYears;
+	ClimatePars parameters;
+	
 } ClimateGrid;
 
-ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, int numYears);
+ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, int numYears, const char * parfile);
 
 /*
 	cg_climate_from_grid: extract climate data from the climate grid cg
@@ -47,6 +60,15 @@ ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, i
 		appropriate coordinates in the climate dimension
 */
 Climate * cg_climate_from_grid(ClimateGrid * cg, int year, int x, int y, int xdim, int ydim);
+
+
+
+/*
+	initialize the parameter struct pars
+	will use the input file parfile if available; if it is null or an empty string
+	will initialize default values
+*/
+int cg_initialize_parameters(ClimatePars * pars, const char * parfile);
 
 
 /*
