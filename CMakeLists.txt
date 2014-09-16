@@ -29,7 +29,6 @@ macro(add_libstmodel_test NAME)
 endmacro(add_libstmodel_test)
 
 add_libstmodel_test(gr_test_alloc)
-add_libstmodel_test(gr_test_neighbors)
 add_libstmodel_test(gr_test_prevalence)
 add_libstmodel_test(gr_test_new_state)
 add_libstmodel_test(gr_test_trans_prob)

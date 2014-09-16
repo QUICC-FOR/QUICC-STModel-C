@@ -18,6 +18,10 @@
 		fourth: mean annual temperature
 
 */
+#include <stdio.h>
+
+#define MAX_LINE_LEN 4095
+
 
 typedef struct {
     double meanTemp;
@@ -44,5 +48,13 @@ ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, i
 */
 Climate * cg_climate_from_grid(ClimateGrid * cg, int year, int x, int y, int xdim, int ydim);
 
+
+/*
+	simple utility function for reading a single line (terminated with '\n') from an input
+	file. The result is stored in the variable line; be sure line is large enough to contain
+	the data; by default this is defined by the variable MAX_LINE_LEN, which specifies the
+	maximum number of characters on a line.
+*/
+void readline(FILE * file, char * line);
 
 #endif

@@ -1,5 +1,6 @@
 #include <math.h>
 #include "../src/grid.c"
+#include "../src/climate.c"
 
 #define  TEST_ERROR_THRESHOLD 0.0001
 
