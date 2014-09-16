@@ -4,6 +4,7 @@
 #include <string.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <math.h>
 
 #include "grid.h"
 
@@ -21,20 +22,22 @@ static void gr_disturb_grid(Grid *grid, double distRate, gsl_rng *rng);
 static inline OffsetType * gr_get_nb_offsets(unsigned short nbSize);
 static inline void ot_set(OffsetType * o, short x, short y);
 static inline int st_state_to_index(char state);
-static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, StateData destProbs);
+static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, ClimatePars * climPar, StateData destProbs);
 static inline char st_select_state(StateData transProbs, gsl_rng * rng);
 static inline int gr_check_grid(Grid * grid);
+static inline long double inv_logit(long double val);
 
 // prototypes for functions defining model parameters
-static inline double beta_t(Climate *climate);
-static inline double beta_b(Climate *climate);
-static inline double theta_b(Climate *climate);
-static inline double theta_t(Climate *climate);
-static inline double alpha_t(Climate *climate);
-static inline double alpha_b(Climate *climate);
-static inline double epsi_m(Climate *climate);
-static inline double epsi_b(Climate *climate);
-static inline double epsi_t(Climate *climate);
+static inline double beta_t(Climate *cl, ClimatePars *cp);
+static inline double beta_b(Climate *cl, ClimatePars *cp);
+static inline double theta_b(Climate *cl, ClimatePars *cp);
+static inline double theta_t(Climate *cl, ClimatePars *cp);
+static inline double alpha_t(Climate *cl, ClimatePars *cp);
+static inline double alpha_b(Climate *cl, ClimatePars *cp);
+static inline double epsi(Climate *cl, ClimatePars *cp);
+static inline double epsi_m(Climate *cl, ClimatePars *cp);
+static inline double epsi_b(Climate *cl, ClimatePars *cp);
+static inline double epsi_t(Climate *cl, ClimatePars *cp);
 
 
 
@@ -80,7 +83,7 @@ Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType
 }
 
 
-void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, gsl_rng *rng)
+void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng)
 /*
 	Current climate is a pointer to a climate struct giving the climate for this cell
 */
@@ -88,7 +91,7 @@ void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, gsl_rng *r
 	StateData prevalence;
 	gr_compute_prevalence(grid, x, y, prevalence);
 	StateData transitionProbs;
-	st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, transitionProbs);
+	st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs);
 	grid->stateNext[x][y] = st_select_state(transitionProbs, rng);
 }
 
@@ -102,7 +105,7 @@ void gr_advance_state(Grid * gr)
 	gr->stateNext = stateSwap;
 }
 
-static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, StateData destProbs)
+static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, ClimatePars * climPar, StateData destProbs)
 {
   /*
           calculate the transition probabilities given the current state
@@ -115,33 +118,33 @@ static inline void st_get_trans_probs(char state, StateData prevalence, Climate 
 	
 	switch(state) {
 	case 'R':
-		destProbs[st_state_to_index('T')] = alpha_t(clim) * (M+T) * (1.0 - alpha_b(clim) * (M+B));
-		destProbs[st_state_to_index('B')] = alpha_b(clim) * (M+B) * (1.0 - alpha_t(clim) * (M+T));
-		destProbs[st_state_to_index('M')] = alpha_t(clim) * (M+B) * alpha_b(clim) * (M+B);
+		destProbs[st_state_to_index('T')] = alpha_t(clim, climPar) * (M+T) * (1.0 - alpha_b(clim, climPar) * (M+B));
+		destProbs[st_state_to_index('B')] = alpha_b(clim, climPar) * (M+B) * (1.0 - alpha_t(clim, climPar) * (M+T));
+		destProbs[st_state_to_index('M')] = alpha_t(clim, climPar) * (M+B) * alpha_b(clim, climPar) * (M+B);
 		destProbs[st_state_to_index('R')] = 1 - (destProbs[st_state_to_index('B')] + 
 			destProbs[st_state_to_index('M')] + destProbs[st_state_to_index('T')]);
     	break;
 
 	case 'M':    
-		destProbs[st_state_to_index('R')] = epsi_m(clim);
-		destProbs[st_state_to_index('B')] = theta_b(clim);
-		destProbs[st_state_to_index('T')] = theta_t(clim);
+		destProbs[st_state_to_index('R')] = epsi_m(clim, climPar);
+		destProbs[st_state_to_index('B')] = theta_b(clim, climPar);
+		destProbs[st_state_to_index('T')] = theta_t(clim, climPar);
 		destProbs[st_state_to_index('M')] = 1 - (destProbs[st_state_to_index('B')] + 
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('T')]);
     	break;
 
 	case 'T':    
-		destProbs[st_state_to_index('R')] = epsi_t(clim);
-		destProbs[st_state_to_index('M')] = beta_b(clim) * (B+M);
+		destProbs[st_state_to_index('R')] = epsi_t(clim, climPar);
+		destProbs[st_state_to_index('M')] = beta_b(clim, climPar) * (B+M);
 		destProbs[st_state_to_index('B')] = 0;
 		destProbs[st_state_to_index('T')] = 1 - (destProbs[st_state_to_index('B')] + 
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
     	break;
 
 	case 'B':    
-		destProbs[st_state_to_index('R')] = epsi_b(clim);
+		destProbs[st_state_to_index('R')] = epsi_b(clim, climPar);
 		destProbs[st_state_to_index('T')] = 0;
-		destProbs[st_state_to_index('M')] = beta_t(clim) * (T+M);
+		destProbs[st_state_to_index('M')] = beta_t(clim, climPar) * (T+M);
 		destProbs[st_state_to_index('B')] = 1 - (destProbs[st_state_to_index('T')] + 
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
     	break;
@@ -414,6 +417,13 @@ static inline int gr_check_grid(Grid * grid)
 }
 
 
+static inline long double inv_logit(long double val)
+{
+	if(val > 0)
+		return 1.0 / (1.0 + exp(-val));
+	else
+		return exp(val) / (1.0 + exp(val));		
+}
 
 
 static inline OffsetType * gr_get_nb_offsets(unsigned short nbSize)
@@ -441,34 +451,60 @@ static inline void ot_set(OffsetType * o, short x, short y)
 	o->y = y;
 }
 
-// TO IMPLEMENT
-// FOR NOW, THESE RETURN A DUMMY VALUE; EVENTUALLY WILL RETURN THE RESULTS OF
-// STATISTICAL MODELS
-static inline double beta_t(Climate *climate) {
-  return 0.5;
-}
-static inline double beta_b(Climate *climate) {
-  return 0.5;
-}
-static inline double theta_b(Climate *climate) {
-  return 0.25;
-}
-static inline double theta_t(Climate *climate) {
-  return 0.25;
-}
-static inline double alpha_t(Climate *climate) {
-  return 0.2;
-}
-static inline double alpha_b(Climate *climate) {
-  return 0.2;
-}
-static inline double epsi_m(Climate *climate) {
-  return 0.01;
-}
-static inline double epsi_b(Climate *climate) {
-  return 0.01;
-}
-static inline double epsi_t(Climate *climate) {
-  return 0.01;
+
+static inline double logit_cubic_climate_parameter(Climate * cl, double * pars)
+{
+	double result = pars[0] + pars[1]*cl->env1 + pars[2]*pow(cl->env1,2) + pars[3]*cl->env2 + pars[4]*pow(cl->env2,2) + pars[5]*pow(cl->env1,3) + pars[6]*pow(cl->env2,3);
+	return result;
 }
 
+static inline double alpha_b(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->alphaB));
+}
+
+static inline double alpha_t(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->alphaT));
+}
+
+static inline double beta_b(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->betaB));
+}
+
+static inline double beta_t(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->betaT));
+}
+
+static inline double theta_b(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->thetaB));
+}
+
+static inline double theta_t(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->thetaT));
+}
+
+static inline double epsi(Climate *cl, ClimatePars *cp)
+{
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->epsi));
+//	return 0.01;
+}
+
+static inline double epsi_m(Climate *cl, ClimatePars *cp)
+{
+	return epsi(cl, cp);
+}
+
+static inline double epsi_b(Climate *cl, ClimatePars *cp)
+{
+	return epsi(cl, cp);
+}
+
+static inline double epsi_t(Climate *cl, ClimatePars *cp)
+{
+	return epsi(cl, cp);
+}

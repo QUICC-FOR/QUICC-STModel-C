@@ -11,13 +11,13 @@ int main(void) {
 	*/
 	int testVal = 0;
 	
-	ClimateGrid * cg = cg_make_climate_grid("climate_test.csv", 10, 10, 20);
+	ClimateGrid * cg = cg_make_climate_grid("climate_test.csv", 10, 10, 20, "test_params.txt");
 	
 	// check values from the new grid
 	for(int x = 0; x < cg->xdim; x++)
 		for(int y = 0; y < cg->ydim; y++)
 			for(int yr = 0; yr < cg->numYears; yr++)
-				testVal += cg->data[x][y][yr]->meanTemp != cg->data[x][y][yr]->meanTemp; // this will segfault if there is a problem
+				testVal += cg->data[x][y][yr]->env1 != cg->data[x][y][yr]->env1; // this will segfault if there is a problem
 
 	return testVal;
 }

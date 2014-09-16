@@ -34,6 +34,7 @@ static int CLIM_Y_DIM = 10;
 static GrNeighborhoodType NBTYPE = MOORE;
 static float DISTURB_RATE = 0.20;
 static char * climateDataFile = "climate_test.csv";
+static char * climateParameterFile = NULL;
 static char * gridDataFile = "";
 static short gridFromFile = 0;
 
@@ -53,7 +54,7 @@ int main(int argc, char **argv) {
 	gsl_rng_set(rng, (int)time(NULL));
   
   
-	ClimateGrid * climGrid = cg_make_climate_grid(climateDataFile, CLIM_X_DIM, CLIM_Y_DIM, MAX_TIME - 1);
+	ClimateGrid * climGrid = cg_make_climate_grid(climateDataFile, CLIM_X_DIM, CLIM_Y_DIM, MAX_TIME - 1, climateParameterFile);
 	Grid *grid;
 	if(gridFromFile)
 		grid = grid_from_file(GR_SIZE_X, GR_SIZE_Y, NBTYPE, gridDataFile);
@@ -67,7 +68,7 @@ int main(int argc, char **argv) {
 		for(int x = 0; x < grid->xdim; x++) {
 			for(int y = 0; y < grid->ydim; y++) {
 				Climate * currentClim = cg_climate_from_grid(climGrid, year-1, x, y, grid->xdim, grid->ydim);
-				gr_update_cell(grid, x, y, currentClim, rng);
+				gr_update_cell(grid, x, y, currentClim, &climGrid->parameters, rng);
 			}
 		}
 		gr_advance_state(grid);
@@ -83,7 +84,7 @@ int main(int argc, char **argv) {
 
 static void parse_args(int argc, char ** argv)
 {
-	char * options = "hvd:t:x:y:a:b:c:g:";
+	char * options = "hvd:t:x:y:a:b:c:g:p:";
 	char opt;
 	int error = 0;
 	while( (opt = getopt(argc, argv, options)) != -1) {
@@ -115,6 +116,9 @@ static void parse_args(int argc, char ** argv)
 		case 'c':
 			climateDataFile = optarg;
 			break;
+		case 'p':
+			climateParameterFile = optarg;
+			break;
 		case 'g':
 			gridDataFile = optarg;
 			gridFromFile = 1;
@@ -140,6 +144,12 @@ static void help()
 	fprintf(stderr, "  -a <int>: specify x dimension of the climate grid (%d)\n", CLIM_X_DIM);
 	fprintf(stderr, "  -b <int>: specify y dimension of the climate grid (%d)\n", CLIM_Y_DIM);	
 	fprintf(stderr, "  -c <filename>: specify the input climate datafile; must match values in -a, -b, and -t options (%s)\n", climateDataFile);	
+	fprintf(stderr, "  -p <filename>: specify a file for reading the parameters for the climate model (NULL)\n");	
+	fprintf(stderr, "        format: %%v%%s%%i ddddd\n");	
+	fprintf(stderr, "        %%v: the first letter of the variable name (e.g., a for alpha)\n");	
+	fprintf(stderr, "        %%s: the first letter of the state for the variable in question (e.g., b for boreal)\n");	
+	fprintf(stderr, "        %%i: the index of the variable; 0 for intercept, 1 for first term, etc\n");	
+	fprintf(stderr, "        dddd: a floating point number with the parameter value\n");	
 	fprintf(stderr, "  -g <filename>: use a previously output grid as input, rather than initializing a new grid (unset)\n");	
 	fprintf(stderr, "  -t <int>: specify the number of time steps after after initial conditions to run the simulation (%d)\n", MAX_TIME-1);
 	fprintf(stderr, "  -d <float>: specify initial disturbance rate between 0 and %f (%f)\n", GR_MAX_DISTURBANCE_RATE, DISTURB_RATE);

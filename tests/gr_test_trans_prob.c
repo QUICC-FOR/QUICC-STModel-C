@@ -1,4 +1,5 @@
 #include <math.h>
+#include <assert.h>
 #include "../src/grid.c"
 #include "../src/climate.c"
 
@@ -24,9 +25,9 @@ int main() {
     char stateTests [] = {'T', 'B', 'M', 'R'};
 
     // define climate conditions to test
-    // not implemented
-    // double meanTempTestVals [] = {-3,-2,-1,0,1,2,3};
-    Climate * clim = NULL;
+    Climate clim = {0,0};
+	ClimatePars climPar;
+	assert(!cg_initialize_parameters(&climPar, NULL));
 
     // loop over prevalence conditions
     for(int prevInd = 0; prevInd < numPrevTests; prevInd++) {
@@ -40,7 +41,7 @@ int main() {
             // init all probs to -1 to start with, so we aren't just using old vals
             for(int j = 0; j < GR_NUM_STATES; j++) transitionProbs[j] = -1;
 
-			st_get_trans_probs(state, prev, clim, transitionProbs);
+			st_get_trans_probs(state, prev, &clim, &climPar, transitionProbs);
 
             // check that they sum to one and that all are on [0,1]
             double sum = 0;
