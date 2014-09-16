@@ -11,7 +11,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -g -Wall -std=c99")
 add_executable(stmodel
   src/main.c
   src/grid.c
-#  src/grid_cell.c
   src/climate.c
 )
 
