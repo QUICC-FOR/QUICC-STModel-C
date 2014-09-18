@@ -15,6 +15,7 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include <gsl/gsl_rng.h>
 
