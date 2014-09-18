@@ -454,7 +454,7 @@ static inline void ot_set(OffsetType * o, short x, short y)
 
 static inline double logit_cubic_climate_parameter(Climate * cl, double * pars)
 {
-	double result = pars[0] + pars[1]*cl->env1 + pars[2]*pow(cl->env1,2) + pars[3]*cl->env2 + pars[4]*pow(cl->env2,2) + pars[5]*pow(cl->env1,3) + pars[6]*pow(cl->env2,3);
+	double result = pars[0] + pars[1]*cl->env1 + pars[2]*cl->env2 + pars[3]*pow(cl->env1,2) + pars[4]*pow(cl->env2,2) + pars[5]*pow(cl->env1,3) + pars[6]*pow(cl->env2,3);
 	return result;
 }
 
