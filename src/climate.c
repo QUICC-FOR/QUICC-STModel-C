@@ -34,6 +34,35 @@ testClim = data.frame(
 )
 write.table(testClim, "/Users/mtalluto/Documents/git_projects/C-STMFor/climate_test.csv", sep=',', row.names=FALSE)
 
+
+
+###### what follows is a different set of climate data for use with Dom's parameters
+xm = 9
+ym = 19
+
+xd = 0:xm
+# precip in meters
+env2 = seq(1, 1.3, length.out=length(xd))
+
+yd = 0:ym
+# temp in degrees
+env1 = seq(6, 1, length.out=length(yd))
+
+xx = rep(xd, length(yd))
+xenv2 = rep(env2, length(yd))
+
+yy = rep(yd, each=length(xd))
+yenv1 = rep(env1, each=length(xd))
+
+testClim = data.frame(
+	x = xx,
+	y = yy,
+	year = rep(0, length(xx)),
+	env1 = yenv1,
+	env2 = xenv2)
+
+write.table(testClim, "/Users/mtalluto/Documents/git_projects/C-STMFor/climate_test_dom.csv", sep=',', row.names=FALSE)
+
 */
 
 static char CL_ERR_MSG [1024] = "";

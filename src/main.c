@@ -32,6 +32,7 @@ static int GR_SIZE_X = 100;
 static int GR_SIZE_Y = 100;
 static int CLIM_X_DIM = 10;
 static int CLIM_Y_DIM = 10;
+static int climateIsConstant = 0;
 static GrNeighborhoodType NBTYPE = MOORE;
 static float DISTURB_RATE = 0.20;
 static char * climateDataFile = "climate_test.csv";
@@ -54,8 +55,10 @@ int main(int argc, char **argv) {
 	assert(rng);
 	gsl_rng_set(rng, (int)time(NULL));
   
-  
-	ClimateGrid * climGrid = cg_make_climate_grid(climateDataFile, CLIM_X_DIM, CLIM_Y_DIM, MAX_TIME - 1, climateParameterFile);
+
+	int climNYears = MAX_TIME - 1;
+	if(climateIsConstant) climNYears = 1;
+	ClimateGrid * climGrid = cg_make_climate_grid(climateDataFile, CLIM_X_DIM, CLIM_Y_DIM, climNYears, climateParameterFile);
 	Grid *grid;
 	if(gridFromFile)
 		grid = grid_from_file(GR_SIZE_X, GR_SIZE_Y, NBTYPE, gridDataFile);
@@ -68,7 +71,9 @@ int main(int argc, char **argv) {
 	for (int year = 1; year < MAX_TIME; year++) {
 		for(int x = 0; x < grid->xdim; x++) {
 			for(int y = 0; y < grid->ydim; y++) {
-				Climate * currentClim = cg_climate_from_grid(climGrid, year-1, x, y, grid->xdim, grid->ydim);
+				int clYear = year-1;
+				if(climateIsConstant) clYear = 0;
+				Climate * currentClim = cg_climate_from_grid(climGrid, clYear, x, y, grid->xdim, grid->ydim);
 				gr_update_cell(grid, x, y, currentClim, &climGrid->parameters, rng);
 			}
 		}
@@ -85,7 +90,7 @@ int main(int argc, char **argv) {
 
 static void parse_args(int argc, char ** argv)
 {
-	char * options = "hvd:t:x:y:a:b:c:g:p:";
+	char * options = "shvd:t:x:y:a:b:c:g:p:";
 	char opt;
 	int error = 0;
 	while( (opt = getopt(argc, argv, options)) != -1) {
@@ -107,6 +112,9 @@ static void parse_args(int argc, char ** argv)
 			break;
 		case 'y':
 			GR_SIZE_Y = strtol(optarg, NULL, 0);
+			break;
+		case 's':
+			climateIsConstant = 1;
 			break;
 		case 'a':
 			CLIM_X_DIM = strtol(optarg, NULL, 0);
@@ -144,7 +152,8 @@ static void help()
 	fprintf(stderr, "  -y <int>: specify y dimension of the simulation grid; must divide evenly into x-dim of climate grid (%d)\n", GR_SIZE_Y);
 	fprintf(stderr, "  -a <int>: specify x dimension of the climate grid (%d)\n", CLIM_X_DIM);
 	fprintf(stderr, "  -b <int>: specify y dimension of the climate grid (%d)\n", CLIM_Y_DIM);	
-	fprintf(stderr, "  -c <filename>: specify the input climate datafile; must match values in -a, -b, and -t options (%s)\n", climateDataFile);	
+	fprintf(stderr, "  -c <filename>: specify the input climate datafile; must match values in -a, -b, and -t options (%s)\n", climateDataFile);
+	fprintf(stderr, "  -s: specify constant climate (instead of varying in time) (unset)\n");	
 	fprintf(stderr, "  -p <filename>: specify a file for reading the parameters for the climate model (NULL)\n");	
 	fprintf(stderr, "        format: %%v%%s%%i ddddd\n");	
 	fprintf(stderr, "        %%v: the first letter of the variable name (e.g., a for alpha)\n");	
