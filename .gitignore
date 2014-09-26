@@ -37,3 +37,4 @@ Testing
 #output 
 *.csv
 *.pdf
+*.history
