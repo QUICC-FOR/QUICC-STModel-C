@@ -12,7 +12,8 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <time.h>
+//#include <time.h>
+#include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -50,10 +51,16 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-  // set up RNG
+  // set up RNG -- reading from /dev/urandom for the seed
 	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 	assert(rng);
-	gsl_rng_set(rng, (int)time(NULL));
+	{
+		int rSource = open("/dev/urandom", O_RDONLY);
+		int rSeed;
+		ssize_t result = read(rSource, ((char*)&rSeed), sizeof(rSeed));
+		close(rSource);
+		gsl_rng_set(rng, rSeed);
+	}
   
 
 	int climNYears = MAX_TIME - 1;
