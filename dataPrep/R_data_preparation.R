@@ -56,6 +56,8 @@ get_bioclim_var  <- function(path_var, yearMin, yearMax){
     }
   }
   
+  output(rs)
+  
 }
 
   
