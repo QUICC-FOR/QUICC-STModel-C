@@ -21,10 +21,6 @@
 
 get_bioclim_var  <- function(path_var, yearMin, yearMax){
   
-  path_var  <- "~/Documents/Data/Raster_pastClimate_STM/ascii/bio300_01/"
-  yearMin  <- 1980
-  yearMax  <- 2010
-  
   library(raster)
   library(rgdal)
   library(stringr)
@@ -37,7 +33,9 @@ get_bioclim_var  <- function(path_var, yearMin, yearMax){
   
   # List of files
   rs_files  <- list.files(path_var)
-  rs_files  <- rs_files[-which(str_detect(rs_files,c('.aux','.xml')))]
+  rm_files  <- which(str_detect(rs_files,c('.aux')))
+  
+  if(!length(rm_files)==0) rs_files  <- rs_files[-rm_files]
   
   # Retrieve all files in time interval
   out_match  <- as.numeric(length(id_files_yrs))
@@ -51,7 +49,7 @@ get_bioclim_var  <- function(path_var, yearMin, yearMax){
   # Start importation
   ###########################
   
-  # Extent Québec 
+  # Extent Québec + 1° 
   ext_qc  <- extent(-80.7600089999999,-56.1054839999999, 45.990798, 63.5852190000001)
   
   ## Create rasterstack
@@ -67,7 +65,7 @@ get_bioclim_var  <- function(path_var, yearMin, yearMax){
     }
   }
   
-  names(rs)  <- as.character(seq(yearMin,yearMax,1))
+  names(rs)  <- seq(yearMin,yearMax,1)
   return(rs)
   
 }
