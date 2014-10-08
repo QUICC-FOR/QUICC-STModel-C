@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 	{
 		int rSource = open("/dev/urandom", O_RDONLY);
 		int rSeed;
-		ssize_t result = read(rSource, ((char*)&rSeed), sizeof(rSeed));
+		read(rSource, ((char*)&rSeed), sizeof(rSeed));
 		close(rSource);
 		gsl_rng_set(rng, rSeed);
 	}
