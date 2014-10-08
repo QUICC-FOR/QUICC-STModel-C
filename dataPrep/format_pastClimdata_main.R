@@ -83,7 +83,7 @@ get_grid_coord  <- function(x,get_mean_NA=TRUE){
 
 # get Coords and reshape for the output
 STM_climData <- get_grid_coord(clim_var)
-STM_climData  <- data.frame(STM_climData[,c(7:8)],year=rep(0,nrow(STM_climData)),env1=STM_climData[,3],env2=STM_climData[,4])
+STM_climData  <- data.frame(x= STM_climData[,7],y= STM_climData[,8],year=rep(0,nrow(STM_climData)),env1=STM_climData[,3],env2=STM_climData[,4])
 
 #Write ouput
 write.table(STM_climData, file="./PastClimate70-00.csv", sep=',', row.names=FALSE)
