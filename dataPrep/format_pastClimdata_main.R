@@ -57,18 +57,19 @@ get_grid_coord  <- function(x,get_mean_NA=TRUE){
   x= clim_var
   ls_clim_var_STMCoord  <- split(x,x$f.lon)
   
-  coord  <- seq(0,length(ls_clim_var_STMCoord)-1,1)
+  coordx  <- seq(0,length(ls_clim_var_STMCoord)-1,1)
   
     for (i in 1: length(ls_clim_var_STMCoord)){
-      ls_clim_var_STMCoord[[i]]$xCoord  <- rep(coord[i],nrow(ls_clim_var_STMCoord[[i]]))
+      ls_clim_var_STMCoord[[i]]$xCoord  <- rep(coordx[i],nrow(ls_clim_var_STMCoord[[i]]))
     }
 
   ls_clim_var_STMCoord <- do.call("rbind", ls_clim_var_STMCoord) 
   
   ls_clim_var_STMCoord  <- split(ls_clim_var_STMCoord,ls_clim_var_STMCoord$f.lat)
-
+  coordy  <- seq(0,length(ls_clim_var_STMCoord)-1,1)
+  
     for (i in 1: length(ls_clim_var_STMCoord)){
-      ls_clim_var_STMCoord[[i]]$yCoord  <- rep(coord[i],nrow(ls_clim_var_STMCoord[[i]]))
+      ls_clim_var_STMCoord[[i]]$yCoord  <- rep(coordy[i],nrow(ls_clim_var_STMCoord[[i]]))
       if(get_mean_NA == TRUE) {
         ls_clim_var_STMCoord[[i]][is.na(ls_clim_var_STMCoord[[i]]$avg_annual_temp),"avg_annual_temp"] = mean(ls_clim_var_STMCoord[[i]]$avg_annual_temp,na.rm=TRUE)
         ls_clim_var_STMCoord[[i]][is.na(ls_clim_var_STMCoord[[i]]$avg_annual_pp),"avg_annual_pp"] = mean(ls_clim_var_STMCoord[[i]]$avg_annual_pp,na.rm=TRUE)
@@ -80,7 +81,9 @@ get_grid_coord  <- function(x,get_mean_NA=TRUE){
   return(ls_clim_var_STMCoord)
 }
 
-# get Coords
+# get Coords and reshape for the output
 STM_climData <- get_grid_coord(clim_var)
+STM_climData  <- data.frame(STM_climData[,c(7:8)],year=rep(0,nrow(STM_climData)),env1=STM_climData[,3],env2=STM_climData[,4])
 
-ggplot(aes(x = lon, y = lat), data = STM_climData) + geom_tile(aes(fill = avg_annual_temp)) + coord_equal()
+#Write ouput
+write.table(STM_climData, file="./PastClimate70-00.csv", sep=',', row.names=FALSE)
