@@ -13,6 +13,7 @@ library(reshape2)
 library(ggmap)
 library(plyr)
 library(RColorBrewer)
+library(gstat)
 
 # Setup paths and variables -------------------------------------------------------------
 
@@ -21,19 +22,24 @@ path_annual_pp   <- "~/Documents/Data/Raster_pastClimate_STM/ascii/bio300_12/"
 yearMin  <- 1970
 yearMax  <- 2000
 
-# extract variables -------------------------------------------------------
+# extract variables on crop area for all years-------------------------------------------------------
 
 rs.annual_mean_temp  <- get_bioclim_var(path_annual_mean_temp,yearMin,yearMax)
 rs.annual_pp  <- get_bioclim_var(path_annual_pp,yearMin,yearMax)
 
-# Get mean on years interval ----------------------------------------------
+# Compute average on all layers of the rasterstack ------------------------
 
-df.annual_mean_temp  <- as.data.frame(mean(rs.annual_mean_temp),na.rm=FALSE,xy=TRUE)
-df.annual_pp  <- as.data.frame(mean(rs.annual_pp),na.rm=FALSE,xy=TRUE)
+rs_avg.annual_mean_temp  <- mean(rs.annual_mean_temp)
+rs_avg.annual_pp  <- mean(rs.annual_pp)
+
+# Switch to dataframe structure ----------------------------------------------
+
+df.annual_mean_temp  <- as.data.frame(rs_avg.annual_mean_temp,na.rm=FALSE,xy=TRUE)
+df.annual_pp  <- as.data.frame(rs_avg.annual_pp,na.rm=FALSE,xy=TRUE)
 
 # Final dataset with units (annual_pp (m) and annual_temp (C))-----------------------------------------------------------
 
-clim_var  <- data.frame(lon = df.annual_mean_temp$x, lat = df.annual_mean_temp$y, avg_annual_temp = df.annual_mean$layer/10, avg_annual_pp = df.annual_pp$layer/1000)
+clim_var  <- data.frame(lon = df.annual_mean_temp$x, lat = df.annual_mean_temp$y, avg_annual_temp = df.annual_mean_temp$layer/10, avg_annual_pp = df.annual_pp$layer/1000)
 
 # Visualization -----------------------------------------------------------
 
@@ -42,15 +48,39 @@ ggplot(aes(x = lon, y = lat), data = clim_var) + geom_tile(aes(fill = avg_annual
 
 # Transfo to STM format ---------------------------------------------------
 
-# transform lat and lon as factors
-clim_var$lon  <- as.factor(clim_var$lon)
-clim_var$lat  <- as.factor(clim_var$lat) # levels of the factor is ordered ACS
+# Transform lat and lon as factors
+clim_var$f.lon  <- as.factor(clim_var$lon)
+clim_var$f.lat  <- as.factor(clim_var$lat) # levels of the factor is ordered ACS
 
+# function to get coord based on the STM model (using split and factors)
+get_grid_coord  <- function(x,get_mean_NA=TRUE){
+  x= clim_var
+  ls_clim_var_STMCoord  <- split(x,x$f.lon)
+  
+  coord  <- seq(0,length(ls_clim_var_STMCoord)-1,1)
+  
+    for (i in 1: length(ls_clim_var_STMCoord)){
+      ls_clim_var_STMCoord[[i]]$xCoord  <- rep(coord[i],nrow(ls_clim_var_STMCoord[[i]]))
+    }
 
-ls_clim_var  <- split(clim_var,clim_var$lon)
+  ls_clim_var_STMCoord <- do.call("rbind", ls_clim_var_STMCoord) 
+  
+  ls_clim_var_STMCoord  <- split(ls_clim_var_STMCoord,ls_clim_var_STMCoord$f.lat)
 
+    for (i in 1: length(ls_clim_var_STMCoord)){
+      ls_clim_var_STMCoord[[i]]$yCoord  <- rep(coord[i],nrow(ls_clim_var_STMCoord[[i]]))
+      if(get_mean_NA == TRUE) {
+        ls_clim_var_STMCoord[[i]][is.na(ls_clim_var_STMCoord[[i]]$avg_annual_temp),"avg_annual_temp"] = mean(ls_clim_var_STMCoord[[i]]$avg_annual_temp,na.rm=TRUE)
+        ls_clim_var_STMCoord[[i]][is.na(ls_clim_var_STMCoord[[i]]$avg_annual_pp),"avg_annual_pp"] = mean(ls_clim_var_STMCoord[[i]]$avg_annual_pp,na.rm=TRUE)
+      }
+    }
+    
+  ls_clim_var_STMCoord <- do.call("rbind", ls_clim_var_STMCoord) 
+  
+  return(ls_clim_var_STMCoord)
+}
 
+# get Coords
+STM_climData <- get_grid_coord(clim_var)
 
-
-
-
+ggplot(aes(x = lon, y = lat), data = STM_climData) + geom_tile(aes(fill = avg_annual_temp)) + coord_equal()
