@@ -32,7 +32,7 @@ testClim = data.frame(
 	env1 = rep(yenv1, length(yr)),
 	env2 = rep(xenv2, length(yr))
 )
-write.table(testClim, "/Users/mtalluto/Documents/git_projects/C-STMFor/climate_test.csv", sep=',', row.names=FALSE)
+write.table(testClim, paste(getwd(),"/climate_test.csv",sep=""), sep=',', row.names=FALSE)
 
 
 
