@@ -39,5 +39,5 @@ Testing
 *.pdf
 *.history
 outDir
-*Times
+Times*
 

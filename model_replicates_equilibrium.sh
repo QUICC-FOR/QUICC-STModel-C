@@ -2,7 +2,7 @@
 
 # Simulation parameters
 WritingStep=2
-nSimu=100
+nSimu=10
 Timesteps=100
 
 outDir=Times$Timesteps-Rep$nSimu-IsaPars
@@ -14,7 +14,7 @@ intWritingStep=${Timesteps}/${WritingStep}
 for (( n=1; n<=${nSimu}; n++ ))
 do
 	mkdir -p $outDir/simu_$n
-	printf "Running simulation $n of 100
+	printf "Running simulation $n of $nSimu
 	......................................\n"
 
 	for (( t=1; t <=${intWritingStep}; t++ ))

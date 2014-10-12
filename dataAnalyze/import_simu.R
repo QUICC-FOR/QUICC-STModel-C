@@ -2,18 +2,6 @@
 ### By Steve Vissault
 ### October, 10th 2014
 
-rm(list=ls())
-
-# Set wd and libraries------------------------------------------------------------------
-
-setwd("~/Documents/GitHub/C-STMFor/outDir/")
-library(stringr)
-library(plyr)
-library(raster)
-library(reshape2)
-library(ggplot2)
-
-
 # Functions ---------------------------------------------------------------
 
 import_step  <- function(file,WritingSteps=WritingSteps,out=out){
@@ -48,50 +36,35 @@ state_to_num  <- function(x) {
   return(i)
 }
 
-# Info on simulation  ------------------------------------------------------------------------
-nSimu <- 60
-WritingSteps  <- 10
-MaxTimeSteps  <- 1000
-y_Gridsize  <- 1600 
-x_Gridsize  <- 500
-all_steps  <- seq(WritingSteps,MaxTimeSteps,WritingSteps)
-simu_paths  <- list.dirs(getwd())[str_detect(list.dirs(getwd()),"simu")]
-ext  <- extent(-75,-70, 44.990798, 57.5)
-proj = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
-
 # Import ------------------------------------------------------------------
 
 #### List timestep file and order them
-
-ls_simu_order  <- simu_paths[sort(as.numeric(str_extract(simu_paths,"\\(?[0-9]+\\)?")),index.return = TRUE)$ix]
-ls_files_order <- list.files(ls_simu_order[1])[sort(as.numeric(str_extract(list.files(ls_simu_order[1]),"\\(?[0-9]+\\)?")),index.return = TRUE)$ix]
+ls_files_order <- list.files(simu_paths[1])[sort(as.numeric(str_extract(list.files(simu_paths[1]),"\\(?[0-9]+\\)?")),index.return = TRUE)$ix]
 
 #### get vector of all time steps
 
-TimeSteps  <- as.numeric(str_extract(ls_files_order,"\\(?[0-9]+\\)?"))*WritingSteps
+TimeSteps  <- as.numeric(str_extract(ls_files_order,"\\(?[0-9]+\\)?"))
 
 #### Check infos on simulation
 
-if(nSimu != length(ls_simu_order)) stop("too many simulation folder..")
+if(nSimu != length(simu_paths)) stop("too many simulation folder..")
 if(sum(all_steps) != sum(TimeSteps)) stop("too many TimeSteps files..")
 
 ### Create brick folder
 
-system("mkdir 'brick_out'")
+system("mkdir -p 'brick_out'")
 
 #### Run loop over all simulation folders
-for(y in 1:length(ls_simu_order)){
+for(y in 1:nSimu){
   #### Prepare brick
-  simu_path  <- ls_simu_order[y]
-  
   #### Store each step in rasterbrick
-  vec_file  <- paste(simu_path,ls_files_order,sep="/")
+  vec_file  <- paste(simu_paths[y],ls_files_order,sep="/")
   ls_step  <- lapply(vec_file,import_step,out="spatial",WritingSteps=WritingSteps)
   brick_simu  <- brick(ls_step)
   
   brick_simu@crs  <- proj
   brick_simu@extent  <- ext
-  names(brick_simu)  <- paste("simu_",TimeSteps,sep="")
+  names(brick_simu)  <- paste("step_",TimeSteps,sep="")
   writeRaster(brick_simu, filename=paste("./brick_out/","step_",y,sep=""), format="raster",bylayer=FALSE,overwrite=TRUE)
 }
   
