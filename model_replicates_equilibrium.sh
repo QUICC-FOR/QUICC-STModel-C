@@ -2,7 +2,7 @@
 
 # Simulation parameters
 WritingStep=2
-nSimu=10
+nSimu=5
 Timesteps=100
 
 outDir=Times$Timesteps-Rep$nSimu-IsaPars

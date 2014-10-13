@@ -14,7 +14,7 @@ library(gridExtra)
 
 # Info on simulation  ----------------------------------------------------------------------
 
-setwd("~/Documents/GitHub/C-STMFor/Times100-Rep10-IsaPars/")
+setwd("~/Documents/GitHub/C-STMFor/Times100-Rep5-IsaParsm3/")
 
 nSimu <- 5
 WritingSteps  <- 2
@@ -30,18 +30,6 @@ proj = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
 # Import to rasterbrick ---------------------------------------------------
 ## Need to be done one times
 #source("../dataAnalyze/import_simu.R")
-
-# Analyse climspace ------------------------------------------------------
-
-source("../dataAnalyze/explo_clim_space.R")
-
-climfile = "PastClimate70-00.csv" #Same structure needed by the model
-
-dom  <- explo_spaceclim(climfile,"dompars.txt")
-isa1  <- explo_spaceclim(climfile,"isapars.txt")
-isa2  <- explo_spaceclim(climfile,"isapars_m3.txt")
-
-ggsave(plot=grid.arrange(dom,isa1,isa2),filename = "./explo_clim_params.pdf",width = 10, height = 20)
 
 # Analyse prop ------------------------------------------------------------
 setwd("./brick_out/")
@@ -74,8 +62,8 @@ simu_files_order  <- simu_files[sort(as.numeric(str_extract(simu_files,"[0-9]+")
 
 prop_all_simu  <- lapply(simu_files_order,compute_prop_all_simus)
 prop_all_simu  <- do.call(rbind,prop_all_simu)
-
+write.csv2(prop_all_simu,file="../prop_all_simus.csv")
 
 gg_prop  <- melt(prop_all_simu,id=c("simu","step"),variable.name = "prop")
-ggplot(gg_prop) + geom_point(aes(x=step,y=value,group=simu,color=prop)) + facet_wrap(~prop,scales = "free_y")
-ggsave()
+ggplot(gg_prop) + geom_point(aes(x=step,y=value,group=simu,color=prop)) + xlab("Time") +ylab("Proportion (%)")
+ggsave("../prop_time.pdf")

@@ -65,6 +65,6 @@ for(y in 1:nSimu){
   brick_simu@crs  <- proj
   brick_simu@extent  <- ext
   names(brick_simu)  <- paste("step_",TimeSteps,sep="")
-  writeRaster(brick_simu, filename=paste("./brick_out/","step_",y,sep=""), format="raster",bylayer=FALSE,overwrite=TRUE)
+  writeRaster(brick_simu, filename=paste("./brick_out/","simu_",y,sep=""), format="raster",bylayer=FALSE,overwrite=TRUE)
 }
   

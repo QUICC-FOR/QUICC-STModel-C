@@ -60,3 +60,12 @@ explo_spaceclim  <- function(climfile,parsfile){
                   "Parameters file:",parsfile))
   
 }
+
+climfile = "PastClimate70-00.csv" #Same structure needed by the model
+
+dom  <- explo_spaceclim(climfile,"dompars.txt")
+isa1  <- explo_spaceclim(climfile,"isapars.txt")
+isa2  <- explo_spaceclim(climfile,"isapars_m3.txt")
+
+grid.arrange(dom,isa1,isa2)
+ggsave(filename = "./explo_clim_params.pdf",width = 10, height = 20)
