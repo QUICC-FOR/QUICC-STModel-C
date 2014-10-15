@@ -51,7 +51,7 @@ get_bioclim_var  <- function(path_var, yearMin, yearMax){
   
   # Extent Québec + 1° 
   #ext_crop <- extent(-80.7600089999999,-56.1054839999999, 45.990798, 63.5852190000001)
-  ext_crop  <- extent(-75,-70, 44.990798, 57.5)
+  ext_crop  <- extent(-75,-70, 44.990798, 52)
   
   ## Create rasterstack
   for(i in 1:length(files_interval)){

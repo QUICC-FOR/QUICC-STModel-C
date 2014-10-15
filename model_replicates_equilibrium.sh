@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Simulation parameters
-WritingStep=2
-nSimu=5
-Timesteps=100
+WritingStep=10
+nSimu=1
+Timesteps=600
 
-outDir=Times$Timesteps-Rep$nSimu-IsaPars
+outDir=Times$Timesteps-Rep$nSimu-DomPars3-NewRaster
 
 mkdir -p $outDir
 
@@ -23,11 +23,11 @@ do
 		if [ $t -eq 1 ]
 		then
 			printf "Running timestep 	$(( $t * $WritingStep )) of $Timesteps \n"
-			./build/stmodel -x 600 -y 1500 -a 60 -b 150 -c ./PastClimate70-00.csv -s -p ./isapars.txt -t $WritingStep -d 0.1 >$present_outfile 2>/dev/null
+			./build/stmodel -x 600 -y 840 -a 60 -b 84 -c ./PastClimate70-00.csv -s -p ./dompars3.txt -t $WritingStep -d 0.1 >$present_outfile 2>/dev/null
 		else
 			printf "                        $(( $t * $WritingStep )) of $Timesteps \n"
 			previous_outfile=$outDir/simu_$n/$(( $t * $WritingStep - $WritingStep ))_step_out.csv
-			./build/stmodel -x 600 -y 1500 -a 60 -b 150 -c ./PastClimate70-00.csv -s -p ./isapars.txt -t $WritingStep -d 0.0 -g $previous_outfile >$present_outfile 2>/dev/null
+			./build/stmodel -x 600 -y 840 -a 60 -b 84 -c ./PastClimate70-00.csv -s -p ./dompars3.txt -t $WritingStep -d 0.0 -g $previous_outfile >$present_outfile 2>/dev/null
 		fi
 	done
 done

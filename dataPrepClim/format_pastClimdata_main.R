@@ -6,15 +6,14 @@ rm(list=ls())
 
 # Setup wd, source files, libraries -----------------------------------------------
 
-setwd("~/Documents/GitHub/C-STMFor/")
-source("dataPrep/extract_int_yrs_pastClimate.R")
+source("~/Documents/GitHub/C-STMFor/dataPrepClim/extract_int_yrs_pastClimate.R")
 library(ggplot2)
 library(reshape2)
 library(ggmap)
 library(plyr)
 library(RColorBrewer)
 library(gstat)
-
+library(gridExtra)
 # Setup paths and variables -------------------------------------------------------------
 
 path_annual_mean_temp  <- "~/Documents/Data/Raster_pastClimate_STM/ascii/bio300_01/"
@@ -43,8 +42,11 @@ clim_var  <- data.frame(lon = df.annual_mean_temp$x, lat = df.annual_mean_temp$y
 
 # Visualization -----------------------------------------------------------
 
-ggplot(aes(x = lon, y = lat), data = clim_var) + geom_tile(aes(fill = avg_annual_temp)) + coord_equal()
-ggplot(aes(x = lon, y = lat), data = clim_var) + geom_tile(aes(fill = avg_annual_pp)) + coord_equal()
+m1  <- ggplot(aes(x = lon, y = lat), data = clim_var) + geom_tile(aes(fill = avg_annual_temp)) + coord_equal()
+m2  <- ggplot(aes(x = lon, y = lat), data = clim_var) + geom_tile(aes(fill = avg_annual_pp)) + coord_equal()
+
+x11()
+grid.arrange(m1,m2)
 
 # Transfo to STM format ---------------------------------------------------
 
@@ -54,7 +56,6 @@ clim_var$f.lat  <- as.factor(clim_var$lat) # levels of the factor is ordered ACS
 
 # function to get coord based on the STM model (using split and factors)
 get_grid_coord  <- function(x,get_mean_NA=TRUE){
-  x= clim_var
   ls_clim_var_STMCoord  <- split(x,x$f.lon)
   
   coordx  <- seq(0,length(ls_clim_var_STMCoord)-1,1)

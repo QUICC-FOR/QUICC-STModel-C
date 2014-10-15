@@ -7,14 +7,13 @@
 # Setup wd, source files, libraries -----------------------------------------------
 
 explo_spaceclim  <- function(climfile,parsfile){
-  
   require(ggplot2)
   require(reshape2)
   require(RColorBrewer)
   
   # Load file ---------------------------------------------------------------
-  clim_var  <- read.table(file = paste("../",climfile,sep=""),sep=",",header=T)
-  pars  <- read.table(file= paste("../",parsfile,sep=""),sep="",header = F)
+  clim_var  <- read.table(file = climfile,sep=",",header=T)
+  pars  <- read.table(file= parsfile,sep="",header = F)
   names(pars)  <- c("pars","value")
   pars_name  <- as.character(pars$pars)
   pars_value  <- pars$value
@@ -61,9 +60,10 @@ explo_spaceclim  <- function(climfile,parsfile){
   
 }
 
-climfile = "PastClimate70-00.csv" #Same structure needed by the model
+climfile = "../../PastClimate70-00.csv" #Same structure needed by the model
 
 dom  <- explo_spaceclim(climfile,"dompars.txt")
+dom2  <- explo_spaceclim(climfile,"../../dompars2.txt")
 isa1  <- explo_spaceclim(climfile,"isapars.txt")
 isa2  <- explo_spaceclim(climfile,"isapars_m3.txt")
 
