@@ -39,5 +39,6 @@ Testing
 *.pdf
 *.history
 outDir
+archives
 Times*
 
