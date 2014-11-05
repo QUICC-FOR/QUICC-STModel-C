@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <time.h>
 #include <gsl/gsl_rng.h>
+#include <math.h>
 
 #include "../src/grid.c"
 #include "../src/climate.c"
@@ -32,20 +33,20 @@ int main() {
 	testResult += prevalence[st_state_to_index('M')] != 2.0/4.0;
 	testResult += prevalence[st_state_to_index('R')] != 0;
 	
-	// test torus in each direction with MOORE neighborhoods, also add an R
+	// test edges in each direction with MOORE neighborhoods, also add an R
 	testGr = gr_make_grid(3, 3, MOORE, UNIFORM, 0, NULL);
 	testGr->stateCurrent[1][2] = 'R';
+	double epsilon = 0.0000001;
 	gr_compute_prevalence(testGr, 2, 2, prevalence);
 	testResult += prevalence[st_state_to_index('T')] != 0;
-	testResult += prevalence[st_state_to_index('B')] != 4.0/8.0;
-	testResult += prevalence[st_state_to_index('M')] != 3.0/8.0;
-	testResult += prevalence[st_state_to_index('R')] != 1.0/8.0;
-	
-	gr_compute_prevalence(testGr, 0, 0, prevalence);
-	testResult += prevalence[st_state_to_index('T')] != 5.0/8.0;
 	testResult += prevalence[st_state_to_index('B')] != 0;
-	testResult += prevalence[st_state_to_index('M')] != 3.0/8.0;
-	testResult += prevalence[st_state_to_index('R')] != 0;
-
+	testResult += fabs(prevalence[st_state_to_index('M')] - 2.0/3.0) > epsilon;
+	testResult += fabs(prevalence[st_state_to_index('R')] - 1.0/3.0) > epsilon;
+	
+	gr_compute_prevalence(testGr, 0, 1, prevalence);
+	testResult += fabs(prevalence[st_state_to_index('T')] - 2.0/5.0) > epsilon;
+	testResult += fabs(prevalence[st_state_to_index('B')] - 1.0/5.0) > epsilon;
+	testResult += fabs(prevalence[st_state_to_index('M')] - 1.0/5.0) > epsilon;
+	testResult += fabs(prevalence[st_state_to_index('R')] - 1.0/5.0) > epsilon;
 	return testResult;
 }

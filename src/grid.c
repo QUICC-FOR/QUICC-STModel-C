@@ -173,29 +173,23 @@ static inline char st_select_state(StateData transProbs, gsl_rng * rng)
  
 static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData prevalence) 
 {
+	// note that StateData is an array type, thus is modifiable in the calling scope
 	for(int i = 0; i < GR_NUM_STATES; i++) prevalence[i] = 0;
-	double increment = 1.0 / grid->nbsize;
+	char nbStates [grid->nbsize];
+	int actualNBSize = 0;
 
 	for(int i = 0; i < grid->nbsize; i++) {
 		int newx = x + grid->nbOffsets[i].x;
 		int newy = y + grid->nbOffsets[i].y;
-		// set up torus; if we go out of bounds in the y direction we assume the type is
-		// temperate if we are in the south and boreal if in the north
-		char neighborState;
-		if(newy < 0) {
-			neighborState = 'T';
-		} else if (newy >= grid->ydim) {
-			neighborState = 'B';
-		} else {
-			// for x, we just wrap around
-			if(newx < 0) {
-				newx = grid->xdim - 1;
-			} else if(newx >= grid->xdim) {
-				newx = 0;
-			}
-			neighborState = grid->stateCurrent[newx][newy];
+		// check for boundaries -- we are using damped edges
+		// if on an edge, you just have fewer neighbors
+		if(!(newy < 0 || newx < 0 || newy >= grid->ydim || newx >= grid->xdim)) {
+			nbStates[actualNBSize++] = grid->stateCurrent[newx][newy];
 		}
-		prevalence[st_state_to_index(neighborState)] += increment;
+	}
+	double increment = 1.0 / actualNBSize;
+	for(int i = 0; i < actualNBSize; i++) {
+		prevalence[st_state_to_index(nbStates[i])] += increment;
 	}
 }
 
