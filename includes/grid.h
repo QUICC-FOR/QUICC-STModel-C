@@ -11,6 +11,7 @@
 #define GR_MAX_DIM_SIZE 65535
 #define GR_MAX_DISTURBANCE_RATE 0.60
 #define GR_NUM_STATES 4
+#define GR_NULL_STATE '0'	// the character value of a null cell
 extern const char GR_POSSIBLE_STATES [GR_NUM_STATES];
 //typedef enum {RANDOM, UNIFORM, MIX, GRID_NULL} GrStartingConditionType;
 typedef enum {RANDOM, UNIFORM, MIX, GR_NULL} GrStartingConditionType;
@@ -76,5 +77,6 @@ void gr_destroy_grid(Grid * grid);
 void gr_output(Grid *grid);
 void gr_view_grid(Grid *grid);
 void gr_advance_state(Grid * gr);
+void gr_set_null(Grid *grid, int x, int y);	// sets the cell at x,y to the null state
 
 #endif

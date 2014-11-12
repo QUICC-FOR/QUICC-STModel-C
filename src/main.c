@@ -72,10 +72,20 @@ int main(int argc, char **argv) {
 	else
 		grid = gr_make_grid(GR_SIZE_X, GR_SIZE_Y, NBTYPE, RANDOM, DISTURB_RATE, rng);
 
+	// handle null climate
+	for(int x = 0; x < grid->xdim; x++) {
+		for(int y = 0; y < grid->ydim; y++) {
+			Climate * currentClim = cg_climate_from_grid(climGrid, clYear, x, y, grid->xdim, grid->ydim);
+			if cl_climate_is_null(currentClim) {
+				gr_set_null(grid, x, y)
+			}
+		}
+	}
+
 	// main loop in time -- we start on year 1, end on MAX_TIME - 1; this gives us
 	// MAX_TIME total time steps (including the initial conditions)
 	fprintf(stderr, "Starting model\n");
-	for (int year = 1; year < MAX_TIME; year++) {
+	for(int year = 1; year < MAX_TIME; year++) {
 		for(int x = 0; x < grid->xdim; x++) {
 			for(int y = 0; y < grid->ydim; y++) {
 				int clYear = year-1;
@@ -174,36 +184,3 @@ static void help()
 	
 	exit(EXIT_SUCCESS);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

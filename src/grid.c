@@ -389,6 +389,11 @@ void gr_view_grid(Grid *grid) {
 }
 
 
+void gr_set_null(Grid *grid, int x, int y)
+{
+	grid->stateCurrent[x][y] = GR_NULL_STATE;
+}
+
 
 static inline int gr_check_grid(Grid * grid)
 {

@@ -66,6 +66,7 @@ write.table(testClim, "/Users/mtalluto/Documents/git_projects/C-STMFor/climate_t
 */
 
 static char CL_ERR_MSG [1024] = "";
+static int cl_climateNullValue = -9999;
 
 static inline int cg_add_climate_record(ClimateGrid * cg, char * line);
 static inline int cg_check_for_missing_climate_data(ClimateGrid * cg);
@@ -215,6 +216,12 @@ static inline void cl_error()
 {
 	fprintf(stderr, "%s\n", CL_ERR_MSG);
 	exit(EXIT_FAILURE);
+}
+
+
+int cl_climate_is_null(Climate *clim)
+{
+	return (clim->env1 == cl_climateNullValue || clim->env2 == cl_climateNullValue)
 }
 
 

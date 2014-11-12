@@ -72,6 +72,12 @@ int cg_initialize_parameters(ClimatePars * pars, const char * parfile);
 
 
 /*
+	returns non-zero value if the climate object passed contains any null data
+	returns zero otherwize
+*/
+int cl_climate_is_null(Climate * clim);
+
+/*
 	simple utility function for reading a single line (terminated with '\n') from an input
 	file. The result is stored in the variable line; be sure line is large enough to contain
 	the data; by default this is defined by the variable MAX_LINE_LEN, which specifies the
