@@ -221,7 +221,7 @@ static inline void cl_error()
 
 int cl_climate_is_null(Climate *clim)
 {
-	return (clim->env1 == cl_climateNullValue || clim->env2 == cl_climateNullValue)
+	return (clim->env1 == cl_climateNullValue || clim->env2 == cl_climateNullValue);
 }
 
 

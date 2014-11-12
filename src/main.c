@@ -75,9 +75,9 @@ int main(int argc, char **argv) {
 	// handle null climate
 	for(int x = 0; x < grid->xdim; x++) {
 		for(int y = 0; y < grid->ydim; y++) {
-			Climate * currentClim = cg_climate_from_grid(climGrid, clYear, x, y, grid->xdim, grid->ydim);
-			if cl_climate_is_null(currentClim) {
-				gr_set_null(grid, x, y)
+			Climate * currentClim = cg_climate_from_grid(climGrid, 0, x, y, grid->xdim, grid->ydim);
+			if(cl_climate_is_null(currentClim)) {
+				gr_set_null(grid, x, y);
 			}
 		}
 	}

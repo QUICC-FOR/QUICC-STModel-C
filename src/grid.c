@@ -88,16 +88,21 @@ void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePar
 	Current climate is a pointer to a climate struct giving the climate for this cell
 */
 {
-	StateData prevalence;
-	gr_compute_prevalence(grid, x, y, prevalence);
-	StateData transitionProbs;
-	st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs);
-	grid->stateNext[x][y] = st_select_state(transitionProbs, rng);
+	if(grid->stateCurrent[x][y] == GR_NULL_STATE) {
+		grid->stateNext[x][y] = GR_NULL_STATE;
+	}
+	else {
+		StateData prevalence;
+		gr_compute_prevalence(grid, x, y, prevalence);
+		StateData transitionProbs;
+		st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs);
+		grid->stateNext[x][y] = st_select_state(transitionProbs, rng);
+	}
 }
 
 void gr_advance_state(Grid * gr)
 /*
-	swaps the state pointers, effectively making what was formerly the next state now the current state
+	swaps the state pointers, making what was formerly the next state now the current state
 */
 {
 	char ** stateSwap = gr->stateCurrent;
@@ -109,6 +114,7 @@ static inline void st_get_trans_probs(char state, StateData prevalence, Climate 
 {
   /*
           calculate the transition probabilities given the current state
+          Not null safe; any calling functions should check for null state beforehand
   */
   
 	// create prevalence aliases to make the math more readable
@@ -153,6 +159,11 @@ static inline void st_get_trans_probs(char state, StateData prevalence, Climate 
 
 
 static inline char st_select_state(StateData transProbs, gsl_rng * rng)
+/*
+	Stochastic portion of the model; randomly selects a new state give the transition
+	probabilities.
+	Not null safe; any calling functions should check for null state beforehand
+*/
 {
 	double rValue = gsl_rng_uniform(rng);
 	double testVal = 0;
@@ -171,9 +182,18 @@ static inline char st_select_state(StateData transProbs, gsl_rng * rng)
 
 
  
-static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData prevalence) 
+static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData prevalence)
+/*
+	find the neighbors of the cell at x,y and compute prevalence, storing it in
+	the prevalence variable
+	Note that prevalence is a StateData type, which is an array, so the underlying
+	data are modifiable in the calling scope and will be preserved on return
+	
+	This function handles edge detection (edges are damped)
+	This function checks for null-state neighbors, which are counted in the total number
+	of neighbors but which contribute nothing to prevalence
+*/
 {
-	// note that StateData is an array type, thus is modifiable in the calling scope
 	for(int i = 0; i < GR_NUM_STATES; i++) prevalence[i] = 0;
 	char nbStates [grid->nbsize];
 	int actualNBSize = 0;
@@ -181,15 +201,18 @@ static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData pre
 	for(int i = 0; i < grid->nbsize; i++) {
 		int newx = x + grid->nbOffsets[i].x;
 		int newy = y + grid->nbOffsets[i].y;
-		// check for boundaries -- we are using damped edges
-		// if on an edge, you just have fewer neighbors
+		/* check for boundaries -- we are using damped edges
+			 if on an edge, you just have fewer neighbors
+			 if not on an edge, append the neighbor's state (even if null) to the array
+			 and increment the number of neighbors */
 		if(!(newy < 0 || newx < 0 || newy >= grid->ydim || newx >= grid->xdim)) {
 			nbStates[actualNBSize++] = grid->stateCurrent[newx][newy];
 		}
 	}
 	double increment = 1.0 / actualNBSize;
 	for(int i = 0; i < actualNBSize; i++) {
-		prevalence[st_state_to_index(nbStates[i])] += increment;
+		if(nbStates[i] != GR_NULL_STATE)
+			prevalence[st_state_to_index(nbStates[i])] += increment;
 	}
 }
 
@@ -199,6 +222,8 @@ static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData pre
 static inline int st_state_to_index(char state)
 {
 	// on error, this will return -1, allowing you to check for invalid states (or crash)
+	// not null-safe - will return -1 on getting a null state; if this is undesired
+	// check for null state in the calling scope
 	switch(state) {
 	case 'B':
 		return 0;
@@ -285,7 +310,7 @@ static inline void gr_set_null_grid(Grid * gr)
 {
 	for(int x = 0; x < gr->xdim; x++) {
 		for(int y = 0; y < gr->ydim; y++) {
-			gr->stateCurrent[x][y] = 0;
+			gr->stateCurrent[x][y] = GR_NULL_STATE;
 		}
 	}	
 }
@@ -390,6 +415,7 @@ void gr_view_grid(Grid *grid) {
 
 
 void gr_set_null(Grid *grid, int x, int y)
+/// simple utility function to set a given cell to the null state
 {
 	grid->stateCurrent[x][y] = GR_NULL_STATE;
 }
@@ -404,7 +430,7 @@ static inline int gr_check_grid(Grid * grid)
 			int found = 0;
 			for(int i = 0; i < GR_NUM_STATES && !found; i++) {
 				char checkState = GR_POSSIBLE_STATES[i];
-				found = (checkState == st);
+				found = (checkState == st || st == GR_NULL_STATE);
 			}
 			if(!found) {
 				error++;
