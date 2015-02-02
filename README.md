@@ -1,4 +1,4 @@
-State and transition landscape model 
+State and transition landscape model
 ========
 <p align='right'>
   <img src='https://travis-ci.org/QUICC-FOR/STModel-Simulation.svg?branch=master' alt='travis status'/>
@@ -13,7 +13,7 @@ State and transition landscape model
 TODO
 
 ### Dependancy:
-    
+
 - GNU Scientific Library: [GSL 1.16](http://www.linuxfromscratch.org/blfs/view/svn/general/gsl.html)
 
 ### Getting started...
