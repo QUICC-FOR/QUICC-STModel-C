@@ -13,7 +13,7 @@ const char GR_POSSIBLE_STATES [GR_NUM_STATES] = {'T', 'B', 'R', 'M'};
 // #include "grid_cell.h"
 
 /* FUNCTION PROTOTYPES */
-static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData prevalence) ;
+static inline void gr_compute_local_prevalence(Grid *grid, int x, int y, StateData prevalence) ;
 static inline void gr_set_null_grid(Grid * gr);
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 static void gr_set_uniform_grid(Grid *grid);
@@ -46,7 +46,7 @@ Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType
 	// first create the grid in memory
 	Grid * newGrid = gr_make_grid(xsize, ysize, nbType, GR_NULL, 0, NULL);
 	fprintf(stderr, "Reading grid state from file <%s>...\n", gridDataFile);
-	
+
 	// borrow some code functions from climate.h for reading in the data
 	FILE * iFile = fopen(gridDataFile, "r");
 	if(!iFile) {
@@ -64,7 +64,7 @@ Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType
 		int y = strtol(cell, NULL, 0);
 		cell = strtok(NULL, ",;");
 		char st = cell[0];
-		
+
 		if(x < 0 || x >= newGrid->xdim || y < 0 || y >= newGrid->ydim) {
 			fprintf(stderr, "Error: coordinates (%d,%d) are invalid for grid dimensions of (%d,%d)\n", x, y, newGrid->xdim, newGrid->ydim);
 			exit(EXIT_FAILURE);
@@ -78,7 +78,7 @@ Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType
 		fprintf(stderr, "Problem reading from the input file\n");
 		exit(EXIT_FAILURE);
 	}
-	
+
 	return newGrid;
 }
 
@@ -93,7 +93,7 @@ void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePar
 	}
 	else {
 		StateData prevalence;
-		gr_compute_prevalence(grid, x, y, prevalence);
+		gr_compute_local_prevalence(grid, x, y, prevalence);
 		StateData transitionProbs;
 		st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs);
 		grid->stateNext[x][y] = st_select_state(transitionProbs, rng);
@@ -116,42 +116,42 @@ static inline void st_get_trans_probs(char state, StateData prevalence, Climate 
           calculate the transition probabilities given the current state
           Not null safe; any calling functions should check for null state beforehand
   */
-  
+
 	// create prevalence aliases to make the math more readable
 	double M = prevalence[st_state_to_index('M')];
 	double B = prevalence[st_state_to_index('B')];
 	double T = prevalence[st_state_to_index('T')];
-	
+
 	switch(state) {
 	case 'R':
 		destProbs[st_state_to_index('T')] = alpha_t(clim, climPar) * (M+T) * (1.0 - alpha_b(clim, climPar) * (M+B));
 		destProbs[st_state_to_index('B')] = alpha_b(clim, climPar) * (M+B) * (1.0 - alpha_t(clim, climPar) * (M+T));
 		destProbs[st_state_to_index('M')] = alpha_t(clim, climPar) * (M+B) * alpha_b(clim, climPar) * (M+B);
-		destProbs[st_state_to_index('R')] = 1 - (destProbs[st_state_to_index('B')] + 
+		destProbs[st_state_to_index('R')] = 1 - (destProbs[st_state_to_index('B')] +
 			destProbs[st_state_to_index('M')] + destProbs[st_state_to_index('T')]);
     	break;
 
-	case 'M':    
+	case 'M':
 		destProbs[st_state_to_index('R')] = epsi_m(clim, climPar);
 		destProbs[st_state_to_index('B')] = theta_b(clim, climPar);
 		destProbs[st_state_to_index('T')] = theta_t(clim, climPar);
-		destProbs[st_state_to_index('M')] = 1 - (destProbs[st_state_to_index('B')] + 
+		destProbs[st_state_to_index('M')] = 1 - (destProbs[st_state_to_index('B')] +
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('T')]);
     	break;
 
-	case 'T':    
+	case 'T':
 		destProbs[st_state_to_index('R')] = epsi_t(clim, climPar);
 		destProbs[st_state_to_index('M')] = beta_b(clim, climPar) * (B+M);
 		destProbs[st_state_to_index('B')] = 0;
-		destProbs[st_state_to_index('T')] = 1 - (destProbs[st_state_to_index('B')] + 
+		destProbs[st_state_to_index('T')] = 1 - (destProbs[st_state_to_index('B')] +
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
     	break;
 
-	case 'B':    
+	case 'B':
 		destProbs[st_state_to_index('R')] = epsi_b(clim, climPar);
 		destProbs[st_state_to_index('T')] = 0;
 		destProbs[st_state_to_index('M')] = beta_t(clim, climPar) * (T+M);
-		destProbs[st_state_to_index('B')] = 1 - (destProbs[st_state_to_index('T')] + 
+		destProbs[st_state_to_index('B')] = 1 - (destProbs[st_state_to_index('T')] +
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
     	break;
 	}
@@ -181,14 +181,14 @@ static inline char st_select_state(StateData transProbs, gsl_rng * rng)
 }
 
 
- 
-static inline void gr_compute_prevalence(Grid *grid, int x, int y, StateData prevalence)
+
+static inline void gr_compute_local_prevalence(Grid *grid, int x, int y, StateData prevalence)
 /*
 	find the neighbors of the cell at x,y and compute prevalence, storing it in
 	the prevalence variable
 	Note that prevalence is a StateData type, which is an array, so the underlying
 	data are modifiable in the calling scope and will be preserved on return
-	
+
 	This function handles edge detection (edges are damped)
 	This function checks for null-state neighbors, which are counted in the total number
 	of neighbors but which contribute nothing to prevalence
@@ -279,7 +279,7 @@ Grid * gr_make_grid(unsigned int xsize, unsigned int ysize, GrNeighborhoodType n
 	case MIX:
 		gr_set_mixed_grid(newGrid, rng);
 		break;
-	
+
 	case GR_NULL:
 		gr_set_null_grid(newGrid);
 		break;
@@ -295,7 +295,7 @@ void gr_destroy_grid(Grid *grid)
 		free(grid->stateCurrent[x]);
 		free(grid->stateNext[x]);
 	}
-	
+
 	free(grid->nbOffsets);
 	free(grid->stateCurrent);
 	free(grid->stateNext);
@@ -312,7 +312,7 @@ static inline void gr_set_null_grid(Grid * gr)
 		for(int y = 0; y < gr->ydim; y++) {
 			gr->stateCurrent[x][y] = GR_NULL_STATE;
 		}
-	}	
+	}
 }
 
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng)
@@ -354,18 +354,18 @@ static void gr_set_mixed_grid(Grid *grid, gsl_rng *rng)
 	assert(grid->ydim >= 5);
 	char states [] = {'M', 'M'};
 	int yIncrement = grid->ydim / 5;
-	
+
 	for(int x = 0; x < grid->xdim; x++) {
 		for(int y = 0; y < yIncrement; y++)
 			grid->stateCurrent[x][y] = 'T';
 		states[0] = 'T';
 		for(int y = yIncrement; y < 2*yIncrement; y++)
-			gsl_ran_choose(rng, &(grid->stateCurrent[x][y]), 1, states, 2, sizeof(*states));      
+			gsl_ran_choose(rng, &(grid->stateCurrent[x][y]), 1, states, 2, sizeof(*states));
 		for(int y = 2*yIncrement; y < 3*yIncrement; y++)
 			grid->stateCurrent[x][y] = 'M';
 		states[0] = 'B';
 		for(int y = 3*yIncrement; y < 4*yIncrement; y++)
-			gsl_ran_choose(rng, &(grid->stateCurrent[x][y]), 1, states, 2, sizeof(*states));      
+			gsl_ran_choose(rng, &(grid->stateCurrent[x][y]), 1, states, 2, sizeof(*states));
 		for(int y = 4*yIncrement; y < grid->ydim; y++)
 			grid->stateCurrent[x][y] = 'B';
 	}
@@ -447,7 +447,7 @@ static inline long double inv_logit(long double val)
 	if(val > 0)
 		return 1.0 / (1.0 + exp(-val));
 	else
-		return exp(val) / (1.0 + exp(val));		
+		return exp(val) / (1.0 + exp(val));
 }
 
 
