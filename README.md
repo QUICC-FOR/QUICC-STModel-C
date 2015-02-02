@@ -4,13 +4,9 @@ State and transition landscape model
   <img src='https://travis-ci.org/QUICC-FOR/STModel-Simulation.svg?branch=master' alt='travis status'/>
 </p>
 
-**Model spatially explicit built on C**
+**STM spatial explicit version, built on C**
 
 **Authors:** Steve Vissault and Matt Talluto
-
-### Functions description
-
-TODO
 
 ### Dependancy:
 
