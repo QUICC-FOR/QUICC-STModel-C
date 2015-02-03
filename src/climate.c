@@ -6,7 +6,7 @@
 
 /*
 	TEMPORARY: here is some R code for generating fake climate data for testing
-	
+
 xm = 9
 ym = 9
 yrm = 19
@@ -32,36 +32,13 @@ testClim = data.frame(
 	env1 = rep(yenv1, length(yr)),
 	env2 = rep(xenv2, length(yr))
 )
+
+# Add -9999 values randomly
+percent_grid <- 0.05
+sample_rows <- sample(1:nrow(testClim),round(nrow(testClim)*percent_grid))
+testClim[sample_rows,c("env1","env2")] <- -9999
+
 write.table(testClim, paste(getwd(),"/climate_test.csv",sep=""), sep=',', row.names=FALSE)
-
-
-
-###### what follows is a different set of climate data for use with Dom's parameters
-xm = 9
-ym = 19
-
-xd = 0:xm
-# precip in meters
-env2 = seq(1, 1.3, length.out=length(xd))
-
-yd = 0:ym
-# temp in degrees
-env1 = seq(6, 1, length.out=length(yd))
-
-xx = rep(xd, length(yd))
-xenv2 = rep(env2, length(yd))
-
-yy = rep(yd, each=length(xd))
-yenv1 = rep(env1, each=length(xd))
-
-testClim = data.frame(
-	x = xx,
-	y = yy,
-	year = rep(0, length(xx)),
-	env1 = yenv1,
-	env2 = xenv2)
-
-write.table(testClim, "/Users/mtalluto/Documents/git_projects/C-STMFor/climate_test_dom.csv", sep=',', row.names=FALSE)
 
 */
 
@@ -87,11 +64,11 @@ ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, i
 	fprintf(stderr, "Reading climate data from file %s...\n", inputFile);
 	ClimateGrid * newClimateGrid = malloc(sizeof(*newClimateGrid));
 	assert(newClimateGrid);
-	
+
 	newClimateGrid->xdim = xdim;
 	newClimateGrid->ydim = ydim;
 	newClimateGrid->numYears = numYears;
-	
+
 	newClimateGrid->data = malloc(xdim * sizeof(*(newClimateGrid->data)));
 	assert(newClimateGrid->data);
 	for(int x = 0; x < xdim; x++) {
@@ -106,7 +83,7 @@ ClimateGrid * cg_make_climate_grid(const char * inputFile, int xdim, int ydim, i
 			}
 		}
 	}
-	
+
 	FILE * iFile = fopen(inputFile, "r");
 	int err = 0;
 	if(!iFile) {
@@ -152,21 +129,21 @@ void readline(FILE * file, char * line) {
 int cg_initialize_parameters(ClimatePars * pars, const char * parfile)
 {
 	int returnState = 0;
-	
+
 	// set defaults
 	pars->alphaB[0] = pars->alphaT[0] = -1.4;
 	pars->betaB[0] = pars->betaT[0] = 0;
 	pars->thetaB[0] = pars->thetaT[0] = -1.1;
-	pars->epsi[0] = -2.2;	
+	pars->epsi[0] = -2.2;
 	for(int i = 1; i < CL_NUM_TERMS; i++) {
 		pars->alphaB[i] = pars->alphaT[i] = pars->betaB[i] = pars->betaT[i] = 0;
 		pars->thetaB[i] = pars->thetaT[i] = pars->epsi[i] = 0;
 	}
-	
+
 	// read parameters from a file
-	if(parfile) 
+	if(parfile)
 		returnState = cg_parse_pars_from_file(pars, parfile);
-	
+
 	return returnState;
 }
 
@@ -242,13 +219,13 @@ static inline int parse_input_parameter(ClimatePars * p, char which, char state,
 		so which='a', state='b', ind=5, datStr="  -1.45" would set parameter
 		  ab5 = -1.45
 	*/
-	
+
 	int errVal = 0;
 	char * err;
 	double data = strtod(datStr, &err);
 	if(err == datStr || ind < 0 || ind >= CL_NUM_TERMS)
 		which = '\0'; // this will trigger an error in the switch below & avoid processing invalid data
-	
+
 	fprintf(stderr, "%c%c%d = %f\n", which, state, ind, data);
 	switch(which) {
 	case 'a':
@@ -263,7 +240,7 @@ static inline int parse_input_parameter(ClimatePars * p, char which, char state,
 			errVal = 1;
 		}
 		break;
-	
+
 	case 'b':
 		switch(state) {
 		case 'b':
@@ -276,7 +253,7 @@ static inline int parse_input_parameter(ClimatePars * p, char which, char state,
 			errVal = 1;
 		}
 		break;
-	
+
 	case 't':
 		switch(state) {
 		case 'b':
@@ -289,11 +266,11 @@ static inline int parse_input_parameter(ClimatePars * p, char which, char state,
 			errVal = 1;
 		}
 		break;
-	
+
 	case 'e':
 		p->epsi[ind] = data;
 		break;
-	
+
 	default:
 		errVal = 1;
 	}
