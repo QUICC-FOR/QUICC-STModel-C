@@ -40,6 +40,7 @@ static char * climateDataFile = "climate_test.csv";
 static char * climateParameterFile = NULL;
 static char * gridDataFile = "";
 static short gridFromFile = 0;
+static short globalPrevalence = 0;
 
 int main(int argc, char **argv) {
 
@@ -61,7 +62,7 @@ int main(int argc, char **argv) {
 		close(rSource);
 		gsl_rng_set(rng, rSeed);
 	}
-  
+
 
 	int climNYears = MAX_TIME - 1;
 	if(climateIsConstant) climNYears = 1;
@@ -91,7 +92,7 @@ int main(int argc, char **argv) {
 				int clYear = year-1;
 				if(climateIsConstant) clYear = 0;
 				Climate * currentClim = cg_climate_from_grid(climGrid, clYear, x, y, grid->xdim, grid->ydim);
-				gr_update_cell(grid, x, y, currentClim, &climGrid->parameters, rng);
+				gr_update_cell(grid, x, y, currentClim, &climGrid->parameters, rng, globalPrevalence);
 			}
 		}
 		gr_advance_state(grid);
@@ -117,7 +118,7 @@ static void parse_args(int argc, char ** argv)
 			break;
 		case ':':
 			error++;
-			break;		
+			break;
 		case '?':
 			error++;
 			break;
@@ -145,7 +146,7 @@ static void parse_args(int argc, char ** argv)
 		case 'p':
 			climateParameterFile = optarg;
 			break;
-		case 'g':
+		case 'i':
 			gridDataFile = optarg;
 			gridFromFile = 1;
 			break;
@@ -154,6 +155,9 @@ static void parse_args(int argc, char ** argv)
 			break;
 		case 'd':
 			DISTURB_RATE = strtof(optarg,NULL);
+			break;
+		case 'g':
+			globalPrevalence = 1;
 			break;
 		}
 	if(error) exit(EXIT_FAILURE);
@@ -168,19 +172,20 @@ static void help()
 	fprintf(stderr, "  -x <int>: specify x dimension of the simulation grid; must divide evenly into x-dim of climate grid (%d)\n", GR_SIZE_X);
 	fprintf(stderr, "  -y <int>: specify y dimension of the simulation grid; must divide evenly into x-dim of climate grid (%d)\n", GR_SIZE_Y);
 	fprintf(stderr, "  -a <int>: specify x dimension of the climate grid (%d)\n", CLIM_X_DIM);
-	fprintf(stderr, "  -b <int>: specify y dimension of the climate grid (%d)\n", CLIM_Y_DIM);	
+	fprintf(stderr, "  -b <int>: specify y dimension of the climate grid (%d)\n", CLIM_Y_DIM);
 	fprintf(stderr, "  -c <filename>: specify the input climate datafile; must match values in -a, -b, and -t options (%s)\n", climateDataFile);
-	fprintf(stderr, "  -s: specify constant climate (instead of varying in time) (unset)\n");	
-	fprintf(stderr, "  -p <filename>: specify a file for reading the parameters for the climate model (NULL)\n");	
-	fprintf(stderr, "        format: %%v%%s%%i ddddd\n");	
-	fprintf(stderr, "        %%v: the first letter of the variable name (e.g., a for alpha)\n");	
-	fprintf(stderr, "        %%s: the first letter of the state for the variable in question (e.g., b for boreal)\n");	
-	fprintf(stderr, "        %%i: the index of the variable; 0 for intercept, 1 for first term, etc\n");	
-	fprintf(stderr, "        dddd: a floating point number with the parameter value\n");	
-	fprintf(stderr, "  -g <filename>: use a previously output grid as input, rather than initializing a new grid (unset)\n");	
+	fprintf(stderr, "  -s: specify constant climate (instead of varying in time) (unset)\n");
+	fprintf(stderr, "  -p <filename>: specify a file for reading the parameters for the climate model (NULL)\n");
+	fprintf(stderr, "        format: %%v%%s%%i ddddd\n");
+	fprintf(stderr, "        %%v: the first letter of the variable name (e.g., a for alpha)\n");
+	fprintf(stderr, "        %%s: the first letter of the state for the variable in question (e.g., b for boreal)\n");
+	fprintf(stderr, "        %%i: the index of the variable; 0 for intercept, 1 for first term, etc\n");
+	fprintf(stderr, "        dddd: a floating point number with the parameter value\n");
+	fprintf(stderr, "  -i <filename>: use a previously output grid as input, rather than initializing a new grid (unset)\n");
 	fprintf(stderr, "  -t <int>: specify the number of time steps after after initial conditions to run the simulation (%d)\n", MAX_TIME-1);
 	fprintf(stderr, "  -d <float>: specify initial disturbance rate between 0 and %f (%f)\n", GR_MAX_DISTURBANCE_RATE, DISTURB_RATE);
 	fprintf(stderr, "  -v: specify Von Neuman neighborhoods (4-cell; default is 8-cell Moore neighborhood)\n");
-	
+	fprintf(stderr, "  -g: specify global neighborhoods prevalence (on the entire grid; default is local)\n");
+
 	exit(EXIT_SUCCESS);
 }

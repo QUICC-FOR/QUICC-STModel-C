@@ -3,7 +3,7 @@
 
 #include "climate.h"
 
-/* 
+/*
 	define some constants controlling error conditions when grids are created
 	GR_MAX_DIM_SIZE determines the maximum size of each dimension of the grid
 	GR_MAX_DISTURBANCE_RATE defines the maximum allowable disturbance rate
@@ -42,14 +42,14 @@ typedef struct {
 	unsigned short xdim, ydim;
 	unsigned short nbsize;
 	OffsetType * nbOffsets;
-	
+
 	/*
 		The grid state is stored in stateCurrent and stateNext
 		These are two-dimensional char arrays [x][y] indexing
 		spatially, the program assumes x maps to -1*longitude and y maps to latitude
 		therefore, small y refers to the south, large y refers to the north
 		small x is EAST, large x is west
-		
+
 		at the beginning of a timestep, stateCurrent is the current state of the grid
 		and stateNext is garbage
 		following updating all cells; stateNext will contain the next time step
@@ -69,7 +69,7 @@ typedef struct {
 
 // TODO: add parameters and function description
 
-void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng);
+void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng, const short globalPrevalence);
 Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType, const char * gridDataFile);
 Grid * gr_make_grid(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType,
 	GrStartingConditionType startingCondition, double startDisturbanceRate, gsl_rng *rng);

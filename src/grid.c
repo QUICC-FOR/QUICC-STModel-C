@@ -14,6 +14,7 @@ const char GR_POSSIBLE_STATES [GR_NUM_STATES] = {'T', 'B', 'R', 'M'};
 
 /* FUNCTION PROTOTYPES */
 static inline void gr_compute_local_prevalence(Grid *grid, int x, int y, StateData prevalence) ;
+static inline void gr_compute_global_prevalence(Grid *grid, int x, int y, StateData prevalence, gsl_rng *rng) ;
 static inline void gr_set_null_grid(Grid * gr);
 static void gr_set_random_grid(Grid *grid, gsl_rng *rng);
 static void gr_set_uniform_grid(Grid *grid);
@@ -83,7 +84,7 @@ Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType
 }
 
 
-void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng)
+void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng, const short globalPrevalence)
 /*
 	Current climate is a pointer to a climate struct giving the climate for this cell
 */
@@ -93,7 +94,14 @@ void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePar
 	}
 	else {
 		StateData prevalence;
-		gr_compute_local_prevalence(grid, x, y, prevalence);
+
+		if(globalPrevalence == 1) {
+			gr_compute_global_prevalence(grid, x, y, prevalence,rng);
+		}
+		else {
+			gr_compute_local_prevalence(grid, x, y, prevalence);
+		}
+
 		StateData transitionProbs;
 		st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs);
 		grid->stateNext[x][y] = st_select_state(transitionProbs, rng);
@@ -215,6 +223,33 @@ static inline void gr_compute_local_prevalence(Grid *grid, int x, int y, StateDa
 			prevalence[st_state_to_index(nbStates[i])] += increment;
 	}
 }
+
+static inline void gr_compute_global_prevalence(Grid *grid, int x, int y, StateData prevalence, gsl_rng *rng)
+/*
+	pick random neighbors in the grid for the cell at x,y and compute the states prevalence, storing it in
+	the prevalence variable.
+
+	NOTE ENHANCEMENT: This function need to NOT pickup a null state (see with Matt)
+*/
+{
+	for(int i = 0; i < GR_NUM_STATES; i++) prevalence[i] = 0;
+	char nbStates [grid->nbsize];
+	int actualNBSize = 0;
+
+
+	for(int i = 0; i < grid->nbsize; i++) {
+		int newx = x + gsl_rng_uniform_int(rng, grid->xdim);
+		int newy = y + gsl_rng_uniform_int(rng, grid->ydim);
+		nbStates[actualNBSize++] = grid->stateCurrent[newx][newy];
+	}
+
+	double increment = 1.0 / actualNBSize;
+	for(int i = 0; i < actualNBSize; i++) {
+		if(nbStates[i] != GR_NULL_STATE)
+			prevalence[st_state_to_index(nbStates[i])] += increment;
+	}
+}
+
 
 
 
