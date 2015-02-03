@@ -13,7 +13,6 @@ int main() {
 	*/
 
 	int testResult = 0;
-	short globalPrevalence =0;
 
 	// verify that st_state_to_index fails properly
 	testResult += (st_state_to_index('D') != -1);
