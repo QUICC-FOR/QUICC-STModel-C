@@ -234,17 +234,17 @@ static inline void gr_compute_global_prevalence(Grid *grid, int x, int y, StateD
 {
 	for(int i = 0; i < GR_NUM_STATES; i++) prevalence[i] = 0;
 	char nbStates [grid->nbsize];
-	int actualNBSize = 0;
 
 
 	for(int i = 0; i < grid->nbsize; i++) {
-		int newx = x + gsl_rng_uniform_int(rng, grid->xdim);
-		int newy = y + gsl_rng_uniform_int(rng, grid->ydim);
-		nbStates[actualNBSize++] = grid->stateCurrent[newx][newy];
+		int newx = gsl_rng_uniform_int(rng, grid->xdim);
+		int newy = gsl_rng_uniform_int(rng, grid->ydim);
+
+		nbStates[i] = grid->stateCurrent[newx][newy];
 	}
 
-	double increment = 1.0 / actualNBSize;
-	for(int i = 0; i < actualNBSize; i++) {
+	double increment = 1.0 / grid->nbsize;
+	for(int i = 0; i < grid->nbsize; i++) {
 		if(nbStates[i] != GR_NULL_STATE)
 			prevalence[st_state_to_index(nbStates[i])] += increment;
 	}

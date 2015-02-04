@@ -48,5 +48,43 @@ int main() {
 	testResult += fabs(prevalence[st_state_to_index('B')] - 1.0/5.0) > epsilon;
 	testResult += fabs(prevalence[st_state_to_index('M')] - 1.0/5.0) > epsilon;
 	testResult += fabs(prevalence[st_state_to_index('R')] - 1.0/5.0) > epsilon;
+
+
+	// test global prevalence
+
+	testGr = gr_make_grid(180, 180, MOORE, UNIFORM, 0, NULL);
+
+  	// set up RNG
+	gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
+	assert(rng);
+
+	// Declare global prevalence and init on 0
+	StateData globalPrevalence;
+	for(int i = 0; i < GR_NUM_STATES; i++) globalPrevalence[i] = 0;
+
+
+	// Compute prevalence on all cells
+	for(int x = 0 ; x < testGr->xdim; x++){
+		for(int y = 0 ; y < testGr->ydim; y++){
+
+			//printf("Cell %d,%d \n",x,y);
+			gr_compute_global_prevalence(testGr,x,y,prevalence,rng);
+
+			for(int i = 0; i < GR_NUM_STATES; i++) {
+				globalPrevalence[i] += prevalence[i]/(testGr->ydim*testGr->xdim);
+				//printf("GlobPrev of %d: %f \n",i,globalPrevalence[i]);
+			}
+		}
+	}
+
+	epsilon=0.005;
+
+	testResult += fabs(prevalence[st_state_to_index('T')] - 0.33) < epsilon;
+	testResult += fabs(prevalence[st_state_to_index('B')] - 0.33) < epsilon;
+	testResult += fabs(prevalence[st_state_to_index('M')] - 0.33) < epsilon;
+
+
+	gsl_rng_free(rng);
+
 	return testResult;
 }
