@@ -69,7 +69,7 @@ typedef struct {
 
 // TODO: add parameters and function description
 
-void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng, const short globalPrevalence);
+void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng, const short globalPrevalence,int stepIt);
 Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType, const char * gridDataFile);
 Grid * gr_make_grid(unsigned int xsize, unsigned int ysize, GrNeighborhoodType nbType,
 	GrStartingConditionType startingCondition, double startDisturbanceRate, gsl_rng *rng);

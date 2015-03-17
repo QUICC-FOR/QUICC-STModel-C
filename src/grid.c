@@ -23,7 +23,7 @@ static void gr_disturb_grid(Grid *grid, double distRate, gsl_rng *rng);
 static inline OffsetType * gr_get_nb_offsets(unsigned short nbSize);
 static inline void ot_set(OffsetType * o, short x, short y);
 static inline int st_state_to_index(char state);
-static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, ClimatePars * climPar, StateData destProbs);
+static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, ClimatePars * climPar, StateData destProbs, int stepIt);
 static inline char st_select_state(StateData transProbs, gsl_rng * rng);
 static inline int gr_check_grid(Grid * grid);
 static inline long double inv_logit(long double val);
@@ -84,7 +84,7 @@ Grid * grid_from_file(unsigned int xsize, unsigned int ysize, GrNeighborhoodType
 }
 
 
-void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng, const short globalPrevalence)
+void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePars * climPars, gsl_rng *rng, const short globalPrevalence,int stepIt)
 /*
 	Current climate is a pointer to a climate struct giving the climate for this cell
 */
@@ -103,7 +103,7 @@ void gr_update_cell(Grid * grid, int x, int y, Climate * currClimate, ClimatePar
 		}
 
 		StateData transitionProbs;
-		st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs);
+		st_get_trans_probs(grid->stateCurrent[x][y], prevalence, currClimate, climPars, transitionProbs,stepIt);
 		grid->stateNext[x][y] = st_select_state(transitionProbs, rng);
 	}
 }
@@ -118,12 +118,13 @@ void gr_advance_state(Grid * gr)
 	gr->stateNext = stateSwap;
 }
 
-static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, ClimatePars * climPar, StateData destProbs)
+static inline void st_get_trans_probs(char state, StateData prevalence, Climate * clim, ClimatePars * climPar, StateData destProbs, int stepIt)
 {
   /*
           calculate the transition probabilities given the current state
           Not null safe; any calling functions should check for null state beforehand
   */
+
 
 	// create prevalence aliases to make the math more readable
 	double M = prevalence[st_state_to_index('M')];
@@ -163,6 +164,14 @@ static inline void st_get_trans_probs(char state, StateData prevalence, Climate 
 			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
     	break;
 	}
+
+	if (stepIt > 1){
+		destProbs[st_state_to_index('R')] = 1 - pow(1 - destProbs[st_state_to_index('R')], stepIt);
+		destProbs[st_state_to_index('T')] = 1 - pow(1 - destProbs[st_state_to_index('T')], stepIt);
+		destProbs[st_state_to_index('M')] = 1 - pow(1 - destProbs[st_state_to_index('M')], stepIt);
+		destProbs[st_state_to_index('B')] = 1 - pow(1 - destProbs[st_state_to_index('B')], stepIt);
+	}
+
 }
 
 

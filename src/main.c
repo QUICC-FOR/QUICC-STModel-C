@@ -41,6 +41,7 @@ static char * climateParameterFile = NULL;
 static char * gridDataFile = "";
 static short gridFromFile = 0;
 static short globalPrevalence = 0;
+static int stepIt = 10;
 
 int main(int argc, char **argv) {
 
@@ -92,7 +93,7 @@ int main(int argc, char **argv) {
 				int clYear = year-1;
 				if(climateIsConstant) clYear = 0;
 				Climate * currentClim = cg_climate_from_grid(climGrid, clYear, x, y, grid->xdim, grid->ydim);
-				gr_update_cell(grid, x, y, currentClim, &climGrid->parameters, rng, globalPrevalence);
+				gr_update_cell(grid, x, y, currentClim, &climGrid->parameters, rng, globalPrevalence,stepIt);
 			}
 		}
 		gr_advance_state(grid);
@@ -108,7 +109,7 @@ int main(int argc, char **argv) {
 
 static void parse_args(int argc, char ** argv)
 {
-	char * options = "shvd:t:x:y:a:b:c:g:p:";
+	char * options = "shvd:t:x:y:a:b:c:g:p:e:";
 	char opt;
 	int error = 0;
 	while( (opt = getopt(argc, argv, options)) != -1) {
@@ -159,6 +160,9 @@ static void parse_args(int argc, char ** argv)
 		case 'g':
 			globalPrevalence = 1;
 			break;
+		case 'e':
+			stepIt = strtol(optarg,NULL,0);
+		break;
 		}
 	if(error) exit(EXIT_FAILURE);
 	}
@@ -186,6 +190,7 @@ static void help()
 	fprintf(stderr, "  -d <float>: specify initial disturbance rate between 0 and %f (%f)\n", GR_MAX_DISTURBANCE_RATE, DISTURB_RATE);
 	fprintf(stderr, "  -v: specify Von Neuman neighborhoods (4-cell; default is 8-cell Moore neighborhood)\n");
 	fprintf(stderr, "  -g: pick n cells randomly in the grid to compute prevalence (on the entire grid; default is local)\n");
+	fprintf(stderr, "  -f: Specify timesteps in each iteration (default:10)\n");
 
 	exit(EXIT_SUCCESS);
 }

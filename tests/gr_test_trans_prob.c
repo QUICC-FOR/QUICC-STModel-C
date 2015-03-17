@@ -8,6 +8,7 @@
 int main() {
 
 	int testResult = 0;
+    int stepIt = 1;
 
     // define prevalence conditions to test
     // currently testing equality, plus complete dominance by each state
@@ -19,7 +20,7 @@ int main() {
             prevTests[j][i] = ( j == i+1 ? 1 : 0);
         }
     }
-    
+
     // define currentState conditions to test
     int numStateTests = GR_NUM_STATES;
     char stateTests [] = {'T', 'B', 'M', 'R'};
@@ -33,7 +34,7 @@ int main() {
     for(int prevInd = 0; prevInd < numPrevTests; prevInd++) {
     	StateData prev;
         for(int i = 0; i < GR_NUM_STATES; i++) prev[i] = prevTests[prevInd][i];
-        
+
         // loop over state tests
         for(int stateInd = 0; stateInd < numStateTests; stateInd++) {
             char state = stateTests[stateInd];
@@ -41,7 +42,7 @@ int main() {
             // init all probs to -1 to start with, so we aren't just using old vals
             for(int j = 0; j < GR_NUM_STATES; j++) transitionProbs[j] = -1;
 
-			st_get_trans_probs(state, prev, &clim, &climPar, transitionProbs);
+			st_get_trans_probs(state, prev, &clim, &climPar, transitionProbs,stepIt);
 
             // check that they sum to one and that all are on [0,1]
             double sum = 0;
