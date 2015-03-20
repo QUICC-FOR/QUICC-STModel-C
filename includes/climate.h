@@ -35,7 +35,8 @@ typedef struct {
 	double alphaT [CL_NUM_TERMS];
 	double betaB [CL_NUM_TERMS];
 	double betaT [CL_NUM_TERMS];
-	double thetaB [CL_NUM_TERMS];
+// 	double thetaB [CL_NUM_TERMS];
+	double theta [CL_NUM_TERMS];
 	double thetaT [CL_NUM_TERMS];
 	double epsi [CL_NUM_TERMS];
 } ClimatePars;

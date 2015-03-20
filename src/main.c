@@ -190,7 +190,7 @@ static void help()
 	fprintf(stderr, "  -d <float>: specify initial disturbance rate between 0 and %f (%f)\n", GR_MAX_DISTURBANCE_RATE, DISTURB_RATE);
 	fprintf(stderr, "  -v: specify Von Neuman neighborhoods (4-cell; default is 8-cell Moore neighborhood)\n");
 	fprintf(stderr, "  -g: pick n cells randomly in the grid to compute prevalence (on the entire grid; default is local)\n");
-	fprintf(stderr, "  -f: Specify timesteps in each iteration (default:10)\n");
+	fprintf(stderr, "  -e: Specify timesteps in each iteration (default:10)\n");
 
 	exit(EXIT_SUCCESS);
 }
