@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
 
 static void parse_args(int argc, char ** argv)
 {
-	char * options = "shvd:t:x:y:a:b:c:g:p:e:";
+	char * options = "shvd:t:x:y:a:b:c:g:p:i:e:";
 	char opt;
 	int error = 0;
 	while( (opt = getopt(argc, argv, options)) != -1) {

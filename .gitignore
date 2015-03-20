@@ -34,11 +34,13 @@ Makefile
 CMakeFiles
 Testing
 
-#output 
+#output
 *.csv
 *.pdf
 *.history
 outDir
 archives
 Times*
-
+out_files/*
+data/*
+pars/*
