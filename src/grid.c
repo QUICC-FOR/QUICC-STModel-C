@@ -31,7 +31,8 @@ static inline long double inv_logit(long double val);
 // prototypes for functions defining model parameters
 static inline double beta_t(Climate *cl, ClimatePars *cp);
 static inline double beta_b(Climate *cl, ClimatePars *cp);
-static inline double theta_b(Climate *cl, ClimatePars *cp);
+// static inline double theta_b(Climate *cl, ClimatePars *cp);
+static inline double theta(Climate *cl, ClimatePars *cp);
 static inline double theta_t(Climate *cl, ClimatePars *cp);
 static inline double alpha_t(Climate *cl, ClimatePars *cp);
 static inline double alpha_b(Climate *cl, ClimatePars *cp);
@@ -133,35 +134,35 @@ static inline void st_get_trans_probs(char state, StateData prevalence, Climate 
 
 	switch(state) {
 	case 'R':
-		destProbs[st_state_to_index('T')] = alpha_t(clim, climPar) * (M+T) * (1.0 - alpha_b(clim, climPar) * (M+B));
-		destProbs[st_state_to_index('B')] = alpha_b(clim, climPar) * (M+B) * (1.0 - alpha_t(clim, climPar) * (M+T));
-		destProbs[st_state_to_index('M')] = alpha_t(clim, climPar) * (M+B) * alpha_b(clim, climPar) * (M+B);
+		destProbs[st_state_to_index('T')] = alpha_t(clim, climPar) * (M+T) * (1.0 - alpha_b(clim, climPar) * (M+B)); // √
+		destProbs[st_state_to_index('B')] = alpha_b(clim, climPar) * (M+B) * (1.0 - alpha_t(clim, climPar) * (M+T)); // √
+		destProbs[st_state_to_index('M')] = alpha_t(clim, climPar) * (M+T) * alpha_b(clim, climPar) * (M+B); // √
 		destProbs[st_state_to_index('R')] = 1 - (destProbs[st_state_to_index('B')] +
-			destProbs[st_state_to_index('M')] + destProbs[st_state_to_index('T')]);
+			destProbs[st_state_to_index('M')] + destProbs[st_state_to_index('T')]); // √
     	break;
 
 	case 'M':
-		destProbs[st_state_to_index('R')] = epsi_m(clim, climPar);
-		destProbs[st_state_to_index('B')] = theta_b(clim, climPar);
-		destProbs[st_state_to_index('T')] = theta_t(clim, climPar);
+		destProbs[st_state_to_index('R')] = epsi_m(clim, climPar); // √
+		destProbs[st_state_to_index('B')] = theta(clim, climPar) * (1 - theta_t(clim, climPar)) * (1.0 - destProbs[st_state_to_index('R')]); // √ CHANGED
+		destProbs[st_state_to_index('T')] = theta(clim, climPar) * theta_t(clim, climPar) * (1.0 - destProbs[st_state_to_index('R')]); // √ CHANGED
 		destProbs[st_state_to_index('M')] = 1 - (destProbs[st_state_to_index('B')] +
-			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('T')]);
+			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('T')]); // √
     	break;
 
 	case 'T':
-		destProbs[st_state_to_index('R')] = epsi_t(clim, climPar);
-		destProbs[st_state_to_index('M')] = beta_b(clim, climPar) * (B+M);
-		destProbs[st_state_to_index('B')] = 0;
+		destProbs[st_state_to_index('R')] = epsi_t(clim, climPar); // √
+		destProbs[st_state_to_index('M')] = beta_b(clim, climPar) * (B+M) * (1 - destProbs[st_state_to_index('R')]); // √ CHANGED
+		destProbs[st_state_to_index('B')] = 0; // √
 		destProbs[st_state_to_index('T')] = 1 - (destProbs[st_state_to_index('B')] +
-			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
+			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]); // √
     	break;
 
 	case 'B':
-		destProbs[st_state_to_index('R')] = epsi_b(clim, climPar);
-		destProbs[st_state_to_index('T')] = 0;
-		destProbs[st_state_to_index('M')] = beta_t(clim, climPar) * (T+M);
+		destProbs[st_state_to_index('R')] = epsi_b(clim, climPar); // √
+		destProbs[st_state_to_index('T')] = 0; // √
+		destProbs[st_state_to_index('M')] = beta_t(clim, climPar) * (T+M) * (1.0 - destProbs[st_state_to_index('R')]); // √ CHANGED
 		destProbs[st_state_to_index('B')] = 1 - (destProbs[st_state_to_index('T')] +
-			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]);
+			destProbs[st_state_to_index('R')] + destProbs[st_state_to_index('M')]); // √
     	break;
 	}
 
@@ -523,7 +524,9 @@ static inline void ot_set(OffsetType * o, short x, short y)
 
 static inline double logit_cubic_climate_parameter(Climate * cl, double * pars)
 {
-	double result = pars[0] + pars[1]*cl->env1 + pars[2]*cl->env2 + pars[3]*pow(cl->env1,2) + pars[4]*pow(cl->env2,2) + pars[5]*pow(cl->env1,3) + pars[6]*pow(cl->env2,3);
+	double result = pars[0] + pars[1]*cl->env1 + pars[2]*cl->env2 + 
+			pars[3]*pow(cl->env1,2) + pars[4]*pow(cl->env2,2) + pars[5]*pow(cl->env1,3) + 
+			pars[6]*pow(cl->env2,3);
 	return result;
 }
 
@@ -547,9 +550,14 @@ static inline double beta_t(Climate *cl, ClimatePars *cp)
 	return inv_logit(logit_cubic_climate_parameter(cl, cp->betaT));
 }
 
-static inline double theta_b(Climate *cl, ClimatePars *cp)
+// static inline double theta_b(Climate *cl, ClimatePars *cp)
+// {
+// 	return inv_logit(logit_cubic_climate_parameter(cl, cp->thetaB));
+// }
+
+static inline double theta(Climate *cl, ClimatePars *cp)
 {
-	return inv_logit(logit_cubic_climate_parameter(cl, cp->thetaB));
+	return inv_logit(logit_cubic_climate_parameter(cl, cp->theta));
 }
 
 static inline double theta_t(Climate *cl, ClimatePars *cp)

@@ -133,11 +133,11 @@ int cg_initialize_parameters(ClimatePars * pars, const char * parfile)
 	// set defaults
 	pars->alphaB[0] = pars->alphaT[0] = -1.4;
 	pars->betaB[0] = pars->betaT[0] = 0;
-	pars->thetaB[0] = pars->thetaT[0] = -1.1;
+	pars->theta[0] = pars->thetaT[0] = -1.1;
 	pars->epsi[0] = -2.2;
 	for(int i = 1; i < CL_NUM_TERMS; i++) {
 		pars->alphaB[i] = pars->alphaT[i] = pars->betaB[i] = pars->betaT[i] = 0;
-		pars->thetaB[i] = pars->thetaT[i] = pars->epsi[i] = 0;
+		pars->theta[i] = pars->thetaT[i] = pars->epsi[i] = 0;
 	}
 
 	// read parameters from a file
@@ -254,16 +254,22 @@ static inline int parse_input_parameter(ClimatePars * p, char which, char state,
 		}
 		break;
 
+	/* theta is a special case
+		there are two theta parameters, theta and theta_t
+		for theta_t, which == t and state == t
+		for theta, we will accept any character after t for the state
+	*/
 	case 't':
 		switch(state) {
-		case 'b':
-			p->thetaB[ind] = data;
-			break;
+// 		case 'b':
+// 			p->thetaB[ind] = data;
+// 			break;
 		case 't':
 			p->thetaT[ind] = data;
 			break;
 		default:
-			errVal = 1;
+			p->theta[ind] = data;
+// 			errVal = 1;
 		}
 		break;
 
