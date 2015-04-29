@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 	if(gridFromFile)
 		grid = grid_from_file(GR_SIZE_X, GR_SIZE_Y, NBTYPE, gridDataFile);
 	else
-		grid = gr_make_grid(GR_SIZE_X, GR_SIZE_Y, NBTYPE, RANDOM, DISTURB_RATE, rng);
+		grid = gr_make_grid(GR_SIZE_X, GR_SIZE_Y, NBTYPE, UNIFORM, DISTURB_RATE, rng);
 
 	// handle null climate
 	for(int x = 0; x < grid->xdim; x++) {
