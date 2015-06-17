@@ -5,9 +5,9 @@
 
 CC=gcc
 
-GSL=-lgsl -lgslcblas
+#GSL=-lgsl -lgslcblas
 # for mingan, comment out the above and uncomment the line below
-#GSL=-Wl,-Bstatic -lgsl -lgslcblas -Wl,-Bdynamic
+GSL=-lm -Wl,-Bstatic -lgsl -lgslcblas -Wl,-Bdynamic
 
 CF=-std=c9x -iquote includes
 
