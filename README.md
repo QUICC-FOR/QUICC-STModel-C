@@ -14,8 +14,8 @@ State and transition landscape model
 
 ### Getting started...
 ```
-	$ git clone https://github.com/QUICC-FOR/QUICC-STModel-C.git
-	$ cd QUICC-STModel-C
+	$ git clone https://github.com/QUICC-FOR/STModel-Simulation.git
+	$ cd STModel-Simulation
 	$ cmake .
 	$ make
 	$ make test
