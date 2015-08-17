@@ -1,12 +1,13 @@
 State and transition landscape model
 ========
-<p align='right'>
-  <img src='https://travis-ci.org/QUICC-FOR/STModel-Simulation.svg?branch=master' alt='travis status'/>
-</p>
 
 **STM spatial explicit version, built on C**
 
 **Authors:** Steve Vissault and Matt Talluto
+
+[![DOI](https://zenodo.org/badge/12319/QUICC-FOR/STModel-Simulation.svg)](https://zenodo.org/badge/latestdoi/12319/QUICC-FOR/STModel-Simulation)
+[![Build Status](https://travis-ci.org/QUICC-FOR/STModel-Simulation.svg?branch=master)](https://travis-ci.org/QUICC-FOR/STModel-Simulation)
+
 
 ### Dependancy:
 
